@@ -236,3 +236,56 @@ evkg = { path = "../evkg", editable = true }
 7. **测试按"先写后改"执行**（用户指定顺序）。改动前新测试以 `ImportError` 失败，
    但这只证明函数缺失、不能证明旧行为有错，因此另外用一个实证脚本把旧行为
    （`0.25` vs 应有的 `0.80`，差 0.55）单独留证，见 EV-014。
+
+### M1-b.5c 新增发现与设计决定
+
+1. **我自己踩了用户警告过的那个坑。** `save_source` 的更新分支复用了 `_put`，而
+   `_put` 对 sources 是 `INSERT OR IGNORE` —— 于是 `save_source` 报 `updated`，
+   **库里却仍是旧值**（调试脚本显示第 4 次调用仍读到 `h1`）。
+   这正是 b.5b 里我判定为"危险状态"的同一类问题，说明"只在调用点小心"不可靠。
+   → 把 `_put` 对 sources 改成真 upsert（`ON CONFLICT(id) DO UPDATE`），**从根上
+   消除这个 helper 的陷阱**，而不是在更新分支绕开它。
+2. **`content_hash` 不能用磁盘原始字节。** 两个理由：
+   * 我引入的不一致：manifest 路径早已按规范化文本取哈希，而快路径按原始字节，
+     两条路径对同一内容会得出不同哈希；
+   * 实际危害：一次 `git checkout` 把 CRLF 换成 LF，所有来源都会被判成"内容已变"
+     并触发整轮重新抽取，而文本一字未改。
+   → 定一个可检验的契约：**`content_hash` 相同 ⟺ 段落所依据的文本相同**，
+   实现为对换行规范化后的文本取哈希。并明确它与 `RawAsset.content_hash`
+   （原始字节，服务任务去重与资产寻址）**不是同一个值**，不要互相比较。
+3. **`read_bytes().decode()` 不做换行翻译。** 我从 `read_text()` 改为读字节后，
+   Windows 上 CRLF 文件的每行行尾多出 `\r`，混进 passage 文本，**直接让 locator
+   回原文的逐字校验失败**（被 b.5a 的既有测试当场抓到）。这不是测试太严，而是
+   真实退化：`\r` 会污染抽取与引文比对。
+   → 新增 `decode_text()` 显式统一换行。由此确立一条语义：**locator 的行号是相对
+   换行规范化后的文本而言的**，与 git 惯例一致（规范化后行数不会因 CRLF 翻倍）。
+4. **删除 passage 必须级联，否则会留下一个自己审计不过的库。** 实测：只删 passage
+   会同时点亮四条不变量 —— `evidence_missing_passage`、`claims_without_evidence`
+   （删掉 evidence 后）、`events_missing_passage`、`ledger_complete_passage_missing`。
+   而且级联是**语义正确**的：原文已经不在了，依赖它的证据与失去全部证据的主张
+   都失去了依据，留着就是无依据的断言。
+   → 新增 `purge_passages()`，顺序为 evidence → 孤儿 claim 及其 relation →
+   幸存 claim 的 `passage_ids` 剪除 → events 及其派生的 timeline/place →
+   抽取账本 → entity_aliases → passages。**并返回各表清理数量**：级联删除是真实的
+   数据损失，必须让调用方看见，不能悄悄发生。
+5. **`access_date` 语义被钉死为"首次落库时间"**，且不参与变更判定。否则重复
+   ingest 相同内容会刷新它，每次都判成 `updated`，`unchanged` 永远不可达。
+   （这也与旧行为一致：旧实现是 `INSERT OR IGNORE`，本就"首次写入生效"。）
+6. **"整体替换段落集合"作为默认语义**。所有既有调用方（快路径、状态机、manifest）
+   本来就一次传入某来源的完整集合，因此默认 `replace_source=True` 不改变它们的
+   行为；而它正是"段落不得静默累积"的实现。空集合无法推断来源，故不删除（已文档化）。
+7. **manifest 的 Wiki 词条身份显式传入**。它的身份是「api + 页名」复合键，不是路径
+   也不是 URL，若走 `logical_source_id` 的路径分支会得到完全不同的 id，且会让
+   既有的 pending 判定失效 —— 因此改为显式传 `source_id`。
+8. **同一文件经快路径与经状态机现在得到同一个 `source_id`**（旧实现是两套方案：
+   路径式 vs 内容式）。这是逻辑身份的顺带收益，也是"下游引用稳定"的前提。
+
+### 未决 / 留给后续
+
+- **级联清理的策略是可选的**：当前实现是"自动级联并报告数量"。另一种设计是
+  "检测到有依赖时拒绝替换、交由调用方决定"。选前者是因为它符合"原文没了、断言
+  就该失效"的语义且不留脏数据；但用户在 M4 之后可能更希望**保留失效主张作为
+  历史**（例如标记为 `SUPERSEDED` 而不是删除）。届时可改为标记式失效。
+- **symbol 级代码精度**仍需解析器，b.5a 起即为明确的已知限制。
+- **evkg 不得推送到 `redmaplewww/evkg`**（用户 2026-10-01 明确指示）。本地领先
+  远程 3 个提交。改动提案见 `docs/UPSTREAM-evkg-commits.md`。

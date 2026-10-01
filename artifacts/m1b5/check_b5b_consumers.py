@@ -7,9 +7,7 @@
 
 from __future__ import annotations
 
-import asyncio
 import json
-
 from pathlib import Path
 
 from evkg.attack import audit_store
@@ -95,7 +93,7 @@ def main() -> int:
 
     store = KnowledgeStore(db)
     try:
-        loaded = [c for c in store.get_claims() if c.id == claim_id][0]
+        loaded = next(c for c in store.get_claims() if c.id == claim_id)
         results.append(("claim 读回且 score 为 None", loaded.confidence.score is None,
                         f"score={loaded.confidence.score} status={loaded.confidence.assessment_status}"))
 

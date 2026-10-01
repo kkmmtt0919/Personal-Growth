@@ -12,7 +12,8 @@
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | 系统架构：分层、Claim→Capability 桥梁、SourceKind 硬约束与双轨记录、数据模型、Agent 运行时、风险清单 | **动手写代码前必读**；改数据模型或证据层前必读 |
 | [`ROADMAP.md`](ROADMAP.md) | 落地路线：目录布局、协作协议、M0–M8 里程碑及完成条件、PRD P0 对照表 | 每次开工前确认当前在哪一步；排期与优先级讨论 |
 | [`ACCEPTANCE_GATES.md`](ACCEPTANCE_GATES.md) | 验收门 G1–G6 与质量门 QG1–QG5、证据记录格式、用 evkg 自举验收证据链的机制 | 声明"做完了"之前必读；设计测试前读 |
-| [`DECISIONS.md`](DECISIONS.md) | 架构决策记录：已拟定的 D1–D8、待用户决策的 Q1–Q4、M1 spike 待验证清单 | 想知道"为什么这么设计"时；要推翻某个决定时先读它 |
+| [`DECISIONS.md`](DECISIONS.md) | 架构决策记录：已拟定的 D1–D8、待用户决策的 Q1–Q4、M1 spike 待验证清单、各小步新增发现 | 想知道"为什么这么设计"时；要推翻某个决定时先读它 |
+| [`UPSTREAM-evkg-commits.md`](UPSTREAM-evkg-commits.md) | evkg 上游改动提案（`a4b15af`、`e432c42`）：问题、证据、变更、兼容性、已知限制、待决问题 | 评审是否把这两个提交推送到 `redmaplewww/evkg`、或据此建 issue/PR 时读 |
 
 ## 其他位置
 

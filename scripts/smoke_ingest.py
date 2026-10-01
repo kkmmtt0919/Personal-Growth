@@ -23,7 +23,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from growth_os.evidence import adapter  # noqa: E402
+from growth_os.evidence import adapter
 
 # (相对路径, 证据类型, 通道, 说明)
 CORPUS = [

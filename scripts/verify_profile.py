@@ -23,10 +23,10 @@ PROFILE_PATH = REPO_ROOT / "backend" / "growth_os" / "evidence" / "profiles" / "
 # 允许脚本在未安装本包时直接运行
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from evkg.config import Profile, activate, active, load_profile  # noqa: E402
-from evkg.domain import SourceKind  # noqa: E402
-from evkg.ingest.splitting import split_passages_with_spans  # noqa: E402
-from evkg.policies import assess_source  # noqa: E402
+from evkg.config import Profile, activate, active, load_profile
+from evkg.domain import SourceKind
+from evkg.ingest.splitting import split_passages_with_spans
+from evkg.policies import assess_source
 
 CHECKS: list[dict] = []
 

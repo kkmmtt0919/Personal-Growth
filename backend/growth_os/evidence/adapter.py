@@ -40,9 +40,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from evkg.config import Profile, activate, code_language_for, load_profile
+from evkg.config import Profile, activate, code_language_for
 from evkg.domain import SourceKind
-from evkg.ingest.connectors import TEXT_SUFFIXES, ingest_code_file, ingest_file
+from evkg.ingest.connectors import TEXT_SUFFIXES, ingest_code_file, ingest_file, logical_source_id
 from evkg.policies import assess_source
 from evkg.store import KnowledgeStore
 
@@ -285,6 +285,15 @@ def sources_by_evidence_type(store: KnowledgeStore, evidence_type: str) -> list[
 
 def counts(store: KnowledgeStore) -> dict:
     return store.counts()
+
+
+def logical_id_for(path: str | Path) -> str:
+    """某个文件会得到的 ``source_id``（纯计算，不落库）。
+
+    按**逻辑身份**（绝对路径）计算，因此内容改动不会改变它 —— 可用于把界面上
+    的一个文件关联回它的证据源。
+    """
+    return logical_source_id(str(path))
 
 
 def audit(db_path: str | Path) -> dict:
