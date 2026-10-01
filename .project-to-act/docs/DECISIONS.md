@@ -1,92 +1,87 @@
 # 架构决策记录
 
-> 记录**已经决定的**与**等待用户决定的**事项。决定一旦落定，除非有新证据不轻易推翻；如推翻，追加记录而非删除。
+> 记录**已经决定的**与**仍待决定的**事项。决定一旦落定，除非有新证据不轻易推翻；如推翻，追加记录而非删除。
 >
-> 状态：D1–D3、D6–D8 已拟定待确认；**Q1–Q4 必须由用户决定后才能进入 M1**。
+> 状态：**Q1–Q4 已于 2026-10-01 由用户确认**；D1–D8 随之生效。M1 已解锁。
 
 ---
 
-## 待用户决策（阻塞 M1 开工）
+## 已确认决策（Q1–Q4，2026-10-01 用户确认）
 
-### Q1 · evkg 如何集成？
+### Q1 · evkg 集成方式 → **独立仓库 + path 依赖** ✅
 
-现状：evkg 位于 `D:\projects\evkg`（独立仓库，单一 commit，版本 0.1.0）。它没有 library facade，`web/queries/dossier/audit` 等模块直接写 SQL；但领域包（YAML）可定制词表、prompt、来源分级、切分规则。
+**决定**：evkg 保留在 `D:\projects\evkg` 作为独立仓库；Growth OS 用 `uv` 的 editable path 依赖引入。
 
-| 选项 | 做法 | 优点 | 缺点 |
-|---|---|---|---|
-| **A（推荐）** | 保持独立仓库，Growth OS 用 `uv` path 依赖（`evkg = { path = "../evkg", editable = true }`） | 边界清晰；evkg 保持通用性；改动走上游 commit 可追溯 | 需要同步维护两个仓库；发布时需 pin 到 commit |
-| B | 把 evkg 源码 vendor 进本仓库 `vendor/evkg/` | 单仓库、改动自由 | 与上游分叉，失去同步能力；evkg 的通用性卖点被浪费 |
-| C | 作为 git 依赖 pin 到 commit | 可复现最好 | 开发迭代慢，每次改动要 push |
+```toml
+# pyproject.toml
+[tool.uv.sources]
+evkg = { path = "../evkg", editable = true }
+```
 
-**推荐 A**。理由：evkg 的价值在于"通用证据图谱"，Growth OS 只是它的一个领域包消费者。分叉会让两边都变差。已确认 evkg 的 prompt / 词表 / 来源分级全部可在 YAML 层覆盖，MVP 阶段大概率不需要改它的源码。
+**架构约束**：`evkg` 只允许在 `backend/evidence/adapter.py` 中被 import；其余代码一律通过适配层。这样耦合风险被限制在单文件。
 
-**请确认**：A / B / C？
+**理由**：已实测确认 evkg 的词表、prompt、来源分级、切分规则全部可在 YAML 领域包层覆盖（`config.py` 的 `Profile` 模型），MVP 大概率不需要改其源码。保持上游可同步，避免分叉 —— evkg 的定位就是"通用证据图谱"，Growth OS 只是它的一个领域包消费者。
 
----
+**发布前动作**：`0.1.0` 前必须把 path 依赖改为 pin 到具体 commit SHA，并记录于 `PROJECT_VERSIONS.md`。
 
-### Q2 · LLM 供应商与模型
-
-evkg 的 `ModelGateway` 支持两类协议：
-
-- `anthropic`（默认）：`EVKG_ANTHROPIC_*`
-- `openai_compatible`：任意 OpenAI 兼容端点（含 Ollama 本地、智谱、DeepSeek 等），支持 `EVKG_OLLAMA_NATIVE=1`
-
-另外支持配置**独立的第二模型**做核查（`EVKG_VERIFIER_*`），避免"自己审自己"。
-
-需要确定：
-
-1. 主模型用哪个供应商 + 模型名？
-2. 是否配置独立的 verifier 模型（建议配，能显著提升攻击环节的可信度）？
-3. 是否允许在开发期使用本地模型（Ollama）以控制成本？
-
-**背景因素**：中文抽取与攻击对模型能力敏感；PRD §10 的能力判定质量直接取决于攻击环节质量。
+**放弃的选项**：vendor 进本仓库（与上游分叉、失去同步能力）；git 依赖 pin commit（开发期迭代太慢）。
 
 ---
 
-### Q3 · 前端技术栈
+### Q2 · LLM 模型 → **GLM 主模型 + 独立 verifier** ✅
 
-| 选项 | 说明 |
-|---|---|
-| **A（推荐）** | React + Vite + TypeScript（与 evkg 的 `frontend/` 一致）；图谱可视化用 Cytoscape |
-| B | Next.js（SSR + 路由约定，但 MVP 是登录后应用，SSR 收益有限） |
-| C | 服务端渲染（Jinja2 + HTMX），最省事，但交互式图谱和聊天体验受限 |
+**决定**：
 
-**推荐 A**。理由：与 evkg 前端方案一致，可以借鉴其已有的 Cytoscape 图谱实现，减少 M8 的工作量。
+- 主模型沿用 `openai_compatible` + `open.bigmodel.cn` + `glm-5.3`（与 evkg 现有配置一致）
+- **另配一个不同的模型作为独立 verifier**（`EVKG_VERIFIER_*`），用于攻击环节的逐条复核与对抗裁决
 
----
+**理由**：evkg 的 `verifier_gateway()` 返回的第二个布尔值就是"复核模型是否独立"。若抽取与攻击用同一模型，等于自己审自己，而 PRD §10 的能力判定质量直接取决于攻击质量。
 
-### Q4 · MVP 是否需要多用户 / 登录？
+**已知陷阱**：evkg 仓库自带的 `.env.example` 写的是 `EVKG_VERIFIER_PROVIDER`，**这是错的** —— 代码实际读取 `EVKG_VERIFIER_LLM_PROVIDER`（`attack/verifier.py:39-40` 的 `env(f"VERIFIER_{suffix}")`，suffix 为 `LLM_PROVIDER`）。照抄那个名字会导致复核模型静默失效。本项目的 `.env.example` 已使用正确名称，并建议向上游提 fix。
 
-| 选项 | 说明 |
-|---|---|
-| **A（推荐）** | 单用户本地优先，无登录；但所有表带 `user_id`，为将来留位 |
-| B | MVP 就做多用户 + 注册登录 |
-
-**推荐 A**。理由：PRD §17 强调"允许低数据量启动"，多用户会把精力吸到权限、会话、隔离上，而这些不影响 PRD §33 的 6 条成功标准。表结构已经预留 `user_id`，将来迁移成本可控。
-
-**风险提示**：evkg 侧目前没有用户概念（`Source` 无 user_id，只有自由 `metadata`）。若将来要多用户，evkg 侧需要按用户分库或在 `metadata` 上打标。选 A 时这个代价可以推迟。
+**模型分层**：`EVKG_*` 用于 evkg 流水线（批量抽取、攻击），可用较便宜的模型；`GROWTH_AGENT_*` 用于 Growth OS Agent 推理（目标澄清、能力审计、成长建议），可用更强的模型；后者留空则回落到前者。
 
 ---
 
-## 已拟定决策（待用户确认）
+### Q3 · 前端技术栈 → **React + Vite + TypeScript** ✅
+
+**决定**：React + Vite + TS；图谱可视化用 Cytoscape；运行时 `Node 24.15.0`。
+
+**理由**：与 evkg 的 `frontend/` 方案一致，可直接借鉴其已有的 Cytoscape 图谱实现，减少 M8 工作量。
+
+**放弃的选项**：Next.js（MVP 是登录后应用，SSR 收益有限）；Jinja2 + HTMX（交互式图谱与聊天体验受限）。
+
+---
+
+### Q4 · 多用户 / 登录 → **单用户本地优先** ✅
+
+**决定**：MVP 不做登录与权限体系；但**所有表带 `user_id`**，为将来留位。
+
+**理由**：PRD §17 强调"允许低数据量启动"；多用户会把精力吸到权限、会话、隔离上，而这些不影响 PRD §33 的 6 条成功标准。表结构已预留 `user_id`，迁移成本可控。
+
+**已记录的代价**：evkg 侧目前没有用户概念（`Source` 无 user_id，只有自由 `metadata`）。将来要做多用户，需按用户分库或在 `metadata` 上打标。选此项时该代价被推迟，不属于 MVP 范围。
+
+---
+
+## 架构决策（D1–D8，已生效）
 
 ### D1 · 证据层复用 evkg，只在一个文件里 import
 
 **决定**：Growth OS 通过 `backend/evidence/adapter.py` 这一个适配层访问 evkg，其余代码不得直接 import evkg。
 
-**理由**：evkg 是 0.1.0 版本、无 library 契约、raw SQL 分散。把耦合收敛到单文件，将来若需替换或升级，改动面可控。
+**理由**：evkg 是 0.1.0 版本、无 library 契约、raw SQL 分散在 `web/queries/dossier/audit` 等模块。把耦合收敛到单文件，将来若需替换或升级，改动面可控。
 
 ### D2 · 单 SQLite，双表族
 
 **决定**：一个 SQLite 文件（WAL），evkg 表族 + Growth OS 的 `g_` 前缀表族共存。跨表族引用（`claim_id` / `source_id`）由应用层保证。
 
-**理由**：PRD §27 明确单 SQLite 思路；evkg 建表全部是 `CREATE TABLE IF NOT EXISTS`，幂等可叠加，无外键约束，物理共存无冲突。避免为了 MVP 引入 Postgres / Neo4j。
+**理由**：PRD §27 明确单 SQLite 思路；evkg 建表全部是 `CREATE TABLE IF NOT EXISTS`（`store.py:40-95`），幂等可叠加，无外键约束，物理共存无冲突。避免为了 MVP 引入 Postgres / Neo4j。
 
 ### D3 · 复用 evkg 的 ModelGateway，不引入第二个网关
 
 **决定**：`from evkg.model_gateway import ModelGateway`，用显式 `overrides={...}` 传入 Growth OS 自己的配置。
 
-**理由**：已支持 Anthropic + OpenAI 兼容 + 第二验证模型 + 重试/超时/结构化输出。用 overrides 而非环境变量，是为了避开 evkg 的进程级全局配置（`config._ACTIVE`）。
+**理由**：已支持 Anthropic + OpenAI 兼容 + 第二验证模型 + 重试/超时/结构化输出。用 overrides 而非环境变量，是为了避开 evkg 的进程级全局配置（`config._ACTIVE`）串扰。
 
 ### D4 · Agent 运行时自建，不用框架
 
@@ -94,13 +89,13 @@ evkg 的 `ModelGateway` 支持两类协议：
 
 **理由**：① PRD §29 只要 3 个逻辑 Agent；② PRD §33 把 Evaluation 列为成功标准，自建才能产出可评估的完整轨迹；③ 避免框架锁死与隐藏行为。
 
-**代价**：需自己处理工具调用的解析与循环收敛。可接受。
+**代价**：需自己处理工具调用的解析与循环收敛。可接受 —— `ModelGateway.structured()` 已解决"约束式 JSON 输出"。
 
 ### D5 · 证据来源采用"双轨记录"
 
 **决定**：粗粒度 `Source.kind`（6 个固定值，驱动 evkg 的 confidence）+ 细粒度 `Source.metadata.growth_evidence_type`（驱动 Growth OS 的星级规则）。另加 `metadata.growth_channel` 区分 `user_evidence` / `domain_reference`。
 
-**理由**：**已实测确认** `SourceKind` 是封闭 StrEnum（`domain.py:10`），且 `assess_source` 用 `_policy_table()[kind]` 直接索引（`policies.py:28`），传入未知 kind 会 KeyError。因此不能新增来源类型。双轨方案零改动达成目标。
+**理由**：**已实测确认** `SourceKind` 是封闭 StrEnum（`domain.py:10-16`），且 `assess_source` 用 `_policy_table()[kind]` 直接索引（`policies.py:28`），传入未知 kind 会 KeyError。因此不能新增来源类型。双轨方案零改动达成目标。
 
 **详见**：`ARCHITECTURE.md` §3.3、§3.4。
 
@@ -131,7 +126,8 @@ evkg 的 `ModelGateway` 支持两类协议：
 | 日期 | 编号 | 变化 | 原因 | 影响 |
 |---|---|---|---|---|
 | 2026-10-01 | D1–D8 | 初次拟定 | 架构规划 | 待用户确认 |
-| 2026-10-01 | Q1–Q4 | 提出 | 阻塞 M1 开工 | 待用户决策 |
+| 2026-10-01 | Q1–Q4 | 提出 | 阻塞 M1 开工 | — |
+| 2026-10-01 | Q1–Q4 | **全部确认，采纳推荐方案** | 用户决策 | M1 解锁；D1/D2/D3/D4/D6 随之确定 |
 
 ---
 

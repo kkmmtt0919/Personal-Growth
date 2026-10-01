@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**未验收**（M0 规划阶段，尚无产品功能可验收）
-- 验收范围：暂无产品功能；M0 自身以「治理账本校验通过」为收口条件
-- 最后检查：2026-10-01（治理账本初始化 + `--validate`）
-- 遗留问题：全部 6 道产品验收门 G1–G6 与 5 道质量门 QG1–QG5 均未开始执行
+- 结论：**M0 地基与治理已验收通过**；产品功能（G1–G6、QG1–QG5）尚未开始，整体项目未验收
+- 验收范围：M0 收口项（治理账本合法性、文档索引一致性、选型确认）
+- 最后检查：2026-10-01
+- 遗留问题：G1–G6 与 QG1–QG5 全部未开始执行；M1 起按里程碑逐个验收
 
 ## 验收标准
 
@@ -36,24 +36,30 @@
 
 | 标准 ID | 标准 | 状态 | 验证方法摘要 | 证据 ID |
 |---|---|---|---|---|
-| A-001 | 治理账本结构合法 | 待检查 | `init_project_management.py --validate` 通过 | 无 |
-| A-002 | 规划文档齐备且索引一致 | 待检查 | `docs/README.md` 索引与实际文件一致 | 无 |
-| A-003 | 用户确认 Q1–Q4 选型 | 待检查 | 决策记录于 `docs/DECISIONS.md` | 无 |
+| A-001 | 治理账本结构合法 | **通过** | `--validate` 与 `--audit` 均 `valid=true, strict_valid=true, errors=[], warnings=[]` | EV-001 |
+| A-002 | 规划文档齐备且索引一致 | **通过** | `docs/` 下 5 份内容文档全部登记于 `docs/README.md`，无未登记文件（差异仅为索引自身 README.md） | EV-002 |
+| A-003 | 用户确认 Q1–Q4 选型 | **通过** | 4 项均选定并记录于 `docs/DECISIONS.md`，采纳推荐方案 | EV-003 |
 
 ## 证据索引
 
 | 证据 ID | 时间 | 方法摘要 | 退出状态 | 版本或文件哈希 | 结果摘要 | 证据位置 | 有效期 |
 |---|---|---|---|---|---|---|---|
+| EV-001 | 2026-10-01 | `uv run python init_project_management.py --project-root "D:/projects/Personal Growth" --validate`（另跑 `--audit`） | exit 0 | `.project-to-act/` 首次提交 | `valid=true, strict_valid=true, schema_version=2, mode=managed, errors=[], warnings=[]`；5 份文档字节数均在阈值内 | 命令输出（见 `PROJECT_PROGRESS.md` 进度历史） | 90d |
+| EV-002 | 2026-10-01 | 对比 `grep -oE '\[`*.md`\]' docs/README.md` 与 `ls docs/*.md` | exit 0 | 同上 | 5 份内容文档（PRD/ARCHITECTURE/ROADMAP/ACCEPTANCE_GATES/DECISIONS）全部登记，无未登记文件；差异仅为索引自身 | `docs/README.md` | 90d |
+| EV-003 | 2026-10-01 | 用户在 AskUserQuestion 中确认 Q1–Q4 | — | 同上 | Q1 独立仓库+path 依赖；Q2 GLM 主模型+独立 verifier；Q3 React+Vite+TS；Q4 单用户本地优先 | `docs/DECISIONS.md` §已确认决策 | 长期（决策类） |
 
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
 |---|---|---|---|---|---|---|
+| A-001 | 2026-10-01 | 治理账本合法性 | `.project-to-act/` | 通过 | EV-001 | — |
+| A-002 | 2026-10-01 | 文档索引一致性 | `docs/` | 通过 | EV-002 | — |
+| A-003 | 2026-10-01 | 选型确认 | Q1–Q4 | 通过 | EV-003 | 用户 |
 
 ## 验收记录
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
 |---|---|---|---|---|---|
-| 2026-10-01 | M0 规划阶段 | 无 | 未执行 | G1–G6、QG1–QG5 全部未开始 | 未验收 |
+| 2026-10-01 | M0 收口（账本/索引/选型） | EV-001 EV-002 EV-003 | 通过 | G1–G6、QG1–QG5 全部未开始 | **M0 验收通过**，M1 可开工 |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

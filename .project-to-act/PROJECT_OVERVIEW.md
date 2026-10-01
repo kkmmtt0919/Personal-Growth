@@ -8,8 +8,8 @@
 - 项目 ID：growth-os
 - 项目负责人：用户（产品决策）／ZCode（实施）
 - 风险等级：中（含一项高不确定性技术依赖：evkg 作为模块可用性，见 R1/R2）
-- 当前阶段：M0 地基与治理（已完成，待用户确认后进入 M1）
-- 当前状态：规划已定稿，等待 4 项选型确认
+- 当前阶段：M0 地基与治理（已完成并验收）；M1 证据底座打通（已解锁，待开工）
+- 当前状态：规划定稿，Q1–Q4 选型已确认
 - 最后更新：2026-10-01
 
 ## 项目目标
@@ -41,8 +41,9 @@ PRD §32 全部条目照原样保留，另加架构层面非目标（见 `docs/A
 
 ## 技术路线与关键约束
 
-- 技术栈：Python 3.12（uv 托管）· FastAPI · SQLite(WAL) · React + Vite + TS —— 详见 `docs/DECISIONS.md` Q1–Q4（待确认）
-- 证据底座：复用 evkg（`D:\projects\evkg`，独立仓库，非 fork），只允许经 `backend/evidence/adapter.py` 单一入口 import
+- 技术栈：Python 3.12（uv 托管）· FastAPI · SQLite(WAL) · React + Vite + TS · Node 24 —— 选型已确认，见 `docs/DECISIONS.md` Q1–Q4
+- 证据底座：复用 evkg（`D:\projects\evkg`，独立仓库，非 fork），以 uv editable path 依赖引入，只允许经 `backend/evidence/adapter.py` 单一入口 import（决定 D1/Q1）
+- LLM：GLM（`open.bigmodel.cn` / `glm-5.3`）作主模型，另配独立 verifier 模型用于攻击复核（决定 Q2）；`EVKG_*` 供流水线、`GROWTH_AGENT_*` 供 Agent 推理，分层配置
 - 存储：单 SQLite，evkg 表族 + Growth OS `g_` 前缀表族共存，跨表族引用由应用层保证（决定 D2）
 - Agent：自建薄运行时，产出完整轨迹用于评估（决定 D4）
 - **硬约束**：`evkg.domain.SourceKind` 是封闭 StrEnum，`assess_source` 直接字典索引，未知 kind 会 KeyError → 细粒度证据类型必须走 `Source.metadata`（决定 D5）
@@ -57,13 +58,16 @@ PRD §32 全部条目照原样保留，另加架构层面非目标（见 `docs/A
 
 ## 当前焦点
 
-- 下一里程碑：**M1 证据底座打通（技术 spike，最高优先级）**
-- 当前工作重点：等待 Q1–Q4 选型确认；确认后从 M1-a 开始
-- 主要阻塞：Q1（evkg 集成方式）、Q2（LLM 模型选型）、Q3（前端技术栈）、Q4（是否需要多用户）
+- 下一里程碑：**M1 证据底座打通（技术 spike，最高优先级）**，已解锁
+- 当前工作重点：M1-a 建 growth 领域包并验证加载
+- 主要阻塞：无（Q1–Q4 已于 2026-10-01 确认）
 
 ## 路线变更记录
 
 | 决定 ID | 日期 | 决定摘要 | 原因与影响 | 证据 ID | 确认来源 |
 |---|---|---|---|---|---|
-| D1–D8 | 2026-10-01 | 拟定 8 项架构决策，见 `docs/DECISIONS.md` | 架构规划产物；D1/D5/D6 影响证据层实现方式 | 无 | 待用户确认 |
-| Q1–Q4 | 2026-10-01 | 提出 4 项待决策，阻塞 M1 开工 | 均为影响全局的选型，不宜由实施方单方决定 | 无 | 待用户决策 |
+| D1–D8 | 2026-10-01 | 拟定 8 项架构决策，见 `docs/DECISIONS.md` | 架构规划产物；D1/D5/D6 影响证据层实现方式 | 无 | 用户已确认（随 Q1–Q4） |
+| Q1 | 2026-10-01 | evkg 采用独立仓库 + uv editable path 依赖 | 保持上游可同步，耦合收敛到单个适配层 | 无 | 用户确认 |
+| Q2 | 2026-10-01 | GLM 主模型 + 独立 verifier 模型 | 避免"自己审自己"削弱攻击环节可信度 | 无 | 用户确认 |
+| Q3 | 2026-10-01 | 前端 React + Vite + TypeScript | 与 evkg 前端一致，可复用其 Cytoscape 图谱实现 | 无 | 用户确认 |
+| Q4 | 2026-10-01 | 单用户本地优先，表结构预留 user_id | 优先跑通 PRD §33 的 6 条成功标准，推迟权限体系 | 无 | 用户确认 |

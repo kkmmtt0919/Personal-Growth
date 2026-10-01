@@ -30,7 +30,7 @@
 
 | 依赖 | 当前指向 | 解析方式 | 备注 |
 |---|---|---|---|
-| evkg | `D:\projects\evkg`（未发布，worktree） | `path` + editable（待 Q1 确认） | 发布前须改为 commit pin |
+| evkg | `D:\projects\evkg`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin |
 | project-to-act | `D:\projects\project-to-act`；已装至 `~/.zcode/skills/project-to-act/` | 治理工具，非运行时依赖 | 仅用其脚本与约定 |
 | Python | 3.12.14（uv 托管） | `requires-python >= 3.11` | 系统解释器为 3.7.8，必须走 uv |
 | uv | 0.12.10 | — | 已验证可用 |
