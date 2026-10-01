@@ -88,14 +88,81 @@ def test_markdown_uses_evkg_fast_path(store, files):
     assert result.passage_count > 0
 
 
-def test_code_file_uses_text_like_route(store, files):
-    """evkg 的 TEXT_SUFFIXES 不含 .java，必须由适配层的兜底路由接住。"""
+def test_code_file_uses_evkg_code_route(store, files):
+    """源码走 evkg 的 ingest_code_file（b.5a 起），不再是适配层自造的 text_like。"""
     result = adapter.ingest_document(
         files["code"], store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "adapter.text_like"
-    assert result.kind == "primary"
+    assert result.route == "evkg.ingest_code_file"
+    assert result.kind == "code"
     assert result.passage_count > 0
+
+
+def test_code_kind_change_is_score_neutral(store, files):
+    """把源码从 primary 改判为 code 不得改变评分 —— 只是语义更准。
+
+    旧数据不能被"顺手升级"：code 与 primary 的基线都是 0.82。
+    """
+    code_result = adapter.ingest_document(
+        files["code"], store=store, evidence_type="repo_artifact"
+    )
+    doc_result = adapter.ingest_document(
+        files["readme"], store=store, evidence_type="repo_artifact"
+    )
+    code_meta = adapter.source_metadata(store, code_result.source_id)
+    doc_meta = adapter.source_metadata(store, doc_result.source_id)
+
+    assert code_meta["assessment"]["baseline_score"] == 0.82
+    assert doc_meta["assessment"]["baseline_score"] == 0.82
+    assert code_result.kind == "code" and doc_result.kind == "primary"
+
+
+def test_code_passages_carry_line_range_locator(store, files):
+    """M4 要能点回『RagService.java L42-L58』，locator 必须带行范围。"""
+    result = adapter.ingest_document(
+        files["code"], store=store, evidence_type="repo_artifact"
+    )
+    passages = store.get_passages(source_id=result.source_id)
+    assert passages
+    for passage in passages:
+        assert "line_start" in passage.locator
+        assert "line_end" in passage.locator
+        assert passage.locator["language"] == "java"
+        assert passage.locator["path"].endswith("Demo.java")
+
+
+def test_code_locators_round_trip_to_original_file(store, files):
+    """核心不变式：拿 locator 切回原始文件，必须逐字等于 passage.text。"""
+    result = adapter.ingest_document(
+        files["code"], store=store, evidence_type="repo_artifact"
+    )
+    on_disk = files["code"].read_text(encoding="utf-8")
+    lines = on_disk.split("\n")
+    for passage in store.get_passages(source_id=result.source_id):
+        start, end = passage.locator["line_start"], passage.locator["line_end"]
+        assert "\n".join(lines[start - 1 : end]) == passage.text
+
+
+def test_code_indentation_is_preserved(store, files):
+    """文本切分会压平缩进；源码必须保留，否则代码读不出结构。"""
+    result = adapter.ingest_document(
+        files["code"], store=store, evidence_type="repo_artifact"
+    )
+    joined = "\n".join(item.text for item in store.get_passages(source_id=result.source_id))
+    assert "        return" in joined, "缩进被抹平了"
+
+
+def test_extensionless_build_files_are_handled(store, tmp_path):
+    """Dockerfile/Makefile 这类无扩展名文件不能被漏掉（旧兜底路由覆盖过它们）。"""
+    dockerfile = tmp_path / "Dockerfile"
+    dockerfile.write_text("FROM python:3.12-slim\n\nRUN pip install uv\n", encoding="utf-8")
+    result = adapter.ingest_document(
+        dockerfile, store=store, evidence_type="repo_artifact"
+    )
+    assert result.route == "evkg.ingest_code_file"
+    assert result.kind == "code"
+    passages = store.get_passages(source_id=result.source_id)
+    assert passages and passages[0].locator["language"] == "dockerfile"
 
 
 def test_binary_suffix_is_rejected(store, files):
@@ -280,7 +347,8 @@ def test_real_java_file_ingests(store):
     result = adapter.ingest_document(
         REAL_JAVA, store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "adapter.text_like"
+    assert result.route == "evkg.ingest_code_file"
+    assert result.kind == "code"
     assert result.passage_count > 0
     passages = store.get_passages(source_id=result.source_id)
     joined = " ".join(p.text for p in passages)

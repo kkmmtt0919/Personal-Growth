@@ -121,16 +121,23 @@ prompts:
 #   growth_evidence_type    →  kind            baseline
 #   ------------------------------------------------------
 #   task_submission         →  primary         0.82   （任务证据，闭环自产）
-#   repo_artifact           →  primary         0.82   （实践证据）
+#   repo_artifact(文档)      →  primary         0.82   （README/交付文档）
+#   repo_artifact(源码)      →  code            0.82   （源码与配置，带行范围 locator）
 #   probe_result            →  contemporary    0.78   （行为证据）
 #   uploaded_doc            →  compilation     0.68   （知识证据）
 #   external_ref            →  modern_study    0.62   （不参与能力评级）
 #   chat_assertion          →  folk            0.35   （弱证据）
+#
+# 注：源码的 kind 是 code（由读取路径决定），但基线仍取 0.82 —— 与 primary 持平，
+# 使「把源码从 primary 改判为 code」不改变任何已有评分，只是语义更准确。
 # ---------------------------------------------------------------------------
 source_policy:
   - kind: primary
     baseline: 0.82
-    rationale: "用户的原始实践产物（任务提交、GitHub 代码、项目仓库）。能力的最强证据，但仍需核查是否为独立完成。"
+    rationale: "用户的原始实践产物（任务提交、项目文档、交付物）。能力的最强证据，但仍需核查是否为独立完成。"
+  - kind: code
+    baseline: 0.82
+    rationale: "用户的源代码与配置产物（仓库源码、脚本、构建配置）。能力的最强证据，可逐行核验；但『代码存在』不等于『声称的功能已实现』，也不证明由本人独立完成。"
   - kind: contemporary
     baseline: 0.78
     rationale: "与能力形成同期产生的记录（现场答题/测试结果、当次任务的会话记录）。属行为证据，反映当下真实表现。"

@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 地基与治理通过；M1-a 领域包通过；M1-b 证据入库通过**；M1 其余小步与产品功能（G1–G6、QG1–QG5）尚未完成
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖可解析）+ M1-b（双轨记录、真实材料入库、QG1 首跑）
+- 结论：**M0 通过；M1-a 通过；M1-b 通过；M1-b.5a 通过（evkg 源码一等支持）**；M1-b.5b/c/d 与 M1-c 未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、适配层变薄、旧数据不变性、locator 真值）
 - 最后检查：2026-10-01
-- 遗留问题：R1 仅验到 ingest 段；R2 已闭环；R4 待 M1-g；G1–G6 与 QG2–QG5 未开始
+- 遗留问题：R1 仅验到 ingest 与 evkg 单元层；symbol 级代码精度需解析器（已排除）；跨切分器重入库的累积问题待 b.5c；G1–G6 与 QG2–QG5 未开始
 
 ## 验收标准
 
@@ -52,6 +52,10 @@
 | EV-006 | 2026-10-01 | `uv run pytest tests/ -v` | exit 0 | adapter `f73bff7e5010`；tests `bb3dfa894969` | **22 passed**。覆盖：两条 ingest 路由选择、二进制后缀拒绝、未知类型/通道拒绝、**成长标签与 `metadata.assessment` 共存**、6 种证据类型→baseline 映射（0.82/0.82/0.78/0.68/0.62/0.35）、评估理由来自成长领域包、通道过滤、按类型过滤、幂等（重复入库不新增行）、重打标签生效且不新增行 | 命令输出；`tests/test_evidence_adapter.py` | 90d |
 | EV-007 | 2026-10-01 | `uv run python -X utf8 scripts/smoke_ingest.py`（真实材料） | exit 0 | smoke `baf17e2c8a6b` | **PASS**。用用户真实仓库 `mytset-rag` 入库：README.md(57 passages, 快路径)、`RagService.java`(11 passages, 文本兜底路由)、`evkg/README.md`(43 passages, 领域参考)。计 3 sources / 111 passages。**三条记录的 `growth_evidence_type`+`growth_channel`+`assessment` 三者共存**，baseline 分别 0.82/0.82/0.62；通道过滤 user_evidence=2、domain_reference=1；幂等复跑 sources 3→3 且 source_id 不变 | 命令输出；`data/growth.db` | 90d |
 | EV-008 | 2026-10-01 | `adapter.audit('data/growth.db')` → `evkg.attack.audit_store` | pass | 同上 | **status=pass, total_violations=0**，10 项不变量检查全部 0 violation。证明适配层的 `json_set` 定向修补**未破坏** evkg 的任何证据完整性约束（引文∈原文、claim 必有证据、passage 必有 source 等）。此即质量门 QG1 在 M1-b 范围的首次通过 | 命令输出；`data/growth.db` | 90d |
+| EV-009 | 2026-10-01 | `uv run pytest ../evkg/tests`（evkg 上游，commit `a4b15af`） | exit 0 | evkg `a4b15af` | **61 passed**（原有 31 + 新增 30）。新增覆盖：`SourceKind.CODE` 与策略表、**既有 6 个 kind 基线未被改动**（旧数据不可被顺手改）、语言判定（后缀/URI/无扩展名文件/拒绝散文与数据）、`CodeReader` 不被 `PlainTextReader` 遮蔽、保留缩进、**locator 不许说谎**、方法内空行+嵌套块不切碎、行范围有序不重叠、max_lines 上限、类第二成员可分离、退格到主体层切/退格到方法体内部不切、仅括号噪声为零、`ingest_code_file` 幂等与拒绝非源码 | 命令输出；`../evkg/tests/test_code_ingest.py` | 90d |
+| EV-010 | 2026-10-01 | `uv run pytest tests/`（本仓） | exit 0 | adapter `1138da7bed90`；tests `586993f0cc2b` | **27 passed**。新增覆盖：源码走 `evkg.ingest_code_file` 且 kind=`code`、**kind 由 primary 改判为 code 时基线保持 0.82（评分中性）**、passage 带 path/language/line_start/line_end、locator 回原文逐字一致、缩进保留、无扩展名构建文件（Dockerfile）不漏 | 命令输出；`tests/test_evidence_adapter.py` | 90d |
+| EV-011 | 2026-10-01 | 旧数据不变性检查：升级 evkg 后**不做任何重新入库**，逐字段对比 `artifacts/m1b5/before_sources.json` | 一致 | adapter `1138da7bed90` | **逐字段完全一致，表计数无差异**（3 sources / 111 passages / 其余表同）。证明本次 evkg 升级本身不触碰已落库数据 | `artifacts/m1b5/before_sources.json`、`after_upgrade_no_reingest.json` | 90d |
+| EV-012 | 2026-10-01 | locator 真值校验：对每条带行范围的 passage，按 locator 回磁盘切原文并逐字比对；随后 `adapter.audit` | exit 0 | 重建后 `data/growth.db` | 重建后 3 sources / 109 passages，形态全部一致（code 源 9 段全带行范围；两个文档源 0 段带行范围）。**代码源 9 条 locator 回磁盘核对，不一致 0 条**。`audit_store` = pass，0/10 violations。切分质量：RagService.java 9 段 / 最大 25 行 / 仅括号噪声 0 条 | 命令输出；`data/growth.db`。重建前的库备份为本机取证材料 `artifacts/m1b5/*.db.bak`（二进制，已 gitignore 不入库） | 90d |
 
 ## Gate 记录
 
@@ -65,6 +69,10 @@
 | M1-b | 2026-10-01 | 双轨记录成立（成长标签与 evkg assessment 共存） | `adapter.py` | 通过 | EV-006 | — |
 | M1-b | 2026-10-01 | 真实材料入库可用（含代码路由） | `mytset-rag` 3 文件 | 通过 | EV-007 | — |
 | QG1 | 2026-10-01 | 证据不变量（M1-b 范围首跑） | `data/growth.db` | 通过 | EV-008 | — |
+| M1-b.5a | 2026-10-01 | evkg 源码一等支持（61 项测试全绿、lint 无新增） | `../evkg` @ `a4b15af` | 通过 | EV-009 | — |
+| M1-b.5a | 2026-10-01 | 适配层改走 evkg 原生代码路径且评分中性 | `adapter.py` | 通过 | EV-010 | — |
+| M1-b.5a | 2026-10-01 | 旧数据未被错误升级（升级 evkg 后零变更） | `data/growth.db` | 通过 | EV-011 | — |
+| M1-b.5a | 2026-10-01 | locator 可回磁盘核对（零说谎）+ 切分质量 | `RagService.java` | 通过 | EV-012 | — |
 
 ## 验收记录
 
@@ -73,5 +81,6 @@
 | 2026-10-01 | M0 收口（账本/索引/选型） | EV-001 EV-002 EV-003 | 通过 | G1–G6、QG1–QG5 全部未开始 | **M0 验收通过**，M1 可开工 |
 | 2026-10-01 | M1-a（领域包生效、依赖解析） | EV-004 EV-005 | 通过 | R1/R2/R4 待后续小步 | **M1-a 验收通过** |
 | 2026-10-01 | M1-b（入库、双轨记录、QG1） | EV-006 EV-007 EV-008 | 通过 | M1-c 起需 LLM API Key | **M1-b 验收通过** |
+| 2026-10-01 | M1-b.5a（evkg 源码一等支持、适配层变薄、旧数据不变性） | EV-009 EV-010 EV-011 EV-012 | 通过 | symbol 级精度待解析器；跨切分器累积问题待 b.5c | **M1-b.5a 验收通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

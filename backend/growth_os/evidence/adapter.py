@@ -5,14 +5,18 @@
 
 ## 为什么需要这一层（而不是直接用 evkg）
 
-1. **证据强度语义**：evkg 的 ``SourceKind`` 是封闭枚举（6 个值），且
-   ``policies.assess_source`` 对未知 kind 直接 KeyError。Growth OS 需要的
-   细粒度证据类型（任务提交/代码产物/现场答题/…）无法作为新 kind 存在，
-   因此走 ``Source.metadata.growth_evidence_type`` 双轨记录。
-2. **kind 必须可控**：evkg 的快路径 ``ingest_file`` 接受 ``kind`` 参数，但
-   V1 ``IngestionService`` 在 ``pipeline.py:221`` 把 kind **硬编码为 UNKNOWN**
-   且不写 ``metadata.assessment``。这会让最该被采信的代码/项目证据永久按
-   0.25 的"未知来源"计权，与产品目标相反。**因此本适配层不使用 V1 状态机。**
+1. **证据强度语义**：evkg 的 ``SourceKind`` 是**领域无关**的枚举，Growth OS 需要
+   的细粒度证据类型（任务提交／代码产物／现场答题／…）不属于"来源是什么"，
+   而属于"在成长系统里意味着什么"，因此走
+   ``Source.metadata.growth_evidence_type`` 与 ``growth_channel`` 双轨记录。
+   （v0.1.0 起 evkg 已有 ``SourceKind.CODE``，源码不再需要伪装成文本。）
+2. **kind 与 assessment 的写入路径必须可控**：V1 ``IngestionService`` 在
+   ``pipeline.py:221`` 把 kind **硬编码为 UNKNOWN** 且不写 ``metadata.assessment``，
+   会让代码/项目证据永久按 0.25 的"未知来源"计权；
+   且 ``normalize_document``（``cleaning.py:9-30``）会折叠空白、重排行，
+   使 ``.java`` 的 8 行塌缩成 3 行 —— **行号随之失去意义**。
+   因此本适配层不使用 V1 状态机：文本走 ``ingest_file``，源码走
+   ``ingest_code_file``（带行范围 locator）。
 3. **落库语义是 INSERT OR IGNORE**：``store._put`` 对 sources 用
    ``INSERT OR IGNORE``（``store.py:124``），所以"落库后再改 metadata 重存"
    会被静默忽略。必须用定向 SQL 修补（见 ``_tag_source``）。
@@ -21,10 +25,12 @@
 
 * ``evkg.config.activate`` 写的是**进程级全局** ``_ACTIVE``。同一进程内只能有
   一个领域包，将来多用户/多领域包无法并行（风险 R4）。
-* ``split_passages`` 读取 ``active().splitting.boundary``，所以**必须先
-  ``configure()`` 再切分**，否则会用 evkg 默认边界规则切碎笔记与代码。
-* 源 ID 对快路径是 ``stable_id("src", 文件绝对URI)`` —— 依赖文件**路径**；
-  文件改名或移动到临时目录会被当成全新来源。
+* ``split_passages`` / ``code_language_for`` 都读取 ``active()``，所以**必须先
+  ``configure()`` 再入库或切分**，否则会用 evkg 的默认边界规则与默认语言表。
+* 源 ID 是 ``stable_id("src", 文件绝对URI)`` —— 依赖文件**路径**；文件改名或
+  被复制到临时目录会被当成全新来源（b.5c 计划改为逻辑身份 + content_hash）。
+* 源码的 ``line_start``/``line_end`` 由 ``ingest_code_file`` 在**原始文件文本**
+  上计算，因此可原样切回磁盘核对。经 V1 状态机则做不到（见第 2 条）。
 """
 
 from __future__ import annotations
@@ -34,10 +40,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from evkg.config import Profile, activate, active, load_profile
-from evkg.domain import Source, SourceKind
-from evkg.ingest.connectors import TEXT_SUFFIXES, ingest_file
-from evkg.ingest.splitting import split_passages, stable_id
+from evkg.config import Profile, activate, code_language_for, load_profile
+from evkg.domain import SourceKind
+from evkg.ingest.connectors import TEXT_SUFFIXES, ingest_code_file, ingest_file
 from evkg.policies import assess_source
 from evkg.store import KnowledgeStore
 
@@ -62,7 +67,8 @@ Channel = Literal["user_evidence", "domain_reference"]
 EVIDENCE_KIND_MAP: dict[str, SourceKind] = {
     # 任务证据：闭环自产，最强
     "task_submission": SourceKind.PRIMARY,
-    # 实践证据：代码 / 项目仓库
+    # 实践证据：项目文档与交付物。**源码不走这里** —— 源码由读取路径判定为
+    # SourceKind.CODE（见 ingest_document），语义更准，基线与之持平（0.82）。
     "repo_artifact": SourceKind.PRIMARY,
     # 行为证据：系统现场出题、用户作答
     "probe_result": SourceKind.CONTEMPORARY,
@@ -73,22 +79,8 @@ EVIDENCE_KIND_MAP: dict[str, SourceKind] = {
     # 弱证据：对话中的自述
     "chat_assertion": SourceKind.FOLK,
 }
-"""证据类型 → evkg SourceKind。与 profiles/growth_os.yaml 的 source_policy
+"""证据类型 → 默认 evkg SourceKind。与 profiles/growth_os.yaml 的 source_policy
 rationale 文案一一对应；改这里必须同步改那个文件。"""
-
-TEXT_LIKE_SUFFIXES: frozenset[str] = TEXT_SUFFIXES | {
-    # 代码与配置：evkg 不认，但本质是 UTF-8 文本，按实践证据采集
-    ".py", ".java", ".js", ".jsx", ".ts", ".tsx", ".go", ".rs", ".rb",
-    ".c", ".h", ".cpp", ".hpp", ".cs", ".kt", ".swift", ".scala", ".php",
-    ".sh", ".bash", ".ps1", ".bat",
-    ".sql", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".xml", ".html", ".htm",
-    ".properties", ".gradle", ".dockerfile", ".env.example",
-    ".r", ".m", ".jl", ".lua", ".pl", ".vue", ".svelte",
-}
-"""本适配层认作文本的扩展名（evkg 的 TEXT_SUFFIXES 的超集）。
-
-为什么不交给 V1 状态机：见模块文档第 2 条 —— 状态机会丢掉 kind。
-二进制格式（pdf/docx/xlsx/图片）不在本集合内，留给 M3 单独处理。"""
 
 
 class EvidenceError(RuntimeError):
@@ -169,20 +161,19 @@ def ingest_document(
     suffix = file_path.suffix.lower()
     kind = EVIDENCE_KIND_MAP[evidence_type]
 
-    if suffix in TEXT_SUFFIXES:
-        # 走 evkg 官方快路径：它自己会写 kind 与 metadata.assessment
+    # 路由由**读取路径**决定，而不是由 evidence_type 决定：同一个 repo_artifact
+    # 既可能是 README（文档，primary），也可能是 .java（源码，code）。
+    if code_language_for(file_path.name) is not None:
+        kind = SourceKind.CODE
+        source = ingest_code_file(
+            file_path, title=title, kind=kind, store=store, task_id=task_id
+        )
+        route = "evkg.ingest_code_file"
+    elif suffix in TEXT_SUFFIXES:
         source = ingest_file(
             file_path, title=title, kind=kind, store=store, task_id=task_id
         )
         route = "evkg.ingest_file"
-    elif suffix in TEXT_LIKE_SUFFIXES:
-        # evkg 不认这个扩展名（如 .java/.py），但它本质是 UTF-8 文本。
-        # 复制 evkg 快路径的约定（同样的 stable_id 方案与切分函数），
-        # 以便两种路由的 source id 语义一致、幂等行为一致。
-        source = _ingest_text_like(
-            file_path, title=title, kind=kind, store=store, task_id=task_id
-        )
-        route = "adapter.text_like"
     else:
         raise EvidenceError(
             f"暂不支持 {suffix or '(无扩展名)'}：二进制格式需在 M3 单独处理"
@@ -207,29 +198,6 @@ def ingest_document(
         channel=channel,
         passage_count=len(passages),
     )
-
-
-def _ingest_text_like(
-    path: Path,
-    *,
-    title: str | None,
-    kind: SourceKind,
-    store: KnowledgeStore,
-    task_id: str,
-) -> Source:
-    """文本类文件的兜底入库，沿用 evkg 快路径的 id 与切分约定。"""
-    text = path.read_text(encoding="utf-8", errors="replace")
-    uri = path.resolve().as_uri()
-    source = Source(
-        id=stable_id("src", uri),
-        title=title or path.stem,
-        url=uri,
-        kind=kind,
-        metadata={"assessment": assess_source(kind)},
-    )
-    store.save_source(source, task_id)
-    store.save_passages(split_passages(text, source_id=source.id), task_id)
-    return source
 
 
 # ---------------------------------------------------------------------------

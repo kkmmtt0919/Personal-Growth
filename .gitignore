@@ -37,3 +37,7 @@ Thumbs.db
 # 临时
 tmp/
 *.log
+
+# 本地数据库备份（仅作短期取证，不入库）
+*.bak
+*.db.bak

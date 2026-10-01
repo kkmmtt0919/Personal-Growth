@@ -135,11 +135,11 @@ evkg = { path = "../evkg", editable = true }
 
 进度随 M1 各小步更新（证据见 `PROJECT_ACCEPTANCE.md` 的 EV-004）：
 
-- [~] R1：evkg 的模块级函数能否稳定地被外部调用？ —— **ingest 段已验证**（EV-006/007：`ingest_file`、`split_passages`、`stable_id`、`assess_source`、`KnowledgeStore` 均可用，且 `audit_store` 在适配层写入后仍 pass）。`extract_corpus` / `run_attack` / `write_dossier` 待 M1-c…M1-e
+- [~] R1：evkg 的模块级函数能否稳定地被外部调用？ —— **ingest 段与代码路径已验证**（EV-006/007/009/010/012：`ingest_file`、`ingest_code_file`、`split_code_passages`、`stable_id`、`assess_source`、`KnowledgeStore` 均可用，`audit_store` 在适配层写入后仍 pass）。`extract_corpus` / `run_attack` / `write_dossier` 待 M1-c…M1-e
 - [x] R2：`Source.metadata` 能无损携带成长标签，**且能按 metadata 做 SQL 过滤** —— **已闭环**（EV-006/007）。用 `json_extract(payload,'$.metadata.growth_channel')` 过滤可精确区分 `user_evidence`(2) 与 `domain_reference`(1)。sources 表尚无该路径的表达式索引，走全表扫描；证据量小时可接受，量级上来需补索引
-- [x] R3：6 个 source kind 的语义重映射机制成立，且**无需扩展上游 enum** —— **已验证**（EV-004）。机制：`policies._policy_table()` 用 `table[SourceKind(rule.kind)] = (baseline, rationale)` 覆盖内置表，`except ValueError: continue`。**关键陷阱：profile 里写自定义 kind 不报错，会被静默忽略**，因此细粒度证据类型必须走 `Source.metadata.growth_evidence_type`
-- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 读 `active()` 进程全局状态，同一进程内两个领域包/两个用户库无法并存。MVP 单用户单库可接受；多用户阶段必须每库独立进程或改造上游（M1-g 收口）
-- [~] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **倾向"直接依赖可用"**：R2/R3 已证明扩展机制够用。但 M1-b 发现两处需要"绕开"而非"修改"上游（见下），待 M1-c…M1-f 完成后定论
+- [x] R3：6 个 source kind 的语义重映射机制成立 —— **已验证**（EV-004），且 b.5a 起代码有了专属 kind（`SourceKind.CODE`），不再需要把源码硬塞进文本路径。**陷阱仍在**：profile 里写自定义 kind 不报错，会被静默忽略（`policies.py:22` 的 `except ValueError: continue`），因此细粒度证据类型仍必须走 `Source.metadata.growth_evidence_type`
+- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 与 `code_language_for()` 都读 `active()` 进程全局状态，同一进程内两个领域包/两个用户库无法并存。MVP 单用户单库可接受；多用户阶段必须每库独立进程或改造上游（M1-g 收口）
+- [x] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **结论已修正为"需要改上游，但改法成立"**。D1 当初预测"MVP 大概率不需要改 evkg 源码"，**该预测被 M1-b 证伪**：pipeline 丢 kind、`_put` 用 `INSERT OR IGNORE`、`normalize_document` 破坏行结构，三处都必须动上游。但 D1 的**决策**（不 fork、改动作为上游 commit）成立且已被执行 —— b.5a 即为上游 commit `a4b15af`。这正说明"先把 M1 排在一切之前"的排序是对的：用最小成本证伪了假设
 
 ### M1-a 新增发现
 
@@ -153,25 +153,55 @@ evkg = { path = "../evkg", editable = true }
    `kind=SourceKind.UNKNOWN` **硬编码**，且只写 `metadata={ingestion_job_id, completeness_pending}`，
    **不写 `metadata.assessment`**。后果：经此路径入库的代码/项目证据，其 claim 置信度会永远按
    "未知来源 0.25" 计权 —— 与"代码是最强证据"的产品目标完全相反。
-   另外它的 completeness/澄清机制是为历史文献设计的（会追问"作者是谁""涉及何地"），
-   对代码与笔记是纯噪音（且阻塞状态为 `awaiting_clarification`）。
-   → **决策：Growth OS 不使用 V1 状态机。** 文本走 `ingest_file`，代码等 evkg 不认的
-   UTF-8 文本走适配层自有的 `text_like` 兜底路由（复用 evkg 的 `stable_id`/`split_passages`，
-   保持 id 与切分语义一致）。M3 处理 PDF/docx 时需重新评估此决策。
+   → **b.5a 已改进该函数签名**（kind 可传、默认仍 UNKNOWN），但状态机路径仍未打通，见 M1-b.5a 第 1 条。
 2. **`_put` 对 sources 是 `INSERT OR IGNORE`**（`store.py:124`），不是 `REPLACE`。
    所以"先落库、再改 metadata 重存"会被**静默忽略**（不报错）。
-   → 决策：用 `json_set` 做定向 SQL 修补，只增不改。
+   → 暂以 `json_set` 定向 SQL 修补；**正式修复在 b.5c**（显式 upsert）。
 3. **`extract.py:105-106` 依赖 `source.metadata["assessment"]`**。
    任何整体替换 metadata 的写法都会抹掉它，使 `preliminary_claim_confidence`
    落回 default=0.25，**静默**退化整条置信度链路。
-   → 决策：`_tag_source` 必须用 `json_set` 合并；已由测试
-   `test_growth_tags_coexist_with_assessment` 与 `test_code_route_also_preserves_assessment` 锁死。
-4. 两条 ingest 路由的 **source id 方案不同**：快路径是 `stable_id("src", 文件绝对 URI)`
-   （路径相关），V1 状态机是 `src_<content_hash[:20]>`（内容相关）。同一文件经两条路由
-   会得到两个 source。→ 适配层对每种格式**确定性地只走一条路由**。
-5. `ingest_file` 内处理 `.html` 的分支是**死代码**：`.html/.htm` 不在 `TEXT_SUFFIXES` 里，
+   → b.5a 用 `json_set` 合并规避；**语义层修复在 b.5b**（`UNASSESSED` 不等于 0.25）。
+4. `ingest_file` 内处理 `.html` 的分支是**死代码**：`.html/.htm` 不在 `TEXT_SUFFIXES` 里，
    函数在第 71 行就抛错了，第 88-92 行的 BeautifulSoup 分支永不可达。HTML 实际由
-   `IngestionService` 的 `HtmlReader` 处理（它按 media_type 判断，可用）。
-6. `PlainTextReader.accepts` **同时按 `media_type.startswith("text/")` 判断**
-   （`providers.py:31`），这是代码文件能走 V1 状态机的唯一入口 —— 但受第 1 条限制，
-   我们不用它。
+   `IngestionService` 的 `HtmlReader` 处理。
+5. `PlainTextReader.accepts` **同时按 `media_type.startswith("text/")` 判断**
+   （`providers.py:31`）—— 它把"我是不是纯文本"与"我支持哪些类型"用 `or` 混成一个判断。
+   这是 b.5a 必须把 `CodeReader` 排在它之前的原因；更彻底的清理（拆分 capability 判定）
+   尚未做。
+
+### M1-b.5a 新增发现
+
+1. **`normalize_document` 会摧毁代码的行结构**（`cleaning.py:9-30`）。实测一份 8 行、
+   带缩进的 Java 片段经归一化后变成 3 行、缩进全失：
+   `'public class A { private int x;\n\npublic int get() { return x; } }'`。
+   原因有三：`re.sub(r"[ \t]+", " ", text)` 压平缩进、`re.sub(r"\n{3,}", "\n\n", text)`
+   合并空行、以及把每段的行用 `" "` join 成一行。
+   **后果**：`_save_source_passages` 切的是 `document.text`（归一化后），所以在 V1 状态机
+   路径上算出来的行号是**虚构的**。
+   → **决策：`ingest_code_file` 刻意不经状态机**，在原始文件文本上切分，因此 locator 可回
+   磁盘逐字核对（EV-012 已证）。
+   **要打通状态机，必须先让归一化对代码无损**，而 completeness 的史学期维度
+   （作者/地点/事件）对代码是纯噪音 —— 两件事都还没做，不在 b.5a 范围。
+2. **passage id 把切分方案编进了哈希**（`stable_id("p", f"{source_id}:{index}:{part}")` 对文本，
+   `f"{source_id}:{start}:{end}:{body}"` 对代码），加上 `INSERT OR IGNORE`，导致
+   **更换切分器后旧 passage 既不被替换也不被删除，只会静默累积**。
+   实测：一个源里混进了 11 条被文本切分器撕裂的旧片段（如
+   `'= null) { List<VectorSearchResult> vecto'`，从表达式中间开始）。
+   **后果**：M1-c 会对这些垃圾片段做抽取，既产出无意义断言又虚增证据计数。
+   → **该问题正式移入 b.5c**。b.5a 期间以显式重建证据库处理（有备份），
+   **刻意不在适配层加"重入库前先删旧 passage"的补丁** —— 那正是"用业务适配层修补
+   evkg 领域模型"的反模式，用户已明确要求刹住。
+3. **切分器经三轮实测修正才正确**，每一轮都由具体失败驱动：
+   - 第 1 版按"与 chunk 起点比缩进"→ 类成员全被并成一块（50 行）
+   - 第 2 版改为"与上一个块比"→ 方法可分离，但块缩进取首行导致 `}` 之后的退格边界不可见
+   - 第 3 版块缩进取**块内最小值** + **退格到主体层才切** → 又出现大量仅含 `}` 的片段
+   - 第 4 版合并小同缩进块时按**合并后总行数**设上限 → 收敛
+   最终在 RagService.java（79 行）上：9 段 / 最大 25 行 / 仅括号噪声 0 条 / 说谎 locator 0 条。
+   结论：**没有解析器就无法做到 symbol 级精度，这是硬边界**；类的第一个成员仍会与类声明
+   合并，已作为已知限制写进测试注释。
+4. **`source_id` 方案的既有不一致**：快路径是 `stable_id("src", 文件绝对 URI)`（路径相关），
+   V1 状态机是 `src_<content_hash[:20]>`（内容相关）。同一文件经两条路径会得到两个 source。
+   → b.5a 让每种格式确定性只走一条路由；**统一方案在 b.5c**。
+5. **无扩展名文件曾被我遗漏**：`Dockerfile`/`Makefile` 这类文件的 `Path(...).suffix` 为空串。
+   b.5a 在 `CodeConfig.filenames` 里补了按小写文件名匹配的表，否则删掉旧的适配层兜底路由
+   会造成能力回退（已加测试）。
