@@ -47,43 +47,46 @@ D:\projects\
     ├── .env.example          ← LLM/GitHub 配置模板（不含密钥）
     ├── Makefile / tasks.ps1  ← 常用命令
     ├── backend\
-    │   ├── app\              ← L4 API（FastAPI）
-    │   │   ├── main.py
-    │   │   ├── routers\      ← goals / capabilities / assessments / tasks / chat / ...
-    │   │   └── deps.py
-    │   ├── growth\           ← L2 领域服务（自有语义层，本项目的核心）
-    │   │   ├── goals.py
-    │   │   ├── capabilities.py
-    │   │   ├── assessment.py     ← ★ 五星评级规则（架构 §3）
-    │   │   ├── tasks.py
-    │   │   ├── memory.py
-    │   │   ├── growth.py
-    │   │   └── repo.py           ← g_ 表族的建表与读写
-    │   ├── agents\           ← L3 Agent 运行时
-    │   │   ├── runtime.py
-    │   │   ├── tools.py
-    │   │   ├── context.py
-    │   │   ├── tracer.py
-    │   │   ├── orchestrator.py
-    │   │   ├── goal_agent.py
-    │   │   ├── assessment_agent.py
-    │   │   ├── growth_agent.py
-    │   │   └── scheduler.py
-    │   ├── evidence\         ← L1 适配层（**evkg 的唯一入口，全项目只有这里 import evkg**）
-    │   │   ├── adapter.py
-    │   │   ├── profiles\growth_os.yaml   ← growth 领域包
-    │   │   └── github.py     ← GitHub OAuth + 仓库读取
-    │   └── db\
-    │       ├── schema_growth.sql
-    │       └── migrate.py
+    │   └── growth_os\        ← 单一安装包根（避免 app/agents/growth 这类通用名发生顶层包名冲突）
+    │       ├── __init__.py
+    │       ├── app\          ← L4 API（FastAPI）
+    │       │   ├── main.py
+    │       │   ├── routers\  ← goals / capabilities / assessments / tasks / chat / ...
+    │       │   └── deps.py
+    │       ├── growth\       ← L2 领域服务（自有语义层，本项目的核心）
+    │       │   ├── goals.py
+    │       │   ├── capabilities.py
+    │       │   ├── assessment.py     ← ★ 五星评级规则（架构 §3）
+    │       │   ├── tasks.py
+    │       │   ├── memory.py
+    │       │   └── repo.py           ← g_ 表族的建表与读写
+    │       ├── agents\       ← L3 Agent 运行时
+    │       │   ├── runtime.py
+    │       │   ├── tools.py
+    │       │   ├── context.py
+    │       │   ├── tracer.py
+    │       │   ├── orchestrator.py
+    │       │   ├── goal_agent.py
+    │       │   ├── assessment_agent.py
+    │       │   ├── growth_agent.py
+    │       │   └── scheduler.py
+    │       ├── evidence\     ← L1 适配层（**evkg 的唯一入口，全项目只有这里 import evkg**）
+    │       │   ├── adapter.py
+    │       │   ├── profiles\growth_os.yaml   ← growth 领域包（M1-a 已建）
+    │       │   └── github.py ← GitHub OAuth + 仓库读取
+    │       └── db\
+    │           ├── schema_growth.sql
+    │           └── migrate.py
     ├── frontend\             ← L5（React + Vite + TS）
     │   └── src\pages\  Dashboard / EvidenceSpace / Mentor
-    ├── scripts\              ← 冒烟脚本、演示脚本
+    ├── scripts\              ← 冒烟脚本、演示脚本（verify_profile.py 已就位）
     ├── tests\
     └── data\                 ← SQLite（gitignore）
 ```
 
-**架构约束**：`evkg` 只允许在 `backend/evidence/adapter.py` 中被 import。其余代码一律通过适配层访问证据能力。这样 evkg 的耦合风险被限制在一个文件里。
+**架构约束**：`evkg` 只允许在 `backend/growth_os/evidence/adapter.py` 中被 import。其余代码一律通过适配层访问证据能力。这样 evkg 的耦合风险被限制在一个文件里。`scripts/verify_profile.py` 是 M1-a 阶段的临时例外（直接调用 evkg 做验证），M1-b 建好 adapter 后它应改为经 adapter 调用。
+
+> **布局变更记录（2026-10-01，M1-a 实施时）**：原设计为 `backend/app`、`backend/growth`、`backend/agents` 平铺。实施时改为单一包根 `backend/growth_os/`，原因：平铺会让 `app`、`growth`、`agents` 这类极通用的名字成为顶层可导入包名，存在与第三方包冲突的风险，也不符合打包惯例。功能划分不变，只是多了一层包名前缀。
 
 ---
 
@@ -129,8 +132,8 @@ D:\projects\
 
 **交付物**
 
-1. `backend/evidence/profiles/growth_os.yaml` —— growth 领域包，包含 3.4 节的来源映射与中文 prompt
-2. `backend/evidence/adapter.py` —— 薄封装：`ingest_file / extract / run_attack / dossier / search / audit`
+1. `backend/growth_os/evidence/profiles/growth_os.yaml` —— growth 领域包，包含 3.4 节的来源映射与中文 prompt
+2. `backend/growth_os/evidence/adapter.py` —— 薄封装：`ingest_file / extract / run_attack / dossier / search / audit`
 3. `scripts/smoke_evidence.py` —— 冒烟脚本，跑通全流水线
 4. `tests/test_evidence_adapter.py`
 5. **spike 结论记录**（写入 `DECISIONS.md`）：R1/R2/R4 是否成立

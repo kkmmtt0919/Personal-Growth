@@ -8,8 +8,9 @@
 |---|---|---|---|---|---|---|
 | M0 | 地基与治理：仓库、账本、架构/路线/验收/决策四文档、环境确认 | 已完成 | ZCode | `--validate` + `--audit` 均 strict_valid 通过；决策已确认 | 无 | 2026-10-01 |
 | Q-01 | 用户决策 Q1–Q4（集成方式／模型／前端／多用户） | 已完成 | 用户 | 4 项均已选定 | 无 | 2026-10-01 |
-| M1-a | 建 `growth_os.yaml` 成长领域包并验证加载 | 待确认 | ZCode | profile 加载输出符合预期，6 个 source kind 语义重映射就位 | 无 | 2026-10-01 |
-| M1 | 证据底座打通（技术 spike） | 已规划 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | 无 | 2026-10-01 |
+| M1-a | 建 growth 领域包 + 项目 uv 环境（path 依赖 evkg）+ 验证实际生效 | 已完成 | ZCode | `scripts/verify_profile.py` 13/13 通过 | EV-004 | 2026-10-01 |
+| M1-b | adapter.py 的 ingest 能力（收敛 evkg 单一入口） | 待确认 | ZCode | 一份真实文件经 adapter 落库，产出 sources/passages 计数 | 无 | 2026-10-01 |
+| M1 | 证据底座打通（技术 spike） | 进行中 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004 | 2026-10-01 |
 | M2 | 目标澄清与能力模型 | 已规划 | — | 通过验收门 G1 | 无 | 2026-10-01 |
 | M3 | 证据接入（Upload + GitHub） | 已规划 | — | 见 `docs/ROADMAP.md` M3 | 无 | 2026-10-01 |
 | M4 | 能力审计（产品内核） | 已规划 | — | 通过验收门 G2、G3 | 无 | 2026-10-01 |
@@ -29,9 +30,9 @@
 
 ## 下一步
 
-1. 待用户确认 M1-a 开工。
-2. M1-a：建 `backend/evidence/profiles/growth_os.yaml` 成长领域包，验证 `evkg.config.load_profile` 能加载并生效（6 个 source kind 的语义重映射 + 中文 prompt）。
-3. 之后按 `docs/ROADMAP.md` §5 的小步序列推进 M1-b…M1-g，每步单独汇报与验收。
+1. 待用户确认 M1-b 开工。
+2. M1-b：建 `backend/growth_os/evidence/adapter.py`，把 evkg 收敛为单一入口，先实现 ingest（含 `growth_evidence_type` / `growth_channel` 写入），并用一份真实文件中转落库。
+3. 之后按 `docs/ROADMAP.md` §5 推进 M1-c…M1-g，每步单独汇报与验收。
 
 ## 进度历史
 
@@ -39,3 +40,4 @@
 |---|---|---|---|---|---|---|
 | 2026-10-01 | M0 | 读取 PRD 全文；克隆并分析 evkg 与 project-to-act；确立分层架构与 Claim→Capability 桥梁设计；建立治理账本；产出 4 份规划文档 | 实测确认 `SourceKind` 为封闭枚举（`domain.py:10`、`policies.py:28`），据此采用双轨记录方案；发现 evkg `.env.example` 的 verifier 变量名与代码不一致（`EVKG_VERIFIER_PROVIDER` 实为 `EVKG_VERIFIER_LLM_PROVIDER`） | 无 | Q1–Q4 待决策 | 等待用户决策后进入 M1-a |
 | 2026-10-01 | Q-01 | 用户确认 Q1–Q4，全部采纳推荐方案 | evkg 用独立仓库 + path 依赖；GLM 主模型 + 独立 verifier；前端 React + Vite + TS；单用户本地优先 | 无 | 无 | M1-a 待开工确认 |
+| 2026-10-01 | M1-a | 建 `.project-to-act/docs` 之外的首个代码产物：`pyproject.toml`（uv path 依赖 evkg）、`growth_os.yaml` 成长领域包、`scripts/verify_profile.py` | ① 实测确认 evkg 的策略覆盖机制：`policies._policy_table()` 允许覆盖 6 个内置 kind 的 baseline/rationale，但**新增 kind 会被静默忽略**（`except ValueError: continue`）→ 双轨记录方案得到机制验证；② 布局微调：改用单一包根 `backend/growth_os/`，避免 `app`/`growth`/`agents` 顶层包名冲突 | EV-004 | M1-a2 与 M1-a3 已并入本步完成，不再单列 | M1-b 待开工确认 |

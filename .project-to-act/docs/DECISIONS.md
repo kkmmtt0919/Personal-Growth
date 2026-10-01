@@ -18,7 +18,7 @@
 evkg = { path = "../evkg", editable = true }
 ```
 
-**架构约束**：`evkg` 只允许在 `backend/evidence/adapter.py` 中被 import；其余代码一律通过适配层。这样耦合风险被限制在单文件。
+**架构约束**：`evkg` 只允许在 `backend/growth_os/evidence/adapter.py` 中被 import；其余代码一律通过适配层。这样耦合风险被限制在单文件。
 
 **理由**：已实测确认 evkg 的词表、prompt、来源分级、切分规则全部可在 YAML 领域包层覆盖（`config.py` 的 `Profile` 模型），MVP 大概率不需要改其源码。保持上游可同步，避免分叉 —— evkg 的定位就是"通用证据图谱"，Growth OS 只是它的一个领域包消费者。
 
@@ -67,7 +67,7 @@ evkg = { path = "../evkg", editable = true }
 
 ### D1 · 证据层复用 evkg，只在一个文件里 import
 
-**决定**：Growth OS 通过 `backend/evidence/adapter.py` 这一个适配层访问 evkg，其余代码不得直接 import evkg。
+**决定**：Growth OS 通过 `backend/growth_os/evidence/adapter.py` 这一个适配层访问 evkg，其余代码不得直接 import evkg。
 
 **理由**：evkg 是 0.1.0 版本、无 library 契约、raw SQL 分散在 `web/queries/dossier/audit` 等模块。把耦合收敛到单文件，将来若需替换或升级，改动面可控。
 
@@ -133,10 +133,16 @@ evkg = { path = "../evkg", editable = true }
 
 ## 附：M1 spike 待验证清单
 
-M1 完成后需回头更新本文件：
+进度随 M1 各小步更新（证据见 `PROJECT_ACCEPTANCE.md` 的 EV-004）：
 
-- [ ] R1：evkg 的模块级函数（`ingest_file` / `extract_corpus` / `run_attack` / `write_dossier` / `audit_store`）能否稳定地被外部调用？
-- [ ] R2：`Source.metadata` 能否无损携带 `growth_evidence_type` / `growth_channel` 并可在查询中过滤？
-- [ ] R3：growth 领域包的 6 个 source kind 语义重映射是否够用，还是必须扩展上游 enum？
-- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？
-- [ ] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？
+- [ ] R1：evkg 的模块级函数（`ingest_file` / `extract_corpus` / `run_attack` / `write_dossier` / `audit_store`）能否稳定地被外部调用？ —— **未验证**，M1-b…M1-f
+- [x] R2（静态部分）：`Source.metadata` 能无损携带 `growth_evidence_type` / `growth_channel` —— **已验证**（EV-004）；**待补**：能否在 SQL 查询中按 metadata 过滤（M1-b）
+- [x] R3：6 个 source kind 的语义重映射机制成立，且**无需扩展上游 enum** —— **已验证**（EV-004）。机制细节：`policies._policy_table()` 用 `table[SourceKind(rule.kind)] = (baseline, rationale)` 覆盖内置表，`except ValueError: continue`。**关键陷阱：profile 里写自定义 kind 不会报错，会被静默忽略**，因此细粒度证据类型必须走 `Source.metadata.growth_evidence_type`
+- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 读取的是 `active()` 进程全局状态，意味着**同一进程内两个用户/两个领域包无法并存**。MVP 单用户单库可接受；多用户阶段必须改为每库独立进程或改造上游（M1-g 收口）
+- [ ] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **倾向"直接依赖可用"**（R3 已证明扩展机制够用），待 M1-b…M1-f 完成后定论
+
+### M1-a 新增发现
+
+- `uv` 的 path 依赖解析正常：`evkg==0.1.0 (from file:///D:/projects/evkg)`，editable 模式可用（EV-005）
+- evkg 的 `ingest` 快路径只接受 `.txt/.md/.markdown/.text/.csv/.json/.log`；**PDF/docx/xlsx 必须走 V1 `--service` 状态机**（且 PDF 需 `evkg[office]`）。M3 做 Upload 时必须据此选择路径
+- `_load_cached` 是 `lru_cache(maxsize=8)` 按路径字符串缓存；`load_profile` 会先看 `Path(name).exists()`，所以传绝对路径最稳，传相对路径依赖 cwd

@@ -1,0 +1,39 @@
+[project]
+name = "growth-os"
+version = "0.0.0"
+description = "AI Personal Growth OS — 以证据图谱为可信底座的个人能力成长系统"
+requires-python = ">=3.11"
+dependencies = [
+  "evkg",
+  "pydantic>=2.7",
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.6"]
+office = ["pypdf>=4.0", "python-docx>=1.1", "openpyxl>=3.1"]
+ocr = ["rapidocr-onnxruntime>=1.4"]
+
+# Q1 确认：evkg 保持独立仓库，以 editable path 依赖引入（不 fork）。
+# 发布 0.1.0 前须改为 pin 到具体 commit SHA，见 .project-to-act/docs/DECISIONS.md。
+[tool.uv.sources]
+evkg = { path = "../evkg", editable = true }
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+include = ["growth_os*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100

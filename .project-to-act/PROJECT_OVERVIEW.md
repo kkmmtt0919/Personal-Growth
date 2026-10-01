@@ -42,7 +42,7 @@ PRD §32 全部条目照原样保留，另加架构层面非目标（见 `docs/A
 ## 技术路线与关键约束
 
 - 技术栈：Python 3.12（uv 托管）· FastAPI · SQLite(WAL) · React + Vite + TS · Node 24 —— 选型已确认，见 `docs/DECISIONS.md` Q1–Q4
-- 证据底座：复用 evkg（`D:\projects\evkg`，独立仓库，非 fork），以 uv editable path 依赖引入，只允许经 `backend/evidence/adapter.py` 单一入口 import（决定 D1/Q1）
+- 证据底座：复用 evkg（`D:\projects\evkg`，独立仓库，非 fork），以 uv editable path 依赖引入，只允许经 `backend/growth_os/evidence/adapter.py` 单一入口 import（决定 D1/Q1）
 - LLM：GLM（`open.bigmodel.cn` / `glm-5.3`）作主模型，另配独立 verifier 模型用于攻击复核（决定 Q2）；`EVKG_*` 供流水线、`GROWTH_AGENT_*` 供 Agent 推理，分层配置
 - 存储：单 SQLite，evkg 表族 + Growth OS `g_` 前缀表族共存，跨表族引用由应用层保证（决定 D2）
 - Agent：自建薄运行时，产出完整轨迹用于评估（决定 D4）
