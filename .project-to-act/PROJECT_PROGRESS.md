@@ -9,8 +9,9 @@
 | M0 | 地基与治理：仓库、账本、架构/路线/验收/决策四文档、环境确认 | 已完成 | ZCode | `--validate` + `--audit` 均 strict_valid 通过；决策已确认 | 无 | 2026-10-01 |
 | Q-01 | 用户决策 Q1–Q4（集成方式／模型／前端／多用户） | 已完成 | 用户 | 4 项均已选定 | 无 | 2026-10-01 |
 | M1-a | 建 growth 领域包 + 项目 uv 环境（path 依赖 evkg）+ 验证实际生效 | 已完成 | ZCode | `scripts/verify_profile.py` 13/13 通过 | EV-004 | 2026-10-01 |
-| M1-b | adapter.py 的 ingest 能力（收敛 evkg 单一入口） | 待确认 | ZCode | 一份真实文件经 adapter 落库，产出 sources/passages 计数 | 无 | 2026-10-01 |
-| M1 | 证据底座打通（技术 spike） | 进行中 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004 | 2026-10-01 |
+| M1-b | adapter.py 的 ingest 能力（收敛 evkg 单一入口 + 双轨记录写入） | 已完成 | ZCode | 22 项测试 + 冒烟 PASS + `audit_store` pass(0/10 violations) | EV-006 EV-007 EV-008 | 2026-10-01 |
+| M1-c | adapter.py 的 extract 能力（证据 → 能力断言） | 待确认 | ZCode | 抽取产出可追溯的 claims；**需用户提供 LLM API Key** | 无 | 2026-10-01 |
+| M1 | 证据底座打通（技术 spike） | 进行中 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004…EV-008 | 2026-10-01 |
 | M2 | 目标澄清与能力模型 | 已规划 | — | 通过验收门 G1 | 无 | 2026-10-01 |
 | M3 | 证据接入（Upload + GitHub） | 已规划 | — | 见 `docs/ROADMAP.md` M3 | 无 | 2026-10-01 |
 | M4 | 能力审计（产品内核） | 已规划 | — | 通过验收门 G2、G3 | 无 | 2026-10-01 |
@@ -30,9 +31,9 @@
 
 ## 下一步
 
-1. 待用户确认 M1-b 开工。
-2. M1-b：建 `backend/growth_os/evidence/adapter.py`，把 evkg 收敛为单一入口，先实现 ingest（含 `growth_evidence_type` / `growth_channel` 写入），并用一份真实文件中转落库。
-3. 之后按 `docs/ROADMAP.md` §5 推进 M1-c…M1-g，每步单独汇报与验收。
+1. 待用户确认 M1-c 开工，**并提供 LLM API Key**（M1-c 起需要真实模型调用，我无法代为申请）。
+2. M1-c：在 adapter 上实现 extract —— 用 growth 领域包把 111 条 passages 抽成能力断言（claim），并核对抽取结果是否遵守"严禁升级"规则（计划/了解 ≠ 具备能力）。
+3. `data/growth.db` 已含 3 份真实证据的 111 条 passages，M1-c 可直接在其上继续。
 
 ## 进度历史
 
@@ -40,4 +41,5 @@
 |---|---|---|---|---|---|---|
 | 2026-10-01 | M0 | 读取 PRD 全文；克隆并分析 evkg 与 project-to-act；确立分层架构与 Claim→Capability 桥梁设计；建立治理账本；产出 4 份规划文档 | 实测确认 `SourceKind` 为封闭枚举（`domain.py:10`、`policies.py:28`），据此采用双轨记录方案；发现 evkg `.env.example` 的 verifier 变量名与代码不一致（`EVKG_VERIFIER_PROVIDER` 实为 `EVKG_VERIFIER_LLM_PROVIDER`） | 无 | Q1–Q4 待决策 | 等待用户决策后进入 M1-a |
 | 2026-10-01 | Q-01 | 用户确认 Q1–Q4，全部采纳推荐方案 | evkg 用独立仓库 + path 依赖；GLM 主模型 + 独立 verifier；前端 React + Vite + TS；单用户本地优先 | 无 | 无 | M1-a 待开工确认 |
-| 2026-10-01 | M1-a | 建 `.project-to-act/docs` 之外的首个代码产物：`pyproject.toml`（uv path 依赖 evkg）、`growth_os.yaml` 成长领域包、`scripts/verify_profile.py` | ① 实测确认 evkg 的策略覆盖机制：`policies._policy_table()` 允许覆盖 6 个内置 kind 的 baseline/rationale，但**新增 kind 会被静默忽略**（`except ValueError: continue`）→ 双轨记录方案得到机制验证；② 布局微调：改用单一包根 `backend/growth_os/`，避免 `app`/`growth`/`agents` 顶层包名冲突 | EV-004 | M1-a2 与 M1-a3 已并入本步完成，不再单列 | M1-b 待开工确认 |
+| 2026-10-01 | M1-a | 建 `pyproject.toml`（uv path 依赖 evkg）、`growth_os.yaml` 成长领域包、`scripts/verify_profile.py` | ① 实测确认策略覆盖机制：可覆盖 6 个内置 kind 的 baseline/rationale，但**新增 kind 会被静默忽略**（`except ValueError: continue`）→ 双轨记录方案获机制验证；② 布局微调为单包根 `backend/growth_os/`，避免顶层包名冲突 | EV-004 EV-005 | — | M1-b 待开工确认 |
+| 2026-10-01 | M1-b | 建 `evidence/adapter.py`（evkg 唯一入口）、`scripts/smoke_ingest.py`、`tests/test_evidence_adapter.py`；用用户提供的真实仓库 `mytset-rag` 入库 | ① **V1 `IngestionService` 不可用于成长证据**：`pipeline.py:221` 把 kind 硬编码为 `UNKNOWN` 且不写 `metadata.assessment`，会让代码证据永久按 0.25 计权 → 改用快路径 + 文本类兜底路由；② `_put` 对 sources 是 `INSERT OR IGNORE`，所以"落库后重存改 metadata"会被静默忽略 → 必须用 `json_set` 定向修补；③ `extract.py:105-106` 依赖 `metadata.assessment`，覆盖它会静默退化置信度 | EV-006 EV-007 EV-008 | M1-c 起需要 LLM API Key | M1-c 待开工确认 |

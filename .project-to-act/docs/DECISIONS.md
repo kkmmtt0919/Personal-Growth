@@ -135,14 +135,43 @@ evkg = { path = "../evkg", editable = true }
 
 进度随 M1 各小步更新（证据见 `PROJECT_ACCEPTANCE.md` 的 EV-004）：
 
-- [ ] R1：evkg 的模块级函数（`ingest_file` / `extract_corpus` / `run_attack` / `write_dossier` / `audit_store`）能否稳定地被外部调用？ —— **未验证**，M1-b…M1-f
-- [x] R2（静态部分）：`Source.metadata` 能无损携带 `growth_evidence_type` / `growth_channel` —— **已验证**（EV-004）；**待补**：能否在 SQL 查询中按 metadata 过滤（M1-b）
-- [x] R3：6 个 source kind 的语义重映射机制成立，且**无需扩展上游 enum** —— **已验证**（EV-004）。机制细节：`policies._policy_table()` 用 `table[SourceKind(rule.kind)] = (baseline, rationale)` 覆盖内置表，`except ValueError: continue`。**关键陷阱：profile 里写自定义 kind 不会报错，会被静默忽略**，因此细粒度证据类型必须走 `Source.metadata.growth_evidence_type`
-- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 读取的是 `active()` 进程全局状态，意味着**同一进程内两个用户/两个领域包无法并存**。MVP 单用户单库可接受；多用户阶段必须改为每库独立进程或改造上游（M1-g 收口）
-- [ ] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **倾向"直接依赖可用"**（R3 已证明扩展机制够用），待 M1-b…M1-f 完成后定论
+- [~] R1：evkg 的模块级函数能否稳定地被外部调用？ —— **ingest 段已验证**（EV-006/007：`ingest_file`、`split_passages`、`stable_id`、`assess_source`、`KnowledgeStore` 均可用，且 `audit_store` 在适配层写入后仍 pass）。`extract_corpus` / `run_attack` / `write_dossier` 待 M1-c…M1-e
+- [x] R2：`Source.metadata` 能无损携带成长标签，**且能按 metadata 做 SQL 过滤** —— **已闭环**（EV-006/007）。用 `json_extract(payload,'$.metadata.growth_channel')` 过滤可精确区分 `user_evidence`(2) 与 `domain_reference`(1)。sources 表尚无该路径的表达式索引，走全表扫描；证据量小时可接受，量级上来需补索引
+- [x] R3：6 个 source kind 的语义重映射机制成立，且**无需扩展上游 enum** —— **已验证**（EV-004）。机制：`policies._policy_table()` 用 `table[SourceKind(rule.kind)] = (baseline, rationale)` 覆盖内置表，`except ValueError: continue`。**关键陷阱：profile 里写自定义 kind 不报错，会被静默忽略**，因此细粒度证据类型必须走 `Source.metadata.growth_evidence_type`
+- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 读 `active()` 进程全局状态，同一进程内两个领域包/两个用户库无法并存。MVP 单用户单库可接受；多用户阶段必须每库独立进程或改造上游（M1-g 收口）
+- [~] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **倾向"直接依赖可用"**：R2/R3 已证明扩展机制够用。但 M1-b 发现两处需要"绕开"而非"修改"上游（见下），待 M1-c…M1-f 完成后定论
 
 ### M1-a 新增发现
 
 - `uv` 的 path 依赖解析正常：`evkg==0.1.0 (from file:///D:/projects/evkg)`，editable 模式可用（EV-005）
 - evkg 的 `ingest` 快路径只接受 `.txt/.md/.markdown/.text/.csv/.json/.log`；**PDF/docx/xlsx 必须走 V1 `--service` 状态机**（且 PDF 需 `evkg[office]`）。M3 做 Upload 时必须据此选择路径
 - `_load_cached` 是 `lru_cache(maxsize=8)` 按路径字符串缓存；`load_profile` 会先看 `Path(name).exists()`，所以传绝对路径最稳，传相对路径依赖 cwd
+
+### M1-b 新增发现（三处必须"绕开"上游的行为）
+
+1. **V1 `IngestionService` 不能用于成长证据**：`pipeline.py:221` 的 `_save_source_passages` 把
+   `kind=SourceKind.UNKNOWN` **硬编码**，且只写 `metadata={ingestion_job_id, completeness_pending}`，
+   **不写 `metadata.assessment`**。后果：经此路径入库的代码/项目证据，其 claim 置信度会永远按
+   "未知来源 0.25" 计权 —— 与"代码是最强证据"的产品目标完全相反。
+   另外它的 completeness/澄清机制是为历史文献设计的（会追问"作者是谁""涉及何地"），
+   对代码与笔记是纯噪音（且阻塞状态为 `awaiting_clarification`）。
+   → **决策：Growth OS 不使用 V1 状态机。** 文本走 `ingest_file`，代码等 evkg 不认的
+   UTF-8 文本走适配层自有的 `text_like` 兜底路由（复用 evkg 的 `stable_id`/`split_passages`，
+   保持 id 与切分语义一致）。M3 处理 PDF/docx 时需重新评估此决策。
+2. **`_put` 对 sources 是 `INSERT OR IGNORE`**（`store.py:124`），不是 `REPLACE`。
+   所以"先落库、再改 metadata 重存"会被**静默忽略**（不报错）。
+   → 决策：用 `json_set` 做定向 SQL 修补，只增不改。
+3. **`extract.py:105-106` 依赖 `source.metadata["assessment"]`**。
+   任何整体替换 metadata 的写法都会抹掉它，使 `preliminary_claim_confidence`
+   落回 default=0.25，**静默**退化整条置信度链路。
+   → 决策：`_tag_source` 必须用 `json_set` 合并；已由测试
+   `test_growth_tags_coexist_with_assessment` 与 `test_code_route_also_preserves_assessment` 锁死。
+4. 两条 ingest 路由的 **source id 方案不同**：快路径是 `stable_id("src", 文件绝对 URI)`
+   （路径相关），V1 状态机是 `src_<content_hash[:20]>`（内容相关）。同一文件经两条路由
+   会得到两个 source。→ 适配层对每种格式**确定性地只走一条路由**。
+5. `ingest_file` 内处理 `.html` 的分支是**死代码**：`.html/.htm` 不在 `TEXT_SUFFIXES` 里，
+   函数在第 71 行就抛错了，第 88-92 行的 BeautifulSoup 分支永不可达。HTML 实际由
+   `IngestionService` 的 `HtmlReader` 处理（它按 media_type 判断，可用）。
+6. `PlainTextReader.accepts` **同时按 `media_type.startswith("text/")` 判断**
+   （`providers.py:31`），这是代码文件能走 V1 状态机的唯一入口 —— 但受第 1 条限制，
+   我们不用它。
