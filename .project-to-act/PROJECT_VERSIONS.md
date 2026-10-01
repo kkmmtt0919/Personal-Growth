@@ -15,7 +15,7 @@
 - 计划内容：M1–M5 完成 → 跑通 `Goal → Evidence → Capability → Task → Growth` 闭环，对应验收门 G1–G5
 - 发布条件：
   - G1–G5 全部通过且证据未过期
-  - 质量门 QG1–QG5 通过（含 evkg 自身 31 项测试全绿）
+  - 质量门 QG1–QG5 通过（含 evkg 自身测试全绿；b.5b 后为 81 项）
   - `evkg audit_store` = pass；`run_damage_selftest` = caught
 
 ## 兼容性与迁移政策
@@ -30,7 +30,7 @@
 
 | 依赖 | 当前指向 | 解析方式 | 备注 |
 |---|---|---|---|
-| evkg | `D:\projects\evkg` @ `a4b15af`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin；b.5a 已向上游提交一次改动 |
+| evkg | `D:\projects\evkg` @ `a4b15af`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin；b.5a / b.5b 已向上游提交两次改动（`a4b15af`、`e432c42`），**均未推送远程** |
 | project-to-act | `D:\projects\project-to-act`；已装至 `~/.zcode/skills/project-to-act/` | 治理工具，非运行时依赖 | 仅用其脚本与约定 |
 | Python | 3.12.14（uv 托管） | `requires-python >= 3.11` | 系统解释器为 3.7.8，必须走 uv |
 | uv | 0.12.10 | — | 已验证可用 |

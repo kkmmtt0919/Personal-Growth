@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 通过；M1-a 通过；M1-b 通过；M1-b.5a 通过（evkg 源码一等支持）**；M1-b.5b/c/d 与 M1-c 未开始
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、适配层变薄、旧数据不变性、locator 真值）
+- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b 均通过**；M1-b.5c、M1-b.5d 与 M1-c 未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、适配层变薄、旧数据不变性、locator 真值）+ M1-b.5b（缺失值语义、下游消费者、旧数据不变性）
 - 最后检查：2026-10-01
-- 遗留问题：R1 仅验到 ingest 与 evkg 单元层；symbol 级代码精度需解析器（已排除）；跨切分器重入库的累积问题待 b.5c；G1–G6 与 QG2–QG5 未开始
+- 遗留问题：symbol 级代码精度需解析器（已明确排除）；跨切分器重入库的 passage 累积待 b.5c；G1–G6 与 QG2–QG5 未开始
 
 ## 验收标准
 
@@ -56,6 +56,10 @@
 | EV-010 | 2026-10-01 | `uv run pytest tests/`（本仓） | exit 0 | adapter `1138da7bed90`；tests `586993f0cc2b` | **27 passed**。新增覆盖：源码走 `evkg.ingest_code_file` 且 kind=`code`、**kind 由 primary 改判为 code 时基线保持 0.82（评分中性）**、passage 带 path/language/line_start/line_end、locator 回原文逐字一致、缩进保留、无扩展名构建文件（Dockerfile）不漏 | 命令输出；`tests/test_evidence_adapter.py` | 90d |
 | EV-011 | 2026-10-01 | 旧数据不变性检查：升级 evkg 后**不做任何重新入库**，逐字段对比 `artifacts/m1b5/before_sources.json` | 一致 | adapter `1138da7bed90` | **逐字段完全一致，表计数无差异**（3 sources / 111 passages / 其余表同）。证明本次 evkg 升级本身不触碰已落库数据 | `artifacts/m1b5/before_sources.json`、`after_upgrade_no_reingest.json` | 90d |
 | EV-012 | 2026-10-01 | locator 真值校验：对每条带行范围的 passage，按 locator 回磁盘切原文并逐字比对；随后 `adapter.audit` | exit 0 | 重建后 `data/growth.db` | 重建后 3 sources / 109 passages，形态全部一致（code 源 9 段全带行范围；两个文档源 0 段带行范围）。**代码源 9 条 locator 回磁盘核对，不一致 0 条**。`audit_store` = pass，0/10 violations。切分质量：RagService.java 9 段 / 最大 25 行 / 仅括号噪声 0 条 | 命令输出；`data/growth.db`。重建前的库备份为本机取证材料 `artifacts/m1b5/*.db.bak`（二进制，已 gitignore 不入库） | 90d |
+| EV-013 | 2026-10-01 | `uv run pytest ../evkg/tests`（evkg 上游，commit `e432c42`） | exit 0 | evkg `e432c42` | **81 passed**（b.5a 后 61 + 新增 20）。新增 `tests/test_assessment_lifecycle.py` 为**成对对照**：缺失不产出 0.25；缺失也不产出高分（抽取质量 0.99 仍 `score=None`）；`SourceKind.UNKNOWN` 的 0.25 先验保持不变且与 `unassessed` 可区分；**已评估情形 7 个 kind 数值逐位不变**；旧 `Confidence` 行（无 `assessment_status`）仍可读回。lint 26→25，未新增 | 命令输出；`../evkg/tests/test_assessment_lifecycle.py` | 90d |
+| EV-014 | 2026-10-01 | 前后对照实证：`artifacts/m1b5/check_b5b_after.py`（同一脚本在改动前亦运行过，见进度历史） | exit 0 | script `72c3f13627a8` | 改动前：无缓存 assessment 的 **kind=code** 来源被按 **0.25** 计权（策略表应为 0.80，**差 0.55**）；改动后：加权值 = 0.80，**差 0.00**，`origin=derived_from_kind`。来源记录丢失时抽取质量 0.99 仍 `score=None`（未被"未评估"抬成高分）。`SourceKind.UNKNOWN` 仍为 0.25 且 `status=assessed`。7 个 kind 的已评估数值全部逐位不变 | 命令输出；`artifacts/m1b5/check_b5b_after.py` | 90d |
+| EV-015 | 2026-10-01 | 下游消费者检查：`artifacts/m1b5/check_b5b_consumers.py`（构造 `score=None` 的 claim 走真实存储与渲染） | exit 0 | script `73fd88c7c8ad` | **7/7 通过**：claim 读回 `score=None`/`status=unassessed`；`relations.confidence` 列接受 NULL；dossier 渲染不崩；`adversarial.claim_score` 对 None 不抛错；`storage_status` 通过；索引检索（含 `ORDER BY json_extract(confidence.score)`）不崩；`audit_store` 仍 pass(0/10)。覆盖了改动前识别出的 6 个消费者 | 命令输出；`artifacts/m1b5/check_b5b_consumers.py` | 90d |
+| EV-016 | 2026-10-01 | 真实库旧数据不变性：逐字段对比 `artifacts/m1b5/before_sources.json` + `adapter.audit` | 一致 | adapter `1138da7bed90` | 3 个来源的 `assessment_baseline` 全部与基线快照一致，且解析后 `origin=cached`（未被重新推导）。唯一差异 `src_bb2159281c69a158.kind: primary→code` 是 **b.5a 已记录的刻意变更**（基线不变，评分中性），非本次引入。claims=0，故无 claim 级置信度被改写。`audit_store` = pass | 命令输出；`artifacts/m1b5/before_sources.json` | 90d |
 
 ## Gate 记录
 
@@ -73,6 +77,9 @@
 | M1-b.5a | 2026-10-01 | 适配层改走 evkg 原生代码路径且评分中性 | `adapter.py` | 通过 | EV-010 | — |
 | M1-b.5a | 2026-10-01 | 旧数据未被错误升级（升级 evkg 后零变更） | `data/growth.db` | 通过 | EV-011 | — |
 | M1-b.5a | 2026-10-01 | locator 可回磁盘核对（零说谎）+ 切分质量 | `RagService.java` | 通过 | EV-012 | — |
+| M1-b.5b | 2026-10-01 | 缺失值语义（`UNASSESSED` 双向设防，已评估数值逐位不变） | `../evkg` @ `e432c42` | 通过 | EV-013 EV-014 | — |
+| M1-b.5b | 2026-10-01 | 下游消费者在 `score=None` 下不崩 | 6 个消费者 | 通过 | EV-015 | — |
+| M1-b.5b | 2026-10-01 | 旧数据未被错误升级 | `data/growth.db` | 通过 | EV-016 | — |
 
 ## 验收记录
 
@@ -82,5 +89,6 @@
 | 2026-10-01 | M1-a（领域包生效、依赖解析） | EV-004 EV-005 | 通过 | R1/R2/R4 待后续小步 | **M1-a 验收通过** |
 | 2026-10-01 | M1-b（入库、双轨记录、QG1） | EV-006 EV-007 EV-008 | 通过 | M1-c 起需 LLM API Key | **M1-b 验收通过** |
 | 2026-10-01 | M1-b.5a（evkg 源码一等支持、适配层变薄、旧数据不变性） | EV-009 EV-010 EV-011 EV-012 | 通过 | symbol 级精度待解析器；跨切分器累积问题待 b.5c | **M1-b.5a 验收通过** |
+| 2026-10-01 | M1-b.5b（缺失值语义、下游消费者、旧数据不变性） | EV-013 EV-014 EV-015 EV-016 | 通过 | — | **M1-b.5b 验收通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

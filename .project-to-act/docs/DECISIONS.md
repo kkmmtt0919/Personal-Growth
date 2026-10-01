@@ -205,3 +205,34 @@ evkg = { path = "../evkg", editable = true }
 5. **无扩展名文件曾被我遗漏**：`Dockerfile`/`Makefile` 这类文件的 `Path(...).suffix` 为空串。
    b.5a 在 `CodeConfig.filenames` 里补了按小写文件名匹配的表，否则删掉旧的适配层兜底路由
    会造成能力回退（已加测试）。
+
+### M1-b.5b 新增发现与设计决定
+
+1. **缺失值必须双向设防。** 用户最初指出的是"未评估 ≠ 低分"，但实施时确认反过来同样致命：
+   若把缺失兜底成**高分**，未经核验的自述/README 自声明就能靠"未评估"这条通道获得可信度。
+   因此最终语义是「缺失不带数字」而不是「缺失换成另一个默认值」：
+   `score=None` + `assessment_status='unassessed'`。
+   对照测试在抽取质量 0.99 时仍断言 `score is None`。
+2. **按 `kind` 推导 ≠ 发明数字。** `assess_source(kind)` 是同一份策略表的**确定性函数**，
+   所以"没缓存分级"时按 kind 推导得到的是正确先验，而不是猜测。旧实现用固定 0.25 兜底，
+   实测让一个 `code` 来源（策略表 0.80）被按 0.25 计权 —— **同源同内容仅因缓存有无差 0.55，
+   且全程静默**。修复后差 0.00。
+   为可审计，分级的 `origin` 如实标出来源：`cached` / `derived_from_kind` / `missing_source`
+   / `missing_kind`。**"只用了类型先验"与"逐来源评估过"必须可区分。**
+3. **`SourceKind.UNKNOWN` 的先验保持不变**（0.25，`status=assessed`）。
+   按用户要求，它与 `unassessed` 是两种状态，测试成对锁定。
+4. **未新建 claim 生命周期**（遵守用户指令）。`ASSESSED`/`UNASSESSED` 两个常量只描述
+   **分级取值的形状**（有没有数字），claim 仍沿用既有 `ClaimStatus`：来源未分级时
+   claim 记为 `DISPUTED`（不予采信），并在 `metadata.assessment_status` 单独标注，
+   以免与"证据被反驳"混淆。
+5. **`score` 可空的影响面已逐一核实**，改动前就识别出 6 个消费者，改动后逐个验证
+   （EV-015）：`extract` 构造、`store.save_claim` 写 `relations.confidence` 列（接受 NULL）、
+   `dossier` 渲染、`index/search` 与 `web` 的 `ORDER BY json_extract(confidence.score)`
+   （NULL 在 DESC 下排最后，安全）、`adversarial` 的筛选排序（新增模块级 `claim_score()`
+   守卫）、`audit_store` 不变量。
+6. **`adversarial` 的 None 守卫只用于排序**：未分级按 0 参与筛选与排序，避免
+   `None` 比较抛错、也避免未分级 claim 被当作高置信目标优先攻击；这**不代表**给它评了 0 分，
+   其 `assessment_status` 仍是 `unassessed`。已在注释和测试中写明，防止后人误读。
+7. **测试按"先写后改"执行**（用户指定顺序）。改动前新测试以 `ImportError` 失败，
+   但这只证明函数缺失、不能证明旧行为有错，因此另外用一个实证脚本把旧行为
+   （`0.25` vs 应有的 `0.80`，差 0.55）单独留证，见 EV-014。
