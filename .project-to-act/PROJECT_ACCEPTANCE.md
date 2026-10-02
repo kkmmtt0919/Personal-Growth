@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0、M1、M2 全部通过并归档/收口**。**M2 已正式收口**：G1 验收门通过（真实模型会话 `glm-5.3-flash`，含两条反例；截图豁免待 M8 补证），AC1–AC12 全满足，全量回归 Growth OS 143 / evkg 101 全绿，真实库未被污染。evkg 依赖策略 = 有条件依赖（C1–C5），交付 = 本地 bundle 归档。**当前停在 M3 门前**（不提前启动 B-g2 或 M3 实现）。详见 `artifacts/m2/acceptance-report.md`、`artifacts/gates/G1/README.md`
-- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2（基线冻结、a/b/c、两层预算、G1 真实会话、AC1–AC12 验收）**
+- 结论：**M0、M1、M2、M3 全部通过并收口**。**M3 证据接入已正式收口**（2026-10-02，Gate 13/13 通过，EV-065）：完成条件 1–5 + 质量门全部通过（PDF/Markdown 可检索、ZIP 技术栈、公共仓库 5 条材料口径 claim、JD 隔离、audit pass/0）。G1 验收门通过（真实模型会话 `glm-5.3-flash`，含两条反例；截图豁免待 M8 补证）。evkg 依赖策略 = 有条件依赖（C1–C5），交付 = 本地 bundle 归档。**当前停在 M4 门前**：`docs/M4-PLAN.md` v0.1 范围冻结草案待用户确认（不写代码、不跑实验）。详见 `artifacts/gates/M3/README.md`、`artifacts/m2/acceptance-report.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2（基线冻结、a/b/c、两层预算、G1 真实会话、AC1–AC12 验收）** + **M3（a/b、B-g2、c/d/e、M3 Gate）**
 - 最后检查：2026-10-02
-- 遗留问题：**B-g2** 富格式（PDF/docx/xlsx）上传路径 0 端到端验证，M3 开工前须先 spike；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**M4 前**必须解决抽取模型持久化；**多领域包或并发 profile 前**必须改上游 profile 作用域；归属层缺失使项目产物暂不能作为能力证据（待 M2/M4 决策）；G1–G6 与 QG2–QG5 未开始
+- 遗留问题：**M4 前置** —— C5 抽取模型持久化必须在 M4 验收前解决；M4-PLAN v0.1 三处冻结点待确认（G2/G3 判定方式、assessment 归属模型、再生成语义）；**M3 开放项** —— PDF 适配层 V1 入口（产品上传链路未完成）、页码级 locator（上游第 14 项）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 5 个提交）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**多领域包或并发 profile 前**必须改上游 profile 作用域；G2–G6 与 QG3 未开始（G1、QG1/QG2/QG4/QG5 已有通过证据）
 
 ## 验收标准
 
@@ -15,7 +15,7 @@
 
 | 标准 ID | 标准 | 状态 | 验证方法摘要 | 证据 ID |
 |---|---|---|---|---|
-| G1 | Goal Clarification：模糊目标 → 明确目标 | 待检查 | 冷启动 ≤6 轮产出含四要素的 confirmed goal；含反例检查 | 无 |
+| G1 | Goal Clarification：模糊目标 → 明确目标 | **通过** | 冷启动 ≤6 轮产出含四要素的 confirmed goal；含反例检查（真实模型会话；截图豁免待 M8 补证） | EV-056 EV-057 |
 | G2 | Evidence Traceability：能力判断可追溯 | 待检查 | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass | 无 |
 | G3 | Capability Audit：识别"自称会但证据不足" | 待检查 | **A/B 对照实验**：弱证据组须得"理解高·实践低"，强证据组须显著更高 | 无 |
 | G4 | Task Quality：任务针对缺口且可验收 | 待检查 | 每个 task 可反向映射到 gap；"去学习 X"类任务必须被拒 | 无 |
@@ -26,11 +26,11 @@
 
 | 标准 ID | 标准 | 状态 | 验证方法摘要 | 证据 ID |
 |---|---|---|---|---|
-| QG1 | 证据不变量 | 待检查 | `evkg audit_store` = pass，9 项检查 0 violation | 无 |
-| QG2 | 攻击自测 | 待检查 | `evkg run_damage_selftest` = caught | 无 |
-| QG3 | 评级规则覆盖 | 待检查 | `tests/test_assessment_rules.py` 覆盖含 G3 A/B 场景的决定性用例 | 无 |
-| QG4 | 无密钥入库 | 待检查 | 仓库与账本无明文密钥；`.env` 已 gitignore；日志脱敏 | 无 |
-| QG5 | 全量测试 | 待检查 | `uv run pytest` 全绿（含 evkg 自身 31 项） | 无 |
+| QG1 | 证据不变量 | **通过** | `evkg audit_store` = pass，9 项检查 0 violation（M3 Gate 复核 pass/0） | EV-065 |
+| QG2 | 攻击自测 | **通过**（M1-f 双向测量口径） | 伪造数据注入前/后双向测量（不采信内置 `status` 单值，C4）；三场景 caught 且清理后零差异 | EV-037…EV-041 |
+| QG3 | 评级规则覆盖 | 待检查（M4） | `tests/test_assessment_rules.py` 覆盖含 G3 A/B 场景的决定性用例 | 无 |
+| QG4 | 无密钥入库 | **通过** | 仓库与账本无明文密钥；`.env` 已 gitignore；日志脱敏（M3 Gate：119 个跟踪文件 0 命中） | EV-065 |
+| QG5 | 全量测试 | **通过** | `uv run pytest` 全绿（M3 Gate：Growth OS 267 项 + evkg 107 项 + ruff） | EV-065 |
 
 治理门（M0）：
 
