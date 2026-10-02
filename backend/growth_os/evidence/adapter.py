@@ -1,53 +1,56 @@
 """Growth OS 证据适配层（L1）。
 
-本文件是全项目**唯一**允许 ``import evkg`` 的模块（决定 D1）。其余代码一律
-通过这里的函数访问证据能力，以便将来替换或升级 evkg 时改动面可控。
+本文件是全项目**唯一**允许 ``import evkg`` 的模块（决定 D1）。其余代码一律通过
+这里的函数访问证据能力，以便将来替换或升级 evkg 时改动面可控。
 
-## 为什么需要这一层（而不是直接用 evkg）
+## 这一层的边界（b.5d 起）
 
-1. **证据强度语义**：evkg 的 ``SourceKind`` 是**领域无关**的枚举，Growth OS 需要
-   的细粒度证据类型（任务提交／代码产物／现场答题／…）不属于"来源是什么"，
-   而属于"在成长系统里意味着什么"，因此走
-   ``Source.metadata.growth_evidence_type`` 与 ``growth_channel`` 双轨记录。
-   （v0.1.0 起 evkg 已有 ``SourceKind.CODE``，源码不再需要伪装成文本。）
-2. **kind 与 assessment 的写入路径必须可控**：V1 ``IngestionService`` 在
-   ``pipeline.py:221`` 把 kind **硬编码为 UNKNOWN** 且不写 ``metadata.assessment``，
-   会让代码/项目证据永久按 0.25 的"未知来源"计权；
-   且 ``normalize_document``（``cleaning.py:9-30``）会折叠空白、重排行，
-   使 ``.java`` 的 8 行塌缩成 3 行 —— **行号随之失去意义**。
-   因此本适配层不使用 V1 状态机：文本走 ``ingest_file``，源码走
-   ``ingest_code_file``（带行范围 locator）。
-3. **落库语义是 INSERT OR IGNORE**：``store._put`` 对 sources 用
-   ``INSERT OR IGNORE``（``store.py:124``），所以"落库后再改 metadata 重存"
-   会被静默忽略。必须用定向 SQL 修补（见 ``_tag_source``）。
+**只负责 Growth OS 自己的领域语义，不理解 evkg 的任何存储细节。**
+
+| 归 Growth OS | 归 evkg |
+|---|---|
+| 证据类型 → 能力评级的角色（知识／行为／实践／任务） | 来源怎么读（reader） |
+| `growth_evidence_type` / `growth_channel` 两个标签 | 段落怎么切（文本／代码两套切分器） |
+| 哪些标签对应哪些 evkg kind | locator 怎么填、行号怎么算 |
+| 能力评级与缺口计算 | `assessment` 怎么算、`content_hash` 怎么判 |
+| 面向产品的错误类型（``EvidenceError``） | source 与 passage 的写入语义 |
+
+具体地：本文件**不写任何裸 SQL**、不访问 ``store.db``、不判定文件后缀、
+不组装 ``assessment``。这些在 b.5d 之前都是它自己做的（见 DECISIONS "M1-b.5d"），
+现在由 evkg 的公共 API 承担：
+
+* ``evkg.ingest.ingest_path`` —— 按内容类型自动路由，调用方只说"入库这个文件"
+* ``evkg.store.KnowledgeStore.find_sources(metadata=...)`` —— 按标签检索
+* ``ingest_path(..., metadata=...)`` —— 领域标签随入库一起写，与 evkg 自己的键合并
+
+有一条测试守着这个边界（``tests/test_adapter_boundary.py``）：适配层源码里出现
+``sqlite3`` / ``.db.execute`` / ``json_set`` / ``SELECT`` 之类就直接失败，
+防止耦合随时间慢慢长回来。
 
 ## 已知限制（记录在案，不要误以为可以并存）
 
 * ``evkg.config.activate`` 写的是**进程级全局** ``_ACTIVE``。同一进程内只能有
   一个领域包，将来多用户/多领域包无法并行（风险 R4）。
-* ``split_passages`` / ``code_language_for`` 都读取 ``active()``，所以**必须先
-  ``configure()`` 再入库或切分**，否则会用 evkg 的默认边界规则与默认语言表。
-* 源 ID 是 ``stable_id("src", 文件绝对URI)`` —— 依赖文件**路径**；文件改名或
-  被复制到临时目录会被当成全新来源（b.5c 计划改为逻辑身份 + content_hash）。
-* 源码的 ``line_start``/``line_end`` 由 ``ingest_code_file`` 在**原始文件文本**
-  上计算，因此可原样切回磁盘核对。经 V1 状态机则做不到（见第 2 条）。
+* ``activate`` / ``ingest_path`` 内部都会读 ``active()``，所以**必须先
+  ``configure()`` 再入库**，否则会用 evkg 的默认领域配置。
+* ``source_id`` 是**逻辑身份**（文件绝对路径），与内容无关；内容是否变化由
+  ``Source.content_hash`` 表达。文件改名会被当成新来源（路径即身份）。
+* locator 的行号相对**换行规范化后**的文本，可原样切回磁盘核对。
 """
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from evkg.config import Profile, activate, code_language_for
+from evkg.config import Profile, activate
 from evkg.domain import SourceKind
-from evkg.ingest.connectors import TEXT_SUFFIXES, ingest_code_file, ingest_file, logical_source_id
-from evkg.policies import assess_source
+from evkg.ingest import ingest_path, logical_source_id
 from evkg.store import KnowledgeStore
 
 # ---------------------------------------------------------------------------
-# 常量与映射
+# 常量与映射（这些是 Growth OS 的领域知识，不是 evkg 的）
 # ---------------------------------------------------------------------------
 
 PROFILE_PATH = Path(__file__).resolve().parent / "profiles" / "growth_os.yaml"
@@ -67,8 +70,9 @@ Channel = Literal["user_evidence", "domain_reference"]
 EVIDENCE_KIND_MAP: dict[str, SourceKind] = {
     # 任务证据：闭环自产，最强
     "task_submission": SourceKind.PRIMARY,
-    # 实践证据：项目文档与交付物。**源码不走这里** —— 源码由读取路径判定为
-    # SourceKind.CODE（见 ingest_document），语义更准，基线与之持平（0.82）。
+    # 实践证据：项目文档与交付物。
+    # **源码不走这里** —— 源码由 evkg 的读取路径判定为 SourceKind.CODE，语义更准，
+    # 且 growth 领域包给 code 的基线与 primary 持平（0.82），因此改判是评分中性的。
     "repo_artifact": SourceKind.PRIMARY,
     # 行为证据：系统现场出题、用户作答
     "probe_result": SourceKind.CONTEMPORARY,
@@ -79,12 +83,15 @@ EVIDENCE_KIND_MAP: dict[str, SourceKind] = {
     # 弱证据：对话中的自述
     "chat_assertion": SourceKind.FOLK,
 }
-"""证据类型 → 默认 evkg SourceKind。与 profiles/growth_os.yaml 的 source_policy
+"""证据类型 → evkg SourceKind。与 ``profiles/growth_os.yaml`` 的 source_policy
 rationale 文案一一对应；改这里必须同步改那个文件。"""
+
+GROWTH_EVIDENCE_TYPE = "growth_evidence_type"
+GROWTH_CHANNEL = "growth_channel"
 
 
 class EvidenceError(RuntimeError):
-    """证据层错误。"""
+    """证据层错误（面向产品的错误类型，不把 evkg 的异常类型泄漏出去）。"""
 
 
 # ---------------------------------------------------------------------------
@@ -95,8 +102,8 @@ class EvidenceError(RuntimeError):
 def configure(profile_path: str | Path | None = None) -> Profile:
     """激活成长领域包。
 
-    必须在任何入库/切分之前调用：``split_passages`` 读取进程级
-    ``active().splitting.boundary``。
+    必须在任何入库之前调用：evkg 的切分边界、代码语言表、来源策略都读进程级
+    ``active()``。
     """
     path = Path(profile_path) if profile_path else PROFILE_PATH
     if not path.is_file():
@@ -110,12 +117,12 @@ def configure(profile_path: str | Path | None = None) -> Profile:
 def open_store(db_path: str | Path | None = None) -> KnowledgeStore:
     """打开知识库。
 
-    永远显式传路径：``KnowledgeStore()`` 不传参会在 ``store.py:31-33`` 直接
-    TypeError（那里用了 ``Path(path)`` 而不是 ``Path(self.path)``）。
+    永远显式传路径：``KnowledgeStore()`` 不传参会在 ``store.py`` 直接 TypeError
+    （那里用了 ``Path(path)`` 而不是 ``Path(self.path)``）。
     """
     path = Path(db_path) if db_path else Path("data/growth.db")
     path.parent.mkdir(parents=True, exist_ok=True)
-    configure()  # 保证切分边界等配置在打开前就位
+    configure()  # 保证领域配置在打开前就位
     return KnowledgeStore(str(path))
 
 
@@ -128,7 +135,6 @@ def open_store(db_path: str | Path | None = None) -> KnowledgeStore:
 class IngestResult:
     source_id: str
     title: str
-    route: str
     kind: str
     evidence_type: str
     channel: str
@@ -144,10 +150,15 @@ def ingest_document(
     title: str | None = None,
     task_id: str = "growth_os",
 ) -> IngestResult:
-    """把一份文本类文件作为证据入库，并打上成长语义标签。
+    """把一份文件作为证据入库，并打上成长语义标签。
 
-    幂等：同一路径重复入库不会产生重复 source/passage（底层 INSERT OR IGNORE）。
-    但**重打标签是允许的** —— ``_tag_source`` 会覆盖成长标签，便于纠正误标。
+    适配层在这里做三件事，且只做这三件：校验**领域取值**、给出**领域标签**、
+    把「入库这个文件」这件事交给 evkg。文件是源码还是文本、段落怎么切、
+    locator 怎么填，全部由 ``ingest_path`` 决定。
+
+    幂等：同一文件重复入库不会产生重复 source/passage；内容未变时 evkg 会判为
+    ``unchanged``。重打标签（换 evidence_type）是允许的 —— 新标签覆盖同名旧值，
+    其余键保留。
     """
     if evidence_type not in EVIDENCE_KIND_MAP:
         raise EvidenceError(f"未知证据类型: {evidence_type!r}")
@@ -158,129 +169,55 @@ def ingest_document(
     if not file_path.is_file():
         raise EvidenceError(f"文件不存在: {file_path}")
 
-    suffix = file_path.suffix.lower()
-    kind = EVIDENCE_KIND_MAP[evidence_type]
-
-    # 路由由**读取路径**决定，而不是由 evidence_type 决定：同一个 repo_artifact
-    # 既可能是 README（文档，primary），也可能是 .java（源码，code）。
-    if code_language_for(file_path.name) is not None:
-        kind = SourceKind.CODE
-        source = ingest_code_file(
-            file_path, title=title, kind=kind, store=store, task_id=task_id
+    try:
+        source = ingest_path(
+            file_path,
+            title=title,
+            kind=EVIDENCE_KIND_MAP[evidence_type],
+            metadata={GROWTH_EVIDENCE_TYPE: evidence_type, GROWTH_CHANNEL: channel},
+            store=store,
+            task_id=task_id,
         )
-        route = "evkg.ingest_code_file"
-    elif suffix in TEXT_SUFFIXES:
-        source = ingest_file(
-            file_path, title=title, kind=kind, store=store, task_id=task_id
-        )
-        route = "evkg.ingest_file"
-    else:
-        raise EvidenceError(
-            f"暂不支持 {suffix or '(无扩展名)'}：二进制格式需在 M3 单独处理"
-            f"（PDF 还需安装 evkg[office]）"
-        )
+    except ValueError as exc:
+        # 把 evkg 对"格式不支持"的判定翻译成产品侧错误类型
+        raise EvidenceError(str(exc)) from exc
 
-    _tag_source(
-        store,
-        source.id,
-        kind=kind,
-        evidence_type=evidence_type,
-        channel=channel,
-    )
-
-    passages = store.get_passages(source_id=source.id)
     return IngestResult(
         source_id=source.id,
         title=source.title,
-        route=route,
-        kind=kind.value,
+        kind=source.kind.value,
         evidence_type=evidence_type,
         channel=channel,
-        passage_count=len(passages),
+        passage_count=len(store.get_passages(source_id=source.id)),
     )
 
 
 # ---------------------------------------------------------------------------
-# 成长语义标签（双轨记录的写入点）
+# 读取与检索（全部走 evkg 的公共 API，不碰存储细节）
 # ---------------------------------------------------------------------------
-
-
-def _tag_source(
-    store: KnowledgeStore,
-    source_id: str,
-    *,
-    kind: SourceKind,
-    evidence_type: str,
-    channel: str,
-) -> None:
-    """把成长语义**并入** sources.payload，而不是替换它。
-
-    为什么用裸 SQL：``_put`` 对 sources 是 ``INSERT OR IGNORE``，重存会被
-    静默忽略。用 ``json_set`` 只增不改，evkg 自己写的 ``metadata.assessment``
-    原样保留 —— 那个键被 ``extract.py:105-106`` 用于计算置信度，覆盖它会让
-    整条置信度链路退化成"未知来源 0.25"。
-
-    同时把 kind 与 assessment 一并写正：这既让重复打标签幂等，也能修正
-    其它路径（如 V1 状态机）写入的错误 kind。
-    """
-    store.db.execute(
-        """
-        UPDATE sources
-        SET payload = json_set(
-                payload,
-                '$.kind', ?,
-                '$.metadata.assessment', json(?),
-                '$.metadata.growth_evidence_type', ?,
-                '$.metadata.growth_channel', ?
-            )
-        WHERE id = ?
-        """,
-        (
-            kind.value,
-            json.dumps(assess_source(kind), ensure_ascii=False),
-            evidence_type,
-            channel,
-            source_id,
-        ),
-    )
-    store.db.commit()
-    store.audit(
-        "growth_os",
-        "growth_tagged",
-        source_id,
-        {"evidence_type": evidence_type, "channel": channel, "kind": kind.value},
-    )
 
 
 def source_metadata(store: KnowledgeStore, source_id: str) -> dict:
     """读回某个 source 的 metadata（供验证与调试）。"""
-    row = store.db.execute(
-        "SELECT payload FROM sources WHERE id=?", (source_id,)
-    ).fetchone()
-    if not row:
+    source = store.get_source(source_id)
+    if source is None:
         raise EvidenceError(f"未知 source: {source_id}")
-    return json.loads(row[0]).get("metadata", {})
+    return dict(source.metadata)
 
 
 def sources_by_channel(store: KnowledgeStore, channel: str) -> list[str]:
-    """按成长通道过滤 source —— 双轨记录可查询性的实证。
+    """按成长通道过滤 source。
 
-    依赖 SQLite JSON1 的 ``json_extract``。sources 表当前没有针对该路径的
-    表达式索引，走全表扫描；证据表规模小，MVP 阶段可接受，量级上来后再加索引。
+    这是 `user_evidence` 与 `domain_reference` 必须分开的落地处：不分开的话，
+    岗位 JD 里写"AI 工程师需要会 RAG"会被误读成"用户会 RAG"。
     """
-    rows = store.db.execute(
-        "SELECT id FROM sources WHERE json_extract(payload,'$.metadata.growth_channel')=? ORDER BY id",
-        (channel,),
-    ).fetchall()
-    return [row[0] for row in rows]
+    hits = store.find_sources(metadata={GROWTH_CHANNEL: channel})
+    return sorted(source.id for source in hits)
 
 
 def sources_by_evidence_type(store: KnowledgeStore, evidence_type: str) -> list[str]:
-    rows = store.db.execute(
-        "SELECT id FROM sources WHERE json_extract(payload,'$.metadata.growth_evidence_type')=? ORDER BY id",
-        (evidence_type,),
-    ).fetchall()
-    return [row[0] for row in rows]
+    hits = store.find_sources(metadata={GROWTH_EVIDENCE_TYPE: evidence_type})
+    return sorted(source.id for source in hits)
 
 
 def counts(store: KnowledgeStore) -> dict:

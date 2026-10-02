@@ -81,7 +81,6 @@ def main() -> int:
                 "file": str(path.relative_to(REPO_ROOT.parent)).replace("\\", "/"),
                 "note": note,
                 "source_id": result.source_id,
-                "route": result.route,
                 "kind": result.kind,
                 "evidence_type": result.evidence_type,
                 "channel": result.channel,

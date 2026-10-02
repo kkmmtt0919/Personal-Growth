@@ -82,19 +82,23 @@ def test_markdown_uses_evkg_fast_path(store, files):
     result = adapter.ingest_document(
         files["readme"], store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "evkg.ingest_file"
+    assert result.kind == "primary", "普通文本应按调用方给的 kind 落库"
     assert result.kind == "primary"
     assert result.passage_count > 0
 
 
-def test_code_file_uses_evkg_code_route(store, files):
-    """源码走 evkg 的 ingest_code_file（b.5a 起），不再是适配层自造的 text_like。"""
+def test_code_file_is_routed_by_evkg_not_by_adapter(store, files):
+    """b.5d 起路由由 evkg 决定，适配层不看后缀、也不再暴露 route。
+
+    可直接观测的结论就是 ``kind == "code"``：这既说明走了代码路径，
+    也是"保留了缩进与行范围"的前提。
+    """
     result = adapter.ingest_document(
         files["code"], store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "evkg.ingest_code_file"
     assert result.kind == "code"
     assert result.passage_count > 0
+    assert not hasattr(result, "route"), "路由是实现细节，不应出现在适配层 API 上"
 
 
 def test_code_kind_change_is_score_neutral(store, files):
@@ -158,7 +162,6 @@ def test_extensionless_build_files_are_handled(store, tmp_path):
     result = adapter.ingest_document(
         dockerfile, store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "evkg.ingest_code_file"
     assert result.kind == "code"
     passages = store.get_passages(source_id=result.source_id)
     assert passages and passages[0].locator["language"] == "dockerfile"
@@ -166,7 +169,7 @@ def test_extensionless_build_files_are_handled(store, tmp_path):
 
 def test_binary_suffix_is_rejected(store, files):
     """二进制格式留给 M3，不应静默当成文本读进来。"""
-    with pytest.raises(adapter.EvidenceError, match="暂不支持"):
+    with pytest.raises(adapter.EvidenceError, match="V1 状态机"):
         adapter.ingest_document(
             files["binary"], store=store, evidence_type="repo_artifact"
         )
@@ -346,7 +349,6 @@ def test_real_java_file_ingests(store):
     result = adapter.ingest_document(
         REAL_JAVA, store=store, evidence_type="repo_artifact"
     )
-    assert result.route == "evkg.ingest_code_file"
     assert result.kind == "code"
     assert result.passage_count > 0
     passages = store.get_passages(source_id=result.source_id)

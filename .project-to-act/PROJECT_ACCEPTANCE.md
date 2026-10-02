@@ -4,8 +4,8 @@
 
 ## 当前验收结论
 
-- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c 均通过**；M1-b.5d 与 M1-c 未开始
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、适配层变薄、旧数据不变性、locator 真值）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）
+- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d 均通过**；M1 的三层基础（ingest / evidence model / adapter boundary）已闭环；M1-c（extract）未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）
 - 最后检查：2026-10-01
 - 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 3 个提交且不得推送**
 
@@ -64,6 +64,10 @@
 | EV-018 | 2026-10-01 | 端到端实证 `artifacts/m1b5/check_b5c.py`（真实材料，两部分） | exit 0 | script `f474ae3d1d62` | **全部通过**。A 部分（真实库 3 份证据）：source 身份稳定（3 个全部保留 id）、unchanged 时 passage 数不增长（9/57/43）、`content_hash` 全部写入、QG1 pass；其中「首次写入 → updated」的迁移在字段引入后的首次运行中观测（那次 output 显示 3 个来源由 `content_hash=None` 变为有值），本机此后已处稳态，脚本会如实说明而不再报假 OK。B 部分（真实 `RagService.java` 副本，**替换**一句方法体使旧段落真正失效）：8/8 通过 —— 一个逻辑 source、source_id 不变、content_hash 变化、新 passage 集合与重新切分一致、确有旧 passage 被清理（1 条）、被清理的 id 已不在库、新内容已落库、库自洽 | 命令输出；`artifacts/m1b5/check_b5c.py` | 90d |
 | EV-019 | 2026-10-01 | 下游消费者复检 + 冒烟：`check_b5b_consumers.py`、`scripts/smoke_ingest.py` | exit 0 | consumer script `73acf21c2e61` | 消费者检查 **7/7 通过**（`score=None` 下 claim 读回、`relations.confidence` 写 NULL、dossier 渲染、`claim_score` 守卫、`storage_status`、索引检索、`audit_store` pass）；`smoke_ingest.py` = **PASS**（3 sources / 109 passages / 通道过滤 / 幂等）。证明 b.5c 改写入语义后既有适配层流程未破 | 命令输出 | 90d |
 | EV-020 | 2026-10-01 | 真实库最终状态复核：逐字段对比基线快照 + `adapter.audit` | 一致 | adapter `92e850102897` | 3 个来源的 **source id 全部未变**（逻辑身份方案的关键保证），`kind`、`assessment_baseline` 与基线快照一致（唯一差异仍是 b.5a 已记录的 `kind: primary→code`）。新增 `content_hash` 字段已写入。`audit_store` = pass，0/10 violations | 命令输出；`data/growth.db` | 90d |
+| EV-021 | 2026-10-01 | `uv run pytest ../evkg/tests`（evkg 上游，commit `28afbc0`） | exit 0 | evkg `28afbc0` | **101 passed**（b.5c 后 93 + 新增 8）。新增 `tests/test_ingest_boundary.py`：源码经 `ingest_path` 自动落为 `CODE` 且带行范围、普通文本的 kind 由调用方决定、不支持格式报错指向状态机、**调用方领域标签与 evkg 的 assessment 共存**、重新 ingest 时标签不丢且判 `unchanged`、`find_sources` 单键/多键/空结果。lint 25，未新增 | 命令输出；`../evkg/tests/test_ingest_boundary.py` | 90d |
+| EV-022 | 2026-10-01 | `uv run pytest tests/`（本仓，含新增边界检查） | exit 0 | adapter `bbfd5412fea6`；boundary `10de9f47ff22` | **38 passed**。新增 `tests/test_adapter_boundary.py` **11 项静态 AST 检查**：可执行代码中不得出现 `sqlite3` / `.db.execute` / `.db.commit` / `json_set` / `json_extract` / 内联 SQL 关键字 / 下划线成员；只允许导入 evkg 的公共模块；不得依赖 sqlite3/sqlalchemy/peewee；不得调用 store 低层方法；不得再有私有辅助函数（`_tag_source` 已删除）。检查先剥 docstring 再匹配，避免把"不做什么"的说明文字误判 | 命令输出；`tests/test_adapter_boundary.py` | 90d |
+| EV-023 | 2026-10-01 | 回归复跑 b.5b / b.5c 的全部实证脚本 | exit 0 | 同 EV-014 / EV-018 | b.5c 端到端：**全部通过**（真实库三态循环 + RagService.java 替换式改写 8/8）；b.5b 消费者检查：**全部通过**（7/7）。证明 b.5d 删除裸 SQL 与 metadata 补丁后，既有写入语义与下游路径均未破 | 命令输出 | 90d |
+| EV-024 | 2026-10-01 | 真实库复核：source id 稳定性 + 通道过滤改走 `find_sources` + `adapter.audit` | pass | adapter `bbfd5412fea6` | 旧 id 全部仍在；相对基线的字段差异**仅** `src_bb2159281c69a158.kind`（b.5a 已记录的刻意变更，基线未动）。通道过滤经**公共 API** 得到 user_evidence=2 / domain_reference=1，repo_artifact=2、external_ref=1，与改动前一致。`audit_store` = pass，0/10 violations | 命令输出；`data/growth.db` | 90d |
 
 ## Gate 记录
 
@@ -88,6 +92,10 @@
 | M1-b.5c | 2026-10-01 | A→B 核心性质（真实材料端到端） | `RagService.java` 副本 | 通过 | EV-018 | — |
 | M1-b.5c | 2026-10-01 | 下游消费者与冒烟未破 | adapter + 6 消费者 | 通过 | EV-019 | — |
 | M1-b.5c | 2026-10-01 | source 身份稳定 + 库自洽 | `data/growth.db` | 通过 | EV-020 | — |
+| M1-b.5d | 2026-10-01 | evkg 公共入口补齐（101 项全绿） | `../evkg` @ `28afbc0` | 通过 | EV-021 | — |
+| M1-b.5d | 2026-10-01 | **适配层边界**：无裸 SQL / 无自造路由 / 无私有辅助 | `adapter.py` | 通过 | EV-022 | — |
+| M1-b.5d | 2026-10-01 | 删补丁后既有写入语义与下游未破 | 回归脚本 | 通过 | EV-023 | — |
+| M1-b.5d | 2026-10-01 | source 身份稳定 + 检索走公共 API | `data/growth.db` | 通过 | EV-024 | — |
 
 ## 验收记录
 
@@ -99,5 +107,6 @@
 | 2026-10-01 | M1-b.5a（evkg 源码一等支持、适配层变薄、旧数据不变性） | EV-009 EV-010 EV-011 EV-012 | 通过 | symbol 级精度待解析器；跨切分器累积问题待 b.5c | **M1-b.5a 验收通过** |
 | 2026-10-01 | M1-b.5b（缺失值语义、下游消费者、旧数据不变性） | EV-013 EV-014 EV-015 EV-016 | 通过 | — | **M1-b.5b 验收通过** |
 | 2026-10-01 | M1-b.5c（逻辑身份、content_hash、显式 upsert、级联替换） | EV-017 EV-018 EV-019 EV-020 | 通过 | symbol 级精度待解析器；evkg 不得推送远程 | **M1-b.5c 验收通过** |
+| 2026-10-01 | M1-b.5d（适配层边界、公共 API 补齐） | EV-021 EV-022 EV-023 EV-024 | 通过 | — | **M1-b.5d 验收通过；M1 的 a/b/c 三层闭环** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

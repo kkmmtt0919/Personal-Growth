@@ -280,12 +280,66 @@ evkg = { path = "../evkg", editable = true }
 8. **同一文件经快路径与经状态机现在得到同一个 `source_id`**（旧实现是两套方案：
    路径式 vs 内容式）。这是逻辑身份的顺带收益，也是"下游引用稳定"的前提。
 
+### M1-b.5d 新增发现与设计决定
+
+1. **删掉"补丁"的前提是上游提供了等价能力，而不是下游变得更小心。**
+   b.5d 的目标不是"重构 adapter"，而是**证明 Growth OS 不再需要知道 evkg 内部存储细节**。
+   为此先在 evkg 补了两个公共入口，下游才可能真正删干净：
+   * `ingest_path()` —— 按内容类型自动路由。此前适配层必须自己判后缀、自己决定调用
+     `ingest_file` 还是 `ingest_code_file`，等于把 `TEXT_SUFFIXES` 与 `CodeConfig.languages`
+     复制了一份到下游。
+   * `find_sources(metadata=...)` —— 按标签检索。此前适配层只能对 `sources.payload`
+     写 `json_extract` 裸 SQL。
+   加上 b.5c 的 metadata 合并语义与 `ingest_path(..., metadata=...)` 的透传，适配层的
+   `_tag_source`（`json_set` 改 payload）才有存在理由消失。
+2. **`IngestResult.route` 被删除。** 它暴露的是 evkg 的实现路由（"走了哪个函数"），
+   属于实现细节；而 `kind == "code"` 已经表达了同一事实，且是**领域可见**的语义。
+   保留 `route` 就等于在适配层 API 上固化上游的内部结构。
+3. **边界检查做成静态 AST 检查，而不是靠约定。** 理由是实证的：M1-b.5c 期间我自己就
+   复用了 `INSERT OR IGNORE` 的 helper，导致 `save_source` 报 `updated` 而库里是旧值 ——
+   说明"写的时候小心"守不住这类约束。检查内容：可执行代码（先剥 docstring）中不得出现
+   `sqlite3` / `.db.execute` / `.db.commit` / `json_set` / `json_extract` / 内联 SQL 关键字 /
+   下划线成员；只允许导入 evkg 的公共模块；不得调用 store 低层方法；不得再有私有辅助函数。
+4. **检查最初误报了文档字符串。** 第一版按行匹配，把适配层文档里"**不**写任何裸 SQL、
+   不使用 `sqlite3`"这类**说明性文字**当成了违规。修正方式是用 AST 剥掉 docstring 后
+   `ast.unparse` 重新生成代码再匹配 —— 只检查可执行代码。记录此事是因为它说明
+   "静态检查"本身也需要被验证，否则会逼着作者把解释性文字删掉。
+
 ### 未决 / 留给后续
 
-- **级联清理的策略是可选的**：当前实现是"自动级联并报告数量"。另一种设计是
-  "检测到有依赖时拒绝替换、交由调用方决定"。选前者是因为它符合"原文没了、断言
-  就该失效"的语义且不留脏数据；但用户在 M4 之后可能更希望**保留失效主张作为
-  历史**（例如标记为 `SUPERSEDED` 而不是删除）。届时可改为标记式失效。
+- **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
+  当前是 **hard cleanup** —— 删除段落、级联删除失去全部证据的主张，保证
+  「当前 Evidence Graph 不含已失效证据」。这对 M1 的目标是对的。
+  但 M4 的攻击环节可能希望看到**历史**（"过去曾有一个 claim『召回率 92%』，
+  依据是 README v1，后来代码更新、README 被改"）—— 那时删除就不够了。
+  收敛方向（**现在不引入**）：
+
+  ```
+  purge mode
+  ├── cleanup    （MVP 当前实现：硬清理）
+  └── supersede  （审计历史：标记失效而非删除）
+  ```
+
+- **locator 的 invariant（用户已确认为必须保留的约束）**：
+
+  > **locator 不只是位置描述，而必须能够重新定位到同一份证据文本。**
+
+  即 locator 必须能无条件地把原文切回来并与 `passage.text` 逐字相等。
+  这条是 b.5a 引入、由测试锁死的（`test_locators_are_truthful`、
+  `test_code_locators_round_trip_to_original_file`）。
+  它也解释了为什么 CRLF 污染必须修：若放任 `\r` 混进文本，就会出现
+  "line_start 看起来对、passage 内容已被污染"的假绿 —— 对代码证据不可接受。
+
+- **`RawAsset.content_hash` 与 `Source.content_hash` 的分工**（用户已确认为正确划分，
+  必须保留）：
+
+  ```
+  RawAsset.content_hash = 原始字节哈希   → ingestion 层：这个输入资产是不是同一个字节文件
+  Source.content_hash   = 规范化文本哈希 → evidence 层：影响证据理解的文本是否变化
+  ```
+
+  混用会让一次 `git checkout` 的换行变化触发全部来源重新抽取，造成大量无意义成本。
+
 - **symbol 级代码精度**仍需解析器，b.5a 起即为明确的已知限制。
 - **evkg 不得推送到 `redmaplewww/evkg`**（用户 2026-10-01 明确指示）。本地领先
-  远程 3 个提交。改动提案见 `docs/UPSTREAM-evkg-commits.md`。
+  远程 3 个提交。改动提案见 `docs/UPSTREAM-evkg-commits.md`（已含三个提交的完整链）。

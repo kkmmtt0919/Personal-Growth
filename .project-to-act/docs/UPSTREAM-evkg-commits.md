@@ -1,15 +1,209 @@
 # evkg 上游改动提案（待评审）
 
-> 用途：把 Growth OS 在 M1-b.5 期间对 evkg 的两处改动整理成可直接提 issue / PR 的文本。
-> 这两个提交**目前只在本地**（`D:\projects\evkg`），**尚未推送**到 `redmaplewww/evkg`。
-> 状态：待用户评审后再决定是否推送或建 issue。
+> 用途：把 Growth OS 在 M1-b.5 期间对 evkg 的三处改动整理成可直接提 issue / PR 的文本。
+> 这些提交**只在本地**（`D:\projects\evkg`），**已确认不推送到** `redmaplewww/evkg`
+> （用户 2026-10-01 指示）。
+> 状态：待用户评审后决定是否建 issue/PR。
+
+## 三个提交是一条链，请一并评审
+
+单独看任何一个都会显得像局部修补；三个连起来才看得出是在补齐**证据落库的语义层**：
+
+| Commit | 问题 | 修复 |
+|---|---|---|
+| `a4b15af` | 代码证据无法保留真实 locator（缩进被抹平、行号在归一化后失去意义） | `SourceKind.CODE` / `CodeReader` / `split_code_passages` / `ingest_code_file` |
+| `e432c42` | 未评估的证据被错误降权（缺失值被当成 0.25 低分） | assessment lifecycle：缺失不带数字，且标明分级来源 |
+| `068389d` | source 更新语义丢失（写入报成功但库里是旧值；换切分器后旧段落静默累积） | 逻辑身份 id + `content_hash` + 显式 upsert + 段落级联替换 |
+| `28afbc0` | 下游不得不用裸 SQL 与自造路由才能用 evkg（前者改 payload，后者判后缀） | `ingest_path()` 统一路由 + `find_sources()` 按 metadata 检索 + `metadata` 透传 |
+
+**为什么必须一起看**：`068389d` 是让下游能删掉自己那层裸 SQL 的**前提**，
+`28afbc0` 才是**把那层裸 SQL 真正删掉**的那一步 —— 没有它，第三方依然需要
+`json_extract` 与后缀判定，只是从"改 payload"变成"查 payload"而已。
+
+四者的共同主题：**evkg 需要明确区分「证据是什么」「证据有多可靠」「证据属于哪一次内容」
+「下游的领域标签是什么」，并让写入路径如实报告实际发生了什么。**
+
+---
 
 | 提交 | 主题 | 对应本文档 |
 |---|---|---|
 | `a4b15af` | `ingest: 源码作为一等来源（SourceKind.CODE / CodeReader / 行范围 locator）` | §提案一 |
 | `e432c42` | `assessment: 未分级 ≠ 0.25（缺失值不参与加权，也不凭空抬高）` | §提案二 |
+| `068389d` | `source: 逻辑身份 + content_hash + 显式 upsert（并修掉 passage 静默累积）` | §提案三 |
+| `28afbc0` | `ingest/store: 补齐下游所需的两处公共入口（统一路由 + 按 metadata 检索）` | §提案四 |
 
-两个提案相互独立，可分别接受或拒绝。以下按"问题 → 证据 → 变更 → 行为变更与兼容性 → 已知限制 → 待决问题"组织。
+四个提案可分别接受或拒绝。以下按"问题 → 证据 → 变更 → 行为变更与兼容性 → 已知限制 → 待决问题"组织。
+
+---
+
+## 提案四：补齐下游所需的公共入口
+
+**建议标题**：`ingest/store: 统一路由 + 按 metadata 检索（让下游不必知道存储细节）`
+
+### 问题
+
+外部系统要基于 evkg 做一个领域应用（本例是个人能力成长系统）时，会发现自己不得不
+自己做两件本该属于 evkg 的事：
+
+1. **按内容类型路由**：判断一份文件是源码还是普通文本、该调用 `ingest_file` 还是
+   `ingest_code_file`。这要求下游理解 `TEXT_SUFFIXES`、`CodeConfig.languages`、
+   两套 reader 的能力差异 —— 这些都是实现细节。
+2. **按 metadata 检索**：为了在 metadata 上打领域标签并在之后查回来，下游只能对
+   `sources.payload` 写 `json_extract` 裸 SQL。
+
+这两件事都会被"顺手"留在下游的适配层里，然后随时间变成对 evkg 内部结构的硬依赖。
+
+### 证据
+
+本仓下游（Growth OS）的适配层在本次改动前包含：
+
+```sql
+UPDATE sources SET payload = json_set(payload, '$.metadata.growth_evidence_type', ?, ...)
+SELECT id FROM sources WHERE json_extract(payload,'$.metadata.growth_channel')=?
+```
+
+以及一份自造的 `TEXT_LIKE_SUFFIXES` 后缀表 + 分流逻辑。这几处正是我们要消灭的反模式的
+实例 —— 业务层在替上游修补领域模型。
+
+### 变更
+
+- `ingest_path()`：按**内容类型**自动路由的唯一入口。
+  * 源码/配置（命中 `Profile.code`）→ `ingest_code_file`，且 kind **一律取 `CODE`**。
+    理由：源码之所以需要独立路径，正是因为读取与切分方式不同（保留缩进、记录行范围），
+    这个区别属于"证据是什么"这一层，不该由调用方覆盖。
+  * 普通文本 → `ingest_file`，kind 由调用方决定。
+  * 其余 → `ValueError` 并提示走 V1 状态机。
+- `ingest_file()` / `ingest_code_file()` 新增 `metadata` 参数：迁移调用方的领域标签，
+  与 evkg 自己写的 `assessment` 合并（依赖 `save_source` 的 metadata 合并语义）。
+- `KnowledgeStore.find_sources(metadata=None)`：按 metadata 键值对检索来源，
+  替下游承担 `json_extract`。
+- `ingest/__init__.py` 导出 `ingest_path` 与 `logical_source_id`。
+- `cli.py` 改用 `ingest_path` —— 同一份"后缀→语言"知识不再有两处实现。
+
+### 行为变更与兼容性
+
+| 项 | 影响 |
+|---|---|
+| 新增 `ingest_path` | 纯增量 |
+| `ingest_file` / `ingest_code_file` 新增 `metadata` 关键字参数 | 向后兼容（有默认值） |
+| 新增 `find_sources` | 纯增量 |
+| `cli ingest` 分派 | 行为等价（原分派逻辑搬到 `ingest_path`），代码量减少 |
+| `ingest_path` 对源码**强制** `kind=CODE` | 这是有意的不变量：若调用方传入别的 kind 也会被覆盖，文档已写明 |
+
+### 已知限制
+
+- `find_sources` 目前是全表扫描后在 Python 侧过滤（未把 `json_extract` 推回 SQL）。
+  对当前量级足够；来源数量级大时应补表达式索引或改为 SQL 侧过滤。
+- `ingest_path` 仍不处理二进制格式（PDF/docx/xlsx/图片）—— 那需要 V1 状态机，
+  而状态机目前有自身的已知问题（见提案一"已知限制"第 2 条）。
+
+### 待决问题
+
+- `ingest_path` 对源码强制 `kind=CODE` 是否可接受？替代方案是允许调用方覆盖，
+  但那会让"源码"与"文本"的区别重新变成调用方的责任。
+- 是否需要一个更明确的分层入口（例如 `evkg.public` 之类的门面模块）来固化"什么是
+  公共 API"？当前的允许清单是下游自己维护的（见 Growth OS 的
+  `tests/test_adapter_boundary.py`），若上游能给出一份显式清单会更可靠。
+
+---
+
+## 提案三：source 身份、内容变化与段落更新语义
+
+**建议标题**：`source: 逻辑身份 + content_hash + 显式 upsert（并修掉 passage 静默累积）`
+
+### 问题
+
+四个相关问题，都属"数据库表面写入成功，实际证据图已过期"这一类：
+
+1. **两套互不兼容的 source id 方案**：快路径用路径（`stable_id("src", 绝对URI)`），
+   V1 状态机用内容哈希（`src_<hash20>`）。同一文件经两条路径得到两个 source。
+2. **`content_hash` 在 `RawAsset → Source` 这一步被丢弃**，无法判断内容是否变化。
+3. **`_put` 对 sources 用 `INSERT OR IGNORE`**：行已存在时**静默丢弃**新数据，
+   调用方以为写成功而库里仍是旧值。
+4. **passage 静默累积**：passage id 里含切分方式，换切分器后旧段落既不被覆盖也不被
+   删除，只会累积。实测一个源里混进 11 条被旧切分器撕裂的片段（从表达式中间开始的
+   文本），随后会被抽取成无意义主张并虚增证据计数。
+
+### 证据
+
+- 调试脚本直接抓到第 4 次 `save_source` 仍读到旧 `content_hash`（若沿用 OR-IGNORE 写法）
+- 一个源里同时存在 9 条正确段落与 11 条被撕裂的旧段落
+
+### 变更
+
+- `Source.id` 统一为**逻辑身份**（同一文件/URL 恒定，与内容无关）。
+  新增 `connectors.logical_source_id()` 作为唯一入口，快路径/状态机/manifest 共用。
+  副作用（正向）：同一文件经快路径与经状态机现在得到**同一个** id。
+- `Source.content_hash` 新增。契约是
+  **content_hash 相同 ⟺ 段落所依据的文本相同**，因此基于**换行规范化后**的文本，
+  不是磁盘原始字节。详见"两个 hash 的分工"。
+- 新增 `decode_text()`：显式统一换行。`read_bytes().decode()` 不做换行翻译，
+  Windows 上 CRLF 会让每行多出 `\r` 混进 passage 文本（实测让 locator 回原文的
+  逐字校验失败）。
+- `save_source()` 返回 `WriteOutcome` = `inserted` / `updated` / `unchanged`：
+  * `metadata` **合并**而非整体替换 —— 这是 `unchanged` 能成立的前提，也让 evkg 自己的
+    `assessment` 与下游写的自定义键互不覆盖
+  * `access_date` 表示**首次落库时间**，不参与变更判定，`unchanged` 时保留原值
+  * `_put` 对 sources 改为真 upsert（`ON CONFLICT DO UPDATE`），从根上消除 OR-IGNORE 的坑
+- `save_passages(..., replace_source=True)`：按**整体**替换各来源的段落集合
+  （所有既有调用方本就一次传入完整集合）。
+- 新增 `purge_passages()`：删段落时**级联清理**依赖行并返回各表数量（见下）。
+- `pipeline._save_source_passages()` 透传 kind 与 content_hash，不再硬编码 UNKNOWN。
+
+### 两个 hash 的分工（容易被误用，建议在文档里写死）
+
+```
+RawAsset.content_hash  = 原始字节哈希  → ingestion 层去重 / 资产寻址
+Source.content_hash    = 规范化文本哈希 → evidence 层"语义是否变化"检测
+```
+
+不区分会出问题：一次 `git checkout` 把 CRLF 换成 LF，若按原始字节比较，**所有来源都会
+被判成"内容已变"并触发整轮重新抽取**，而文本一字未改。
+
+### 为什么删除段落必须级联
+
+实测只删 passage 会**同时点亮四条不变量**：
+
+- `evidence_missing_passage`（evidence 指向已删 passage）
+- `claims_without_evidence`（删掉 evidence 之后）
+- `events_missing_passage`
+- `ledger_complete_passage_missing`
+
+也就是留下一个**自己审计不过的库**。而且级联在语义上也是正确的：原文已经不在了，
+依赖它的证据、以及失去全部证据的主张都失去了依据，留着就是无依据的断言。
+
+`purge_passages()` 的顺序：evidence → 因失去全部证据而孤儿化的 claim 及其 relation →
+幸存 claim 的 `passage_ids` 剪除已删 id → events 及其派生的 timeline/place 行 →
+抽取账本 → entity_aliases → 最后 passages。**返回各表清理数量并写审计日志**：
+级联删除是真实的数据损失，必须让调用方看见。
+
+### 行为变更与兼容性
+
+| 项 | 影响 |
+|---|---|
+| `save_source` 返回值 | 从 `None` 变为 `WriteOutcome`。**向后兼容**（原调用方忽略返回值） |
+| `save_passages` 返回值 | 从 `None` 变为计数 dict。**向后兼容** |
+| `save_passages` 默认改为替换 | 既有调用方本就传完整集合；对"追加写入"的用法是**破坏性**的，但本仓无此用法 |
+| `Source` 新增 `content_hash` | 纯增量，旧数据读回为 `None` |
+| source id 方案统一 | **会改变**经 V1 状态机入库的 source id。若已有这类数据需迁移 |
+| `access_date` 语义固化 | 从"每次写入的时间"变为"首次落库时间"（实际旧行为因 OR-IGNORE 本就如此） |
+
+### 已知限制
+
+- 级联删除是**硬清理**，不保留被失效主张的历史。若将来需要"曾经有过什么主张"的审计
+  视图，需要引入 `supersede` 模式（标记失效而非删除）。**本提案不引入**，仅记下这个
+  演进方向。
+- `manifest` 的 Wiki 词条身份是「api + 页名」复合键，不是路径也不是 URL，因此显式传入
+  `source_id`，不走 `logical_source_id` 的路径分支。
+- 段落在物理上被删除后，`RawAsset` 仍保留原始内容；重建段落需要重新 ingest。
+
+### 待决问题
+
+- 段落替换的默认值应该是 `replace_source=True`（当前）还是必须显式声明？考虑到"静默
+  累积"是本提案要修的 bug 之一，我倾向让"替换"成为默认（安全的那一侧）。
+- 长期是否需要 `source_version` 表来保留内容变更历史？当前用 `content_hash` + 每条
+  写入的审计日志覆盖了"什么时候变成什么"，但不保留旧文本。**本提案刻意不引入**，
+  留待真正需要时再加。
 
 ---
 

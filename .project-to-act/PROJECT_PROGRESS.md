@@ -13,9 +13,9 @@
 | M1-b.5a | evkg 源码一等支持：`SourceKind.CODE` + `CodeReader` + 行范围 locator | 已完成 | ZCode | evkg 61 项 + 本仓 27 项全绿；lint 未新增；旧数据零变更 | EV-009…EV-012 | 2026-10-01 |
 | M1-b.5b | evkg assessment 语义：`UNASSESSED ≠ 0.25`（缺失值不参与加权、不凭空抬高） | 已完成 | ZCode | evkg 81 项 + 本仓 27 项全绿；前后对照实证；7 项下游消费者检查通过；lint 无新增 | EV-013…EV-016 | 2026-10-01 |
 | M1-b.5c | evkg 写入语义：逻辑身份 id + `content_hash` + 显式 upsert + passage 级联替换 | 已完成 | ZCode | evkg 93 项 + 本仓 27 项全绿；三态循环与 A→B 性质在真实材料上验证；lint 未新增 | EV-017…EV-020 | 2026-10-01 |
-| M1-b.5d | adapter 变薄：删掉裸 SQL / metadata 补丁 | 待确认 | ZCode | `_tag_source` 的 SQL 修补可移除（metadata 合并已就位） | 无 | 2026-10-01 |
+| M1-b.5d | adapter 变薄：删除裸 SQL / metadata 补丁 / 自造路由；加边界检查防回潮 | 已完成 | ZCode | evkg 101 项 + 本仓 38 项全绿；边界检查 11 项；b.5b/b.5c 实证复跑通过 | EV-021…EV-024 | 2026-10-01 |
 | M1-c | adapter.py 的 extract 能力（证据 → 能力断言） | 已挂起 | ZCode | 抽取产出可追溯的 claims；**需用户提供 LLM API Key** | 无 | 2026-10-01 |
-| M1 | 证据底座打通（技术 spike） | 进行中 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004…EV-020 | 2026-10-01 |
+| M1 | 证据底座打通（技术 spike） | 进行中（a/b/c 三层已闭环，M1-c 未启动） | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004…EV-024 | 2026-10-01 |
 | M2 | 目标澄清与能力模型 | 已规划 | — | 通过验收门 G1 | 无 | 2026-10-01 |
 | M3 | 证据接入（Upload + GitHub） | 已规划 | — | 见 `docs/ROADMAP.md` M3 | 无 | 2026-10-01 |
 | M4 | 能力审计（产品内核） | 已规划 | — | 通过验收门 G2、G3 | 无 | 2026-10-01 |
@@ -35,9 +35,15 @@
 
 ## 下一步
 
-1. 待用户确认 M1-b.5d 开工（adapter 变薄：删掉 `_tag_source` 的裸 SQL 与 metadata 补丁）。
-   b.5c 已让 `save_source` 具备 metadata 合并语义，`json_set` 修补的存在理由消失了。
-2. M1-b.5d 之后，M1 的数据层语义就算稳定，再重新考虑 M1-c（仍需 LLM API Key）。
+M1 的三层基础已闭环（用户 2026-10-01 确认）：**a 入库 → b 证据模型 → c 适配层边界**。
+其中 b 层含四项：code（b.5a 的 `SourceKind.CODE` / `CodeReader` / 行范围 locator）、
+locator（b.5a 起可无条件切回原文，由测试锁死）、assessment（b.5b 起缺失 ≠ 0.25 且标明
+分级来源）、source lifecycle（b.5c 的逻辑身份 / `content_hash` / 三态写入 / 级联替换）；
+c 层由 b.5d 完成，适配层只留领域语义，边界由 `tests/test_adapter_boundary.py` 守住。
+
+1. **待用户确认进入 M1-c（extract）** —— 仍需用户提供 LLM API Key。
+2. M1-c 前的可选事项：把 evkg 的 4 个上游提交整理为 issue/PR（提案文本已完备，
+   见 `docs/UPSTREAM-evkg-commits.md`；**推送需用户另行指示**）。
 
 ### 重要约束（用户指定）
 
@@ -56,4 +62,5 @@
 | 2026-10-01 | 架构评审 | 用户指出 adapter 正在替 evkg 打业务补丁，应改为修 evkg 通用能力、让 adapter 变薄；据此把 M1-c 挂起，改为 M1-b.5（四小步） | 我核实后收窄范围并提出三点修正：`Passage.locator` 本就存在（缺的是填充而非结构）；三个"缺口"实为 `_save_source_passages` 单一有损交接点；`SourceKind.UNKNOWN`（类型未知，合理低先验）与"未评估"（缺失值）是两件事。用户接受修正并选定 b.5c 用方案 (a) | — | — | M1-b.5a 开工 |
 | 2026-10-01 | M1-b.5a | 修 evkg：`SourceKind.CODE`、`CodeConfig`+`code_language_for`、`CodeReader`、`split_code_passages`、`ingest_code_file`、CLI 分派、默认 readers 顺序；本仓：growth 领域包加 code、adapter 改走 `ingest_code_file` 并**删掉自造 text_like 路由** | ① `normalize_document` 会折叠空白并重排行（8 行 Java 塌成 3 行、缩进全失）→ 经 V1 状态机无法保真行号；② passage id 含切分方案 → 换切分器后旧 passage 只累积不替换（实测混入 11 条被撕裂的旧片段）→ 移入 b.5c；③ 切分器经四轮实测修正才收敛；④ **D1 的预测被证伪**（"MVP 大概率不需要改 evkg"），但 D1 的决策成立 | EV-009…EV-012 | symbol 级精度需解析器；累积问题待 b.5c | M1-b.5b 待开工确认 |
 | 2026-10-01 | M1-b.5b | 修 evkg assessment 语义：`ASSESSED`/`UNASSESSED` 与 `assess_unassessed()`/`resolve_source_assessment()`；两处 `default=0.25` 移除；`Confidence.score`/`source_reliability` 与 `EvidenceLink.confidence` 可空并加 `assessment_status`；三个消费者同步 | ① **危害实测**：kind=code 来源无缓存分级就按 0.25 计权，同源同内容差 **0.55** 且静默 → 修复后 0.00；② 按 kind 推导不是"发明数字"（同一份策略表的确定性函数），并用 `origin` 标出"未逐来源评估"；③ 缺失必须**双向设防**：既不得兜底低分，也不得兜底高分；④ 未新建 claim 生命周期（沿用 `ClaimStatus`，未分级记为 `DISPUTED`）；⑤ 测试按"先写后改"，并用实证脚本单独留证旧行为 | EV-013…EV-016 | — | M1-b.5c 待开工确认 |
+| 2026-10-01 | M1-b.5d | 适配层变薄：删掉 `_tag_source` 的裸 SQL、自造后缀路由与 metadata 补丁；evkg 补 `ingest_path()` 统一路由与 `find_sources()` 按 metadata 检索；新增边界检查测试防止耦合回潮 | ① 用户把目标收窄为「**证明 Growth OS 不再需要知道 evkg 内部存储细节**」，并要求加一项**适配层依赖检查** —— 我做成静态 AST 检查（禁 `sqlite3` / `.db.execute` / `json_set` / `json_extract` / 内联 SQL / 下划线成员 / `evkg.ingest.connectors`），因为"M1-b.5c 期间我自己就复用了 OR-IGNORE 的 helper"，证明靠小心守不住；② `IngestResult.route` 被删除：路由是 evkg 的实现细节，`kind=="code"` 已能表达同一事实；③ 检查最初误报文档字符串（我写的"不做什么"说明里含这些词）→ 改为先剥 docstring 再匹配 | EV-021…EV-024 | symbol 级精度待解析器；evkg 不得推送远程 | 待用户确认进入 M1-c |
 | 2026-10-01 | M1-b.5c | 修 evkg 写入语义：`logical_source_id()` 统一两套 id 方案、`Source.content_hash`（基于换行规范化文本）、`save_source` 返回 inserted/updated/unchanged 且 metadata 合并、`_put` 对 sources 改真 upsert、`save_passages` 整体替换、新增 `purge_passages()` 级联清理；pipeline 透传 kind 与 content_hash | ① **我自己踩了用户警告过的坑**：更新分支复用了 `_put`（`INSERT OR IGNORE`），`save_source` 报 updated 但库里仍是旧值 → 已把 `_put` 对 sources 改成真 upsert 从根上消除；② **content_hash 不能用原始字节**：manifest 路径早已按规范化文本取哈希，而快路径用原始字节，两条路径互相矛盾；且原始字节哈希会让一次 git checkout 换行把所有来源判成"已变"→ 统一为「content_hash 相同 ⟺ 段落所依据的文本相同」；③ **新增发现：删 passage 必须级联**，否则同时点亮四条不变量（留下自己审计不过的库）→ 实现 `purge_passages()` 并返回各表清理数量（级联删除是真实数据损失，必须可见）；④ `read_bytes().decode()` 不做换行翻译，CRLF 会让 `\r` 混进 passage 文本并让 locator 校验失败 → 新增 `decode_text()` 显式统一换行 | EV-017…EV-020 | symbol 级精度需解析器；evkg 不得推送远程 | M1-b.5d 待开工确认 |

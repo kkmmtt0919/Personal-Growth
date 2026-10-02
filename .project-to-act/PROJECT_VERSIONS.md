@@ -15,7 +15,7 @@
 - 计划内容：M1–M5 完成 → 跑通 `Goal → Evidence → Capability → Task → Growth` 闭环，对应验收门 G1–G5
 - 发布条件：
   - G1–G5 全部通过且证据未过期
-  - 质量门 QG1–QG5 通过（含 evkg 自身测试全绿；b.5b 后为 81 项）
+  - 质量门 QG1–QG5 通过（含 evkg 自身测试全绿；b.5d 后为 101 项）
   - `evkg audit_store` = pass；`run_damage_selftest` = caught
 
 ## 兼容性与迁移政策
@@ -30,7 +30,7 @@
 
 | 依赖 | 当前指向 | 解析方式 | 备注 |
 |---|---|---|---|
-| evkg | `D:\projects\evkg` @ `068389d`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin。本地已有 3 个上游提交（`a4b15af`、`e432c42`、`068389d`），**用户明确要求不得推送到 `redmaplewww/evkg`**（远程停在 `a448f44`） |
+| evkg | `D:\projects\evkg` @ `28afbc0`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin。本地已有 **4** 个上游提交（`a4b15af`、`e432c42`、`068389d`、`28afbc0`），**用户明确要求不得推送到 `redmaplewww/evkg`**（远程停在 `a448f44`） |
 | project-to-act | `D:\projects\project-to-act`；已装至 `~/.zcode/skills/project-to-act/` | 治理工具，非运行时依赖 | 仅用其脚本与约定 |
 | Python | 3.12.14（uv 托管） | `requires-python >= 3.11` | 系统解释器为 3.7.8，必须走 uv |
 | uv | 0.12.10 | — | 已验证可用 |
