@@ -1,0 +1,112 @@
+{
+  "work_copy": "artifacts\\m1f\\_damage_work.db",
+  "real_db": "data\\growth.db",
+  "real_db_untouched": true,
+  "real_db_delta": {},
+  "scenario_a_builtin": {
+    "scenario": "A_evkg_builtin",
+    "targeted_invariant": "evidence_quote_not_in_passage",
+    "injected_data_type": "存在的 passage + 伪造引文（由 evkg 内部注入并清理）",
+    "raw_selftest": {
+      "status": "caught",
+      "injected_claim": "clm_damage_a9efbd30",
+      "injected_evidence": "ev_damage_a9efbd30",
+      "quote_violations_after_injection": 1,
+      "audit_status_during_injection": "fail"
+    },
+    "detected": true,
+    "violations": [
+      "evidence_quote_not_in_passage"
+    ],
+    "measurement_caveat": "内置函数把注入→审计→清理放在同一调用内，其 finally 会立即删除注入行。因此**无法在函数外部观测到注入期间的违规条数**，只能采信它自报的 caught。为不依赖自述，另加受控注入 A' 做独立测量。",
+    "recovery": {
+      "audit_status_after_cleanup": "pass",
+      "audit_total_violations_after_cleanup": 0,
+      "counts_delta_excluding_audit_log": {},
+      "counts_delta_raw": {
+        "audit_log": [
+          1447,
+          1448
+        ]
+      }
+    }
+  },
+  "controlled_injections": [
+    {
+      "attack": "controlled_fabricated_quote",
+      "injected_data_type": "已存在的 passage + 伪造引文（引文不在该 passage 文本中）",
+      "targeted_invariant": "evidence_quote_not_in_passage",
+      "injected": {
+        "evidence_id": "ev_controlled_fabricated_quote",
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "source_id": "src_bb2159281c69a158",
+        "passage_id": "p_0233b1b8d60fb9e9",
+        "quote": "这段文字从未出现在任何原始材料中 controlled-injection",
+        "row_present_after_injection": 1
+      },
+      "detected": true,
+      "violations": [
+        "evidence_quote_not_in_passage"
+      ],
+      "cross_check": {
+        "check_violations_before": 0,
+        "check_violations_during": 1,
+        "violation_count_increased": true,
+        "injected_id_named_in_audit_sample": true,
+        "audit_status_during_injection": "fail",
+        "audit_total_violations_during": 1
+      },
+      "recovery": {
+        "audit_status_after_cleanup": "pass",
+        "audit_total_violations_after_cleanup": 0,
+        "targeted_check_violations_after_cleanup": 0,
+        "counts_delta_excluding_audit_log": {},
+        "counts_delta_raw": {
+          "audit_log": [
+            1449,
+            1451
+          ]
+        },
+        "counts_delta_note": "audit_log 的增量来自本流程自身的审计/写入记录；其余表必须零差异"
+      }
+    },
+    {
+      "attack": "controlled_dangling_passage",
+      "injected_data_type": "已存在的 claim/source + **不存在的 passage_id**，引文看似合理",
+      "targeted_invariant": "evidence_missing_passage",
+      "injected": {
+        "evidence_id": "ev_controlled_dangling_passage",
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "source_id": "src_bb2159281c69a158",
+        "passage_id": "p_this_passage_does_not_exist",
+        "quote": "代码证明用户完成实现",
+        "row_present_after_injection": 1
+      },
+      "detected": true,
+      "violations": [
+        "evidence_missing_passage"
+      ],
+      "cross_check": {
+        "check_violations_before": 0,
+        "check_violations_during": 1,
+        "violation_count_increased": true,
+        "injected_id_named_in_audit_sample": true,
+        "audit_status_during_injection": "fail",
+        "audit_total_violations_during": 1
+      },
+      "recovery": {
+        "audit_status_after_cleanup": "pass",
+        "audit_total_violations_after_cleanup": 0,
+        "targeted_check_violations_after_cleanup": 0,
+        "counts_delta_excluding_audit_log": {},
+        "counts_delta_raw": {
+          "audit_log": [
+            1452,
+            1454
+          ]
+        },
+        "counts_delta_note": "audit_log 的增量来自本流程自身的审计/写入记录；其余表必须零差异"
+      }
+    }
+  ]
+}

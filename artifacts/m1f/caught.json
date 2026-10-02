@@ -1,0 +1,23 @@
+[
+  {
+    "attack": "A_evkg_builtin",
+    "detected": true,
+    "violations": [
+      "evidence_quote_not_in_passage"
+    ]
+  },
+  {
+    "attack": "controlled_fabricated_quote",
+    "detected": true,
+    "violations": [
+      "evidence_quote_not_in_passage"
+    ]
+  },
+  {
+    "attack": "controlled_dangling_passage",
+    "detected": true,
+    "violations": [
+      "evidence_missing_passage"
+    ]
+  }
+]

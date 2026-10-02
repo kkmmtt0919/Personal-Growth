@@ -1,0 +1,39 @@
+{
+  "A_evkg_builtin": {
+    "audit_status_after_cleanup": "pass",
+    "audit_total_violations_after_cleanup": 0,
+    "counts_delta_excluding_audit_log": {},
+    "counts_delta_raw": {
+      "audit_log": [
+        1447,
+        1448
+      ]
+    }
+  },
+  "controlled_fabricated_quote": {
+    "audit_status_after_cleanup": "pass",
+    "audit_total_violations_after_cleanup": 0,
+    "targeted_check_violations_after_cleanup": 0,
+    "counts_delta_excluding_audit_log": {},
+    "counts_delta_raw": {
+      "audit_log": [
+        1449,
+        1451
+      ]
+    },
+    "counts_delta_note": "audit_log 的增量来自本流程自身的审计/写入记录；其余表必须零差异"
+  },
+  "controlled_dangling_passage": {
+    "audit_status_after_cleanup": "pass",
+    "audit_total_violations_after_cleanup": 0,
+    "targeted_check_violations_after_cleanup": 0,
+    "counts_delta_excluding_audit_log": {},
+    "counts_delta_raw": {
+      "audit_log": [
+        1452,
+        1454
+      ]
+    },
+    "counts_delta_note": "audit_log 的增量来自本流程自身的审计/写入记录；其余表必须零差异"
+  }
+}
