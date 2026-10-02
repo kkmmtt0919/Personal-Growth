@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d 均通过**；M1 的三层基础（ingest / evidence model / adapter boundary）已闭环；M1-c（extract）未开始
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）
+- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d / M1-c 均通过**；M1 的三层基础已闭环，且已产出首批可逐字回溯的能力断言（2 条）；M1-d（attack）未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）
 - 最后检查：2026-10-01
-- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 3 个提交且不得推送**
+- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；独立 verifier 未配置（M1-d 攻击环节将退化为自己审自己）；归属层缺失使项目产物暂不能作为能力证据
 
 ## 验收标准
 
@@ -68,6 +68,10 @@
 | EV-022 | 2026-10-01 | `uv run pytest tests/`（本仓，含新增边界检查） | exit 0 | adapter `bbfd5412fea6`；boundary `10de9f47ff22` | **38 passed**。新增 `tests/test_adapter_boundary.py` **11 项静态 AST 检查**：可执行代码中不得出现 `sqlite3` / `.db.execute` / `.db.commit` / `json_set` / `json_extract` / 内联 SQL 关键字 / 下划线成员；只允许导入 evkg 的公共模块；不得依赖 sqlite3/sqlalchemy/peewee；不得调用 store 低层方法；不得再有私有辅助函数（`_tag_source` 已删除）。检查先剥 docstring 再匹配，避免把"不做什么"的说明文字误判 | 命令输出；`tests/test_adapter_boundary.py` | 90d |
 | EV-023 | 2026-10-01 | 回归复跑 b.5b / b.5c 的全部实证脚本 | exit 0 | 同 EV-014 / EV-018 | b.5c 端到端：**全部通过**（真实库三态循环 + RagService.java 替换式改写 8/8）；b.5b 消费者检查：**全部通过**（7/7）。证明 b.5d 删除裸 SQL 与 metadata 补丁后，既有写入语义与下游路径均未破 | 命令输出 | 90d |
 | EV-024 | 2026-10-01 | 真实库复核：source id 稳定性 + 通道过滤改走 `find_sources` + `adapter.audit` | pass | adapter `bbfd5412fea6` | 旧 id 全部仍在；相对基线的字段差异**仅** `src_bb2159281c69a158.kind`（b.5a 已记录的刻意变更，基线未动）。通道过滤经**公共 API** 得到 user_evidence=2 / domain_reference=1，repo_artifact=2、external_ref=1，与改动前一致。`audit_store` = pass，0/10 violations | 命令输出；`data/growth.db` | 90d |
+| EV-025 | 2026-10-01 | 模型连通性探针 `artifacts/m1b5/probe_model.py`（1 次极小结构化请求） | exit 0 | probe `9a3335fec358` | **PASS**。provider=openai_compatible, model=glm-5.3, tokens in/out=193/30, 中文与 schema 约束均正常。过程中修掉两处配置问题：`EVKG_REASONING_EFFORT=none` 与 `EXTRA_BODY={"thinking":{"type":"disabled"}}` 被模型以 `400 code 1210 该模型始终思考` 拒绝 → 改用 `low`；`EVKG_EXTRA_BODY` 裸写在 dotenv 下会被剥掉内部引号而 JSON 解析失败 → 整体加单引号 | 命令输出；`artifacts/m1b5/probe_model.py` | 90d |
+| EV-026 | 2026-10-01 | 小样本试跑（12 条 passage，库副本） | exit 0 | 副本库（已清理） | 12 条 = 全部 9 条代码 passage + README 前 3 条；产出 **0 条主张**（9 entities / 2 aliases）。**这是正确行为**：`package com.hw.service;`、`import …` 不含能力断言，README 描述的是项目而非个人 —— 即成长领域包「不作能力推断」规则生效。先试跑再全量的做法在此避免了直接对真实库跑 109 条的盲跑 | 命令输出 | 90d |
+| EV-027 | 2026-10-01 | 全量抽取 `uv run --env-file .env python artifacts/m1b5/run_extract.py data/growth.db` | exit 0 | script `9f9319a3984c` | **109/109 passage 完成**（6 批，0 失败批）。产出 **2 claims / 60 entities / 3 aliases / 1 event / 3 evidence / 2 relations**；抽取账本覆盖 109/109。`audit_store` = pass，0/10 violations | 命令输出；`data/growth.db` | 90d |
+| EV-028 | 2026-10-01 | 两条主张的证据链逐字回溯 + 引文完整性 + 「严禁升级」实例验证 | pass | 同上 | ① **「严禁升级」通过**：README「未来规划」的未勾选 TODO 被抽为 `用户 \| 计划学习 \| Dubbo、gRPC…`，陈述明写"仅为计划事项，不代表已具备相应能力"，predicate **未**被升级为"具备能力"；② 另一条 `用户 \| 实现过 \| RAG 检索服务` 的陈述自带限定"**但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身**"（抽取质量自评 0.35，受来源基线 0.82 上限约束）；③ 3 条 evidence 的引文**逐字**存在于对应 passage；④ 每条主张都能沿 claim → evidence → passage → source 走通，代码来源的 passage 带 `line_start/line_end` 与 `language` | 命令输出；`data/growth.db` | 90d |
 
 ## Gate 记录
 
@@ -96,6 +100,10 @@
 | M1-b.5d | 2026-10-01 | **适配层边界**：无裸 SQL / 无自造路由 / 无私有辅助 | `adapter.py` | 通过 | EV-022 | — |
 | M1-b.5d | 2026-10-01 | 删补丁后既有写入语义与下游未破 | 回归脚本 | 通过 | EV-023 | — |
 | M1-b.5d | 2026-10-01 | source 身份稳定 + 检索走公共 API | `data/growth.db` | 通过 | EV-024 | — |
+| M1-c | 2026-10-01 | 模型可用（探针通过，含两处配置修正） | `glm-5.3` @ open.bigmodel.cn | 通过 | EV-025 | — |
+| M1-c | 2026-10-01 | 抽取不越权（项目描述不产生个人能力断言） | 12 条试跑 | 通过 | EV-026 | — |
+| M1-c | 2026-10-01 | 全量抽取完成且库自洽 | `data/growth.db` | 通过 | EV-027 | — |
+| M1-c | 2026-10-01 | **「严禁升级」**（计划 ≠ 具备）+ 证据链逐字可回溯 | 2 条主张 | 通过 | EV-028 | — |
 
 ## 验收记录
 
@@ -108,5 +116,6 @@
 | 2026-10-01 | M1-b.5b（缺失值语义、下游消费者、旧数据不变性） | EV-013 EV-014 EV-015 EV-016 | 通过 | — | **M1-b.5b 验收通过** |
 | 2026-10-01 | M1-b.5c（逻辑身份、content_hash、显式 upsert、级联替换） | EV-017 EV-018 EV-019 EV-020 | 通过 | symbol 级精度待解析器；evkg 不得推送远程 | **M1-b.5c 验收通过** |
 | 2026-10-01 | M1-b.5d（适配层边界、公共 API 补齐） | EV-021 EV-022 EV-023 EV-024 | 通过 | — | **M1-b.5d 验收通过；M1 的 a/b/c 三层闭环** |
+| 2026-10-01 | M1-c（extract：证据 → 能力断言） | EV-025 EV-026 EV-027 EV-028 | 通过 | 归属层待 M2/M4 决策；独立 verifier 未配置 | **M1-c 验收通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

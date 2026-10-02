@@ -305,6 +305,48 @@ evkg = { path = "../evkg", editable = true }
    `ast.unparse` 重新生成代码再匹配 —— 只检查可执行代码。记录此事是因为它说明
    "静态检查"本身也需要被验证，否则会逼着作者把解释性文字删掉。
 
+### M1-c 新增发现
+
+1. **★ 抽取器正确地拒绝把项目成果归因为个人能力 —— 而这个"正确的拒绝"暴露了缺失的一层。**
+   109 条 passage（含 57 条项目 README、9 条源码、43 条领域参考）只产出 **2 条**能力断言。
+   其中一条的陈述是模型自己写的：
+
+   > 「原文（README）描述的项目 MYtest 中实现了 RAG 检索服务…；**但未明确用户本人在项目中的
+   > 具体角色与贡献，能力主张仅基于项目描述本身**。」
+
+   这正是成长领域包里「不作能力推断」那条规则在起作用（b.5a 写入）。但它的后果是：
+   **项目产物（README / 源码）无法自动变成"用户的能力证据"，除非先建立归属** ——
+   "这份仓库确实出自用户"。
+
+   **正确做法**：归属不该由 LLM 去推断（那会把"项目用了 RAG"变成"用户会 RAG"，
+   正是 PRD 第 4 节问题三要防的），而应作为**证据层的显式、可审计决定**：
+   `growth_evidence_type=repo_artifact` + `growth_channel=user_evidence` 这一组合本身
+   就已经表达了"这是用户交给系统的一份仓库产物"。这是 ARCHITECTURE §3 那条 L1/L2 边界的
+   又一体现 —— **LLM 只负责"文本说了什么"，Growth OS 负责"这对用户意味着什么"**。
+   M3 的 GitHub 授权动作会天然提供归属（用户选择授权哪个仓库 = 归属声明）。
+
+   **未决**：归属规则的具体形式（是否需要在 `metadata` 里显式记一条
+   `attribution: user_provided`，以及它如何参与 M4 的评级）留待 M2/M4 决策。
+
+2. **「严禁升级」规则验证通过。** README 的「未来规划」是未勾选 TODO 清单，被抽成
+   `用户 | 计划学习 | Dubbo、gRPC 协议…`，且陈述明写"仅为计划事项，不代表已具备相应能力"。
+   predicate 没有被升级成"具备能力"。这是 M1-c 最重要的单点验证。
+
+3. **2 条主张对演示成长闭环偏薄。** 原因不是抽取失败，而是现有材料以"项目介绍"为主。
+   按证据强度阶梯，能承载"用户能力"的材料是任务提交（`task_submission`）、
+   现场作答（`probe_result`）、对话自述（`chat_assertion`）—— 这些是 M5 任务闭环自产的。
+   **M4 的 G3 对照实验必须自造这类材料**，不能指望一个项目 README。
+
+4. **evkg 自带 `.env.example` 对它的默认模型是无效的**（两处）：
+   * 同时设置 `EVKG_REASONING_EFFORT=none` 与 `EXTRA_BODY={"thinking":{"type":"disabled"}}`，
+     而 `glm-5.3` 实测返回 `400 code 1210: 该模型始终思考，不支持关闭思考；请使用 low、high 或 max`。
+     → 改为 `EVKG_REASONING_EFFORT=low` 可用。
+   * `EVKG_EXTRA_BODY={"thinking":{"type":"disabled"}}` 是**裸写**的，标准 dotenv 解析器
+     （如 `uv --env-file`）会剥掉内部双引号，得到 `{thinking:{type:disabled}}`，
+     `json.loads` 直接失败。必须整体加单引号。
+   这是该文件第三处问题（前两处：`EVKG_VERIFIER_PROVIDER` 变量名错误、本次两处），
+   建议在上游一并修正。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
