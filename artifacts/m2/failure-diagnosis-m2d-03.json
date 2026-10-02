@@ -1,0 +1,66 @@
+{
+  "attempt": "M2-d real #4（提示词修复 + runner 硬编码修复后）",
+  "outcome": "stopped_on_failure（能力树形状不合格；语义失败，按约定未自动重试）",
+  "progress_vs_previous": {
+    "attempt_2": "模型给出两层树（4 领域/14 组/1 点）→ 层级约定未写清",
+    "attempt_3": "修复提示词后：3 领域/6 组/13 点，**形状通过**；失败于 runner 硬编码的能力点路径（已修）",
+    "attempt_4": "澄清 5 轮通过；树 3 领域/8 组/15 点，但**一个节点名内部含「/」** → 被判为第 4 层并被整体拒绝"
+  },
+  "clarification": {
+    "result": "SUCCESS",
+    "rounds": 5,
+    "goal": {
+      "status": "confirmed",
+      "direction": "AI Agent Engineer（偏 AI 应用方向）",
+      "purpose": "找到一份 AI 应用工程师的工作",
+      "horizon": "六个月",
+      "measurable_result": "完成两个可演示的 Agent 项目并通过 20 道面试题"
+    }
+  },
+  "capability_tree_failure": {
+    "model_output": {
+      "nodes": 27,
+      "depth_distribution": {
+        "1": 3,
+        "2": 8,
+        "3": 15,
+        "4": 1
+      }
+    },
+    "offending_paths": [
+      "Agent 核心技术/工具与集成/框架使用（LangChain/LlamaIndex）"
+    ],
+    "root_cause": "提示词用「/」分隔层级，但**没有禁止节点名内部出现「/」**。模型自然地写了「框架使用（LangChain/LlamaIndex）」，该「/」被当作层级分隔符 → 该节点被判为 4 层，且其\"父节点\"不存在 → 整体拒绝。属格式约定未写全，不是模型能力问题。",
+    "why_whole_tree_rejected": "按冻结设计不写半棵树（部分能力模型比没有更难发现）——这一条保持不变"
+  },
+  "proposed_prompt_change": {
+    "file": "backend/growth_os/goal/capability_model.py（CAPABILITY_SYSTEM）",
+    "change": [
+      "在 path 规则里补一句：节点名内部**不得出现「/」**（「/」只用于分隔层级）；需要并列时用「、」或「或」，例如 \"框架使用（LangChain、LlamaIndex）\"",
+      "自检句补充：每个 path 中「/」的个数必须恰好为 2"
+    ],
+    "why_enough": "15/16 个能力点已正确；唯一问题是名称内的分隔符。改这一条即可，标准不变"
+  },
+  "options_for_user": [
+    "A（推荐）：按上述补一句提示词后重跑（预算不变：应用层 ≤8、HTTP ≤8、零额外重试）",
+    "B：把层级分隔符换成不会出现在名称里的字符（如「›」）——需改冻结设计中的 path 约定",
+    "C：允许\"形状失败时自动发一次带错误清单的修正请求\"（上限 +1 次调用）——属语义重试，需你批准为常设规则"
+  ],
+  "budget_used": {
+    "structured_calls_app_level": 6,
+    "structured_calls_upper_bound": 8,
+    "http_requests_observed": 6,
+    "http_request_cap": 8,
+    "transport_extra_retries": 0,
+    "tokens_total": 6036,
+    "note": "HTTP 请求数由包装器统计（含任何重试）；真实模式已把 EVKG_HTTP_RETRIES 设为 1"
+  },
+  "cost_estimate_cumulative": {
+    "attempt_2": "5 次调用 / 4634 tokens",
+    "attempt_3": "7 次调用 / 7196 tokens",
+    "attempt_4": "6 次调用 / 6036 tokens",
+    "合计": "18 次调用 / 约 17.9k tokens（flash 价目下约 0.02 元）"
+  },
+  "data_boundary": "data/growth.db 未触碰；所有尝试只写临时库与 artifacts/m2/",
+  "auto_retry": "未发生（按约定停在报告处，等待你确认方案 A）"
+}

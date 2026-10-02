@@ -209,3 +209,17 @@ def test_model_cannot_claim_verified_source(store):
     assert "unverified" in domain["source_note"]
     # 模型的说法被保留（不做审查式删改），但必须与"未校验"标记同时出现
     assert "已核实" in domain["source_note"]
+
+def test_prompt_states_the_three_level_convention_explicitly():
+    """回归守卫：真实会话曾因"第三层才算能力点"未写清而失败（诊断 m2d-02）。
+
+    提示词必须显式写明层级约定与可自检的数量关系，否则模型会给出两层树。
+    """
+    from growth_os.goal import CAPABILITY_SYSTEM
+
+    assert "必须用满三层" in CAPABILITY_SYSTEM
+    assert "第三层才算能力点" in CAPABILITY_SYSTEM
+    assert "两个" in CAPABILITY_SYSTEM and "2 个能力点" in CAPABILITY_SYSTEM
+    assert "3×2×2" in CAPABILITY_SYSTEM.replace(" ", "")
+    assert CAPABILITY_SYSTEM.count("反例") >= 1
+    assert "输出前自检" in CAPABILITY_SYSTEM

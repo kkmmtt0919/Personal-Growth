@@ -50,7 +50,7 @@ from growth_os.goal import (
     CapabilityModelGenerator,
     GoalAgent,
 )
-from growth_os.store import GrowthStore, capability_id
+from growth_os.store import GrowthStore
 
 GOAL_ID = "goal_m2_real"
 USER_TEXT = "我想成为 AI Agent Engineer"
@@ -144,7 +144,11 @@ async def run_session(store: GrowthStore, gateway, mode: str) -> dict:
         id_factory=lambda: f"{mode}_run_{next(counter):03d}",
     )
     first = await generator.generate(GOAL_ID)
-    adjusted_id = capability_id(GOAL_ID, "Agent 架构/循环与规划/能力点 1", "能力点 1")
+    # 从**已生成的树**里挑一个真实的三层能力点来做人调 —— 不能硬编码路径：
+    # 真实模型每次给出的领域/能力组命名都不同（M2-d 尝试 3 就因此被 GrowthStoreError 拦下）。
+    generated_rows = store.list_capabilities(GOAL_ID)
+    target = next(row for row in generated_rows if row["depth"] == 3)
+    adjusted_id = target["id"]
     generator.adjust(adjusted_id, 5, "演练：人工上调，验证再生成保护")
     second = await generator.generate(GOAL_ID)
 

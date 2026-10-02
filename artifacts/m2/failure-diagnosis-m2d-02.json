@@ -1,0 +1,96 @@
+{
+  "attempt": "M2-d real #2（修复后首次真实会话，glm-5.3-flash）",
+  "outcome": "stopped_on_failure（能力树形状不合格；按约定未自动重试）",
+  "clarification": {
+    "result": "SUCCESS —— 真实模型 4 轮完成澄清，四要素齐全并显式确认",
+    "rounds": [
+      {
+        "id": "clar_goal_m2_real_01",
+        "goal_id": "goal_m2_real",
+        "round": 1,
+        "question": "你希望以 AI Agent Engineer 为目标，是为了找一份相关工作、在当前岗位上转型，还是出于其他目的？",
+        "answer": "找一份 AI 应用工程师的工作",
+        "created_at": "2026-10-02 08:09:02"
+      },
+      {
+        "id": "clar_goal_m2_real_02",
+        "goal_id": "goal_m2_real",
+        "round": 2,
+        "question": "你希望在多长时间内（比如半年、一年）拿到这份 AI 应用工程师的工作？",
+        "answer": "六个月",
+        "created_at": "2026-10-02 08:09:05"
+      },
+      {
+        "id": "clar_goal_m2_real_03",
+        "goal_id": "goal_m2_real",
+        "round": 3,
+        "question": "在这六个月结束时，你希望用什么样的具体结果来衡量自己已达成目标（比如拿到 offer、完成若干个 Agent 项目作品集）？",
+        "answer": "完成两个可演示的 Agent 项目并通过 20 道面试题",
+        "created_at": "2026-10-02 08:09:08"
+      },
+      {
+        "id": "clar_goal_m2_real_04",
+        "goal_id": "goal_m2_real",
+        "round": 4,
+        "question": "综合你的表述：在六个月内完成两个可演示的 Agent 项目并通过 20 道面试题，以帮助你找到一份 AI 应用工程师的工作——是否以此为当前目标？",
+        "answer": "好，就以这个为目标",
+        "created_at": "2026-10-02 08:09:11"
+      }
+    ],
+    "goal": {
+      "status": "confirmed",
+      "direction": "AI Agent Engineer（AI 应用工程师方向）",
+      "purpose": "找一份 AI 应用工程师的工作",
+      "horizon": "六个月",
+      "measurable_result": "完成两个可演示的 Agent 项目并通过 20 道面试题",
+      "source_quote": "好，就以这个为目标"
+    },
+    "note": "语义用户对真实模型的任意提问顺序都给出了对应信息，未出现未匹配；4 轮完成（上限 6）"
+  },
+  "capability_tree_failure": {
+    "validator_requirement": "≥3 个 depth=1 领域 且 ≥12 个 depth=3 能力点 且 ≤3 层（M2-PLAN §3.1）",
+    "model_output": {
+      "nodes": 19,
+      "depth_distribution": {
+        "1": 4,
+        "2": 14,
+        "3": 1
+      },
+      "sample_paths": [
+        "LLM 基础",
+        "LLM 基础/Prompt 工程",
+        "LLM 基础/Prompt 工程/结构化输出与上下文设计",
+        "LLM 基础/模型选型与 API 使用",
+        "LLM 基础/评估与调优",
+        "Agent 系统设计"
+      ]
+    },
+    "root_cause": "提示词与校验器的层级约定不一致：提示词写\"至少 3 个领域、至少 12 个能力点\"，但没说\"能力点必须是第三层\"。模型把第二层的 14 个节点当成能力点，只在一个能力组下展开了第三层 → 校验器按 depth=3 计数得 1 < 12。属规格表达问题，不是模型能力问题。",
+    "no_lowering_of_standard": "不把\"≥12 个三层能力点\"降级为\"≥12 个任意层节点\" —— 那等于降低验收标准"
+  },
+  "proposed_prompt_change": {
+    "file": "backend/growth_os/goal/capability_model.py（CAPABILITY_SYSTEM）",
+    "change": [
+      "明确\"必须用满三层\"并给出可自检的数量关系：≥3 领域；每领域 ≥2 能力组；每能力组 ≥2 能力点（3×2×2 = 12）",
+      "加入合格示例与不合格反例：`LLM 基础/Prompt 工程/结构化输出设计`（合格，第三层才是能力点）对 `LLM 基础/Prompt 工程`（不合格，只是能力组）",
+      "加入输出前自检：数一数第三层节点是否 ≥12"
+    ]
+  },
+  "options_for_user": [
+    "A（本次采用）：按上述修改提示词后重跑，标准不变、预算不变（应用层 ≤8、HTTP ≤8、零额外重试）",
+    "B（未采用，留给你决定）：允许\"形状失败时自动发一次带错误清单的修正请求\"（上限 +1 次调用）——属语义重试，需你批准为常设规则",
+    "C（未采用）：修改已冻结的标准（把\"≥12 个三层能力点\"改为\"≥12 个叶子节点\"）——需你决策"
+  ],
+  "budget_used": {
+    "structured_calls_app_level": 5,
+    "structured_calls_upper_bound": 8,
+    "http_requests_observed": 5,
+    "http_request_cap": 8,
+    "transport_extra_retries": 0,
+    "tokens_total": 4634,
+    "note": "HTTP 请求数由包装器统计（含任何重试）；真实模式已把 EVKG_HTTP_RETRIES 设为 1"
+  },
+  "cost_estimate": "5 次调用、4634 tokens（flash 价目下约 0.006 元）",
+  "data_boundary": "data/growth.db 未触碰（运行前后哈希一致）；本次只写临时库与 artifacts/m2/",
+  "auto_retry": "未发生（按约定停在报告处；用户回复\"跑\"后按方案 A 继续）"
+}
