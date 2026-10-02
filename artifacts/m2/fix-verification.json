@@ -1,0 +1,78 @@
+{
+  "fix": "M2-d 尝试 1 后的演练脚本修复（用户侧语义匹配 + 状态驱动假模型 + ≤6 轮驱动）",
+  "commits": {
+    "failure_record_kept_intact": "463a73b（原始失败记录，未改写）"
+  },
+  "before": {
+    "offline_fake_run": "11/11 通过但**不真实**：手写响应在最后一轮补齐了用户从未提供的时间周期与可衡量结果",
+    "real_attempt_1": "第 3 次调用后失败（GoalStateError: 当前状态 clarifying 不能确认）；诊断见 artifacts/m2/failure-diagnosis-m2d-01.json",
+    "tests_total": 116
+  },
+  "after": {
+    "offline_fake_run": {
+      "all_checks_passed": true,
+      "checks_true": 13,
+      "checks_total": 13,
+      "rounds_used": 5,
+      "all_answers_matched": true,
+      "goal_elements_equal_user_answers": {
+        "direction": "应用方向（偏 AI 应用，不是算法或基础设施）",
+        "purpose": "找一份 AI 应用工程师的工作",
+        "horizon": "六个月",
+        "measurable_result": "完成两个可演示的 Agent 项目并通过 20 道面试题"
+      },
+      "structured_calls_app_level": 7,
+      "planned_upper_bound": 8
+    },
+    "tests": {
+      "total": 128,
+      "per_file": {
+        "test_adapter_boundary.py": 16,
+        "test_agent_runtime.py": 8,
+        "test_capability_model.py": 10,
+        "test_damage_selftest.py": 10,
+        "test_dossier.py": 22,
+        "test_evidence_adapter.py": 27,
+        "test_goal_clarification.py": 20,
+        "test_growth_store.py": 15
+      },
+      "new_tests": [
+        "test_simulated_user_resolves_conflicting_markers_by_precedence",
+        "test_simulated_user_returns_explicit_unmatched_instead_of_inventing",
+        "test_simulated_user_is_deterministic_on_repeated_questions",
+        "test_every_catalog_question_matches_its_own_element（4 参数）",
+        "test_scripted_conversation_only_uses_user_provided_information",
+        "test_out_of_order_questions_still_converge",
+        "test_repeated_question_costs_a_round_but_does_not_corrupt",
+        "test_six_round_exhaustion_stops_without_autofill",
+        "test_complete_elements_without_ready_are_never_auto_confirmed"
+      ],
+      "ruff": "passed",
+      "boundary_checks": "随 pytest 执行：证据层禁 sqlite3/裸 SQL、store/ 只碰 g_ 表、M2 流程零写入 evkg 表"
+    },
+    "real_db": {
+      "sha256": "6ca3205f8132f7d99b6a1f38b896d445985176ccc068780507aec2ad5c4a7f9d",
+      "unchanged_vs_before_attempt_1": true,
+      "g_tables": [],
+      "evidence_counts": {
+        "sources": 3,
+        "passages": 109,
+        "claims": 2,
+        "evidence": 6
+      }
+    }
+  },
+  "remaining_risks": [
+    "真实模型可能问出目录外的问题 → 用户侧返回明确的\"未匹配\"回答（不编造），轮次照算；若连续未匹配会耗尽 6 轮并明确失败（不会自动补齐）",
+    "真实模型的提问顺序与次数不确定：需要 4 个要素问题 + 1 个确认问题（5 轮）最理想，6 轮是硬上限",
+    "能力树形状（≥3 领域 / ≥12 能力点 / ≤3 层）仍是硬门槛：若不满足会整体拒绝并报告，需另行确认是否调整提示词（不自动重试）",
+    "传输层重试（EVKG_HTTP_RETRIES=3）会增加实际 HTTP 请求数：runner 已加 httpx 包装器单独统计，应用层结构化调用数不含重试"
+  ],
+  "rerun_budget": {
+    "structured_calls_upper_bound": 8,
+    "composition": "澄清最多 6 次 + 能力树生成 2 次",
+    "model": "glm-5.3-flash（用户指定）",
+    "estimated_cost": "输入约 8-14k tokens、输出约 4-6k tokens；flash 价目（0.8/2.8 元每百万）下远低于 0.1 元",
+    "authorization": "仍需 M2_ALLOW_REAL_MODEL=1；本次修复未发起任何真实调用"
+  }
+}

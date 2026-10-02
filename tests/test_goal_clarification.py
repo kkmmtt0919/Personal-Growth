@@ -15,6 +15,18 @@ import asyncio
 import itertools
 
 import pytest
+from goal_flow_fixtures import (
+    CONFIRM_QUESTION,
+    ELEMENT_ANSWERS,
+    ELEMENT_ORDER,
+    QUESTION_CATALOG,
+    UNMATCHED_REPLY,
+    SimulatedUser,
+    drive_clarification,
+    proposal_without_consent_turns,
+    scripted_turns,
+    stubborn_question_turns,
+)
 from growth_os.agent import AgentRuntime, FakeGateway
 from growth_os.goal import (
     MAX_ROUNDS,
@@ -197,3 +209,143 @@ def test_every_turn_is_persisted_with_its_run(store):
     assert [run["id"] for run in runs] == [first.run_id, second.run_id]
     assert all(run["status"] == "ok" and run["model_source"] == "result" for run in runs)
     assert first.run_id != second.run_id
+
+# ---------------------------------------------------------------------------
+# M2-d 修复：模拟用户的语义匹配 + 驱动循环的真实性
+# ---------------------------------------------------------------------------
+
+
+def _scripted_agent(store: GrowthStore, turns: list[dict]) -> GoalAgent:
+    counter = itertools.count(1)
+    runtime = AgentRuntime(
+        store=store,
+        gateway=FakeGateway(
+            responses={"goal_clarification": turns}, provider="fake-provider", model="fake-model-x"
+        ),
+        agent="goal",
+        id_factory=lambda: f"run_{next(counter):03d}",
+    )
+    return GoalAgent(store=store, runtime=runtime)
+
+
+def test_simulated_user_resolves_conflicting_markers_by_precedence():
+    """冲突用显式优先级处理：时间 > 方向（"多长时间内找到 AI 应用工程师的工作"判为时间）。"""
+    user = SimulatedUser()
+    assert user.classify("你希望在多长时间内找到一份 AI 应用工程师的工作？") == "horizon"
+    assert user.classify("你更偏向应用、算法还是基础设施？") == "direction"
+    assert user.classify("主要目标是就业、项目能力，还是长期研究？") == "purpose"
+    assert user.classify("达到什么样的结果才算实现目标？") == "measurable_result"
+
+
+def test_simulated_user_returns_explicit_unmatched_instead_of_inventing():
+    user = SimulatedUser()
+    answer = user.answer("你平时喜欢什么运动？")
+    assert answer.matched is False and answer.field is None
+    assert answer.text == UNMATCHED_REPLY
+    for invented in ELEMENT_ANSWERS.values():
+        assert invented not in answer.text
+
+
+def test_simulated_user_is_deterministic_on_repeated_questions():
+    user = SimulatedUser()
+    question = "你希望多长时间内实现这个目标？"
+    assert user.answer(question) == user.answer(question)
+
+
+@pytest.mark.parametrize("field", ELEMENT_ORDER)
+def test_every_catalog_question_matches_its_own_element(field):
+    user = SimulatedUser()
+    for question in QUESTION_CATALOG[field]:
+        assert user.answer(question).field == field
+
+
+def test_scripted_conversation_only_uses_user_provided_information(store):
+    """fake 的真实性：最后一轮的完整提议只能由用户真正回答过的内容组成。"""
+    user = SimulatedUser()
+    proposed = [turn["proposed"] or {} for turn in scripted_turns(user)]
+    keys = {key for item in proposed for key in item}
+    values = [value for item in proposed for value in item.values()]
+    assert values, "对话脚本应当包含模型对用户信息的复述"
+    for answer in ELEMENT_ANSWERS.values():
+        assert answer in values  # 复述的值必须逐字来自用户回答
+    # 除四个要素外不得出现任何凭空补的字段
+    assert keys <= set(ELEMENT_ORDER)
+
+
+def test_out_of_order_questions_still_converge(store):
+    """乱序提问：模型先问可衡量结果，最后才问方向 —— 语义匹配不受顺序影响。"""
+    user = SimulatedUser()
+    order = ("measurable_result", "horizon", "purpose", "direction")
+    turns: list[dict] = []
+    known: dict[str, str] = {}
+    for field in order:
+        question = QUESTION_CATALOG[field][0]
+        turns.append({"question": question, "proposed": dict(known) or None, "ready_to_confirm": False})
+        simulated = user.answer(question)
+        assert simulated.field == field
+        known[field] = simulated.text
+    turns.append(
+        {"question": CONFIRM_QUESTION, "proposed": dict(known), "ready_to_confirm": True}
+    )
+    agent = _scripted_agent(store, turns)
+    result = asyncio.run(drive_clarification(agent, user, goal_id="goal_1", user_text="我想成为 AI 工程师"))
+
+    goal = store.get_goal("goal_1")
+    assert result["rounds_used"] <= MAX_ROUNDS
+    assert goal["status"] == "confirmed"
+    for field in ELEMENT_ORDER:
+        assert goal[field] == ELEMENT_ANSWERS[field]  # 逐字段等于用户真正说过的内容
+    assert all(item["answer_matched"] for item in result["rounds"] if item["answer"])
+
+
+def test_repeated_question_costs_a_round_but_does_not_corrupt(store):
+    """重复提问：用户重复同一答案、轮次照算，最终仍能收敛。"""
+    user = SimulatedUser()
+    horizon_question = QUESTION_CATALOG["horizon"][0]
+    turns = [
+        {"question": horizon_question, "proposed": None, "ready_to_confirm": False},
+        {"question": horizon_question, "proposed": None, "ready_to_confirm": False},
+        *[
+            {"question": QUESTION_CATALOG[field][0], "proposed": None, "ready_to_confirm": False}
+            for field in ("direction", "purpose", "measurable_result")
+        ],
+        {
+            "question": CONFIRM_QUESTION,
+            "proposed": {field: ELEMENT_ANSWERS[field] for field in ELEMENT_ORDER},
+            "ready_to_confirm": True,
+        },
+    ]
+    agent = _scripted_agent(store, turns)
+    result = asyncio.run(drive_clarification(agent, user, goal_id="goal_1", user_text="我想成为 AI 工程师"))
+
+    assert result["rounds_used"] == 6  # 重复的那轮被如实计入，恰好用满 6 轮上限
+    assert result["rounds_used"] <= MAX_ROUNDS
+    goal = store.get_goal("goal_1")
+    assert goal["horizon"] == ELEMENT_ANSWERS["horizon"]
+    assert goal["status"] == "confirmed"
+    assert len(store.list_clarifications("goal_1")) == result["rounds_used"]
+
+
+def test_six_round_exhaustion_stops_without_autofill(store):
+    """六轮耗尽：明确失败；四要素不得被自动补齐。"""
+    user = SimulatedUser()
+    agent = _scripted_agent(store, stubborn_question_turns(QUESTION_CATALOG["horizon"][0]))
+    with pytest.raises(ClarificationLimitReached):
+        asyncio.run(drive_clarification(agent, user, goal_id="goal_1", user_text="我想成为 AI 工程师"))
+    goal = store.get_goal("goal_1")
+    assert goal["status"] == "clarifying"
+    for field in ELEMENT_ORDER:
+        assert goal[field] is None, f"四要素不得被自动补齐: {field}"
+    assert store.counts()["g_goal_clarifications"] == MAX_ROUNDS
+
+
+def test_complete_elements_without_ready_are_never_auto_confirmed(store):
+    """四要素齐全但模型未置 ready_to_confirm：不得自动确认；轮次耗尽即失败。"""
+    user = SimulatedUser()
+    agent = _scripted_agent(store, proposal_without_consent_turns(user))
+    with pytest.raises(ClarificationLimitReached):
+        asyncio.run(drive_clarification(agent, user, goal_id="goal_1", user_text="我想成为 AI 工程师"))
+    goal = store.get_goal("goal_1")
+    assert goal["status"] != "confirmed"
+    assert goal["source_quote"] is None
+    assert goal["direction"] == ELEMENT_ANSWERS["direction"]  # 信息在，但没有"同意"
