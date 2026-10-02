@@ -51,6 +51,11 @@ from evkg.ingest import ingest_path, logical_source_id
 from evkg.store import KnowledgeStore
 
 from ..agent.gateway import GatewayResult, StructuredGateway
+from .attribution import (
+    ATTRIBUTION_METADATA_KEY,
+    AttributionError,
+    validate_attribution,
+)
 
 # ---------------------------------------------------------------------------
 # 常量与映射（这些是 Growth OS 的领域知识，不是 evkg 的）
@@ -141,6 +146,8 @@ class IngestResult:
     kind: str
     evidence_type: str
     channel: str
+    attribution: str | None
+    """本次入库声明的归属；`None` 表示未声明（读取时按 `unknown` 处理）。"""
     passage_count: int
 
 
@@ -150,6 +157,7 @@ def ingest_document(
     store: KnowledgeStore,
     evidence_type: EvidenceType,
     channel: Channel = "user_evidence",
+    attribution: str | None = None,
     title: str | None = None,
     task_id: str = "growth_os",
 ) -> IngestResult:
@@ -162,22 +170,36 @@ def ingest_document(
     幂等：同一文件重复入库不会产生重复 source/passage；内容未变时 evkg 会判为
     ``unchanged``。重打标签（换 evidence_type）是允许的 —— 新标签覆盖同名旧值，
     其余键保留。
+
+    ``attribution``（M3-a 归属层）：材料的归属声明，只允许
+    ``user_declared`` / ``user_asserted`` / ``unknown``（见
+    ``growth_os.evidence.attribution``）。**不传表示"未声明"**，
+    读取时按 ``unknown`` 处理（fail-closed），不会默认成"用户声明过"。
     """
     if evidence_type not in EVIDENCE_KIND_MAP:
         raise EvidenceError(f"未知证据类型: {evidence_type!r}")
     if channel not in ("user_evidence", "domain_reference"):
         raise EvidenceError(f"未知证据通道: {channel!r}")
+    if attribution is not None:
+        try:
+            attribution = validate_attribution(attribution)
+        except AttributionError as error:
+            # 翻译成产品侧错误类型，与其他入参校验保持一致
+            raise EvidenceError(str(error)) from error
 
     file_path = Path(path)
     if not file_path.is_file():
         raise EvidenceError(f"文件不存在: {file_path}")
 
+    metadata = {GROWTH_EVIDENCE_TYPE: evidence_type, GROWTH_CHANNEL: channel}
+    if attribution is not None:
+        metadata[ATTRIBUTION_METADATA_KEY] = attribution
     try:
         source = ingest_path(
             file_path,
             title=title,
             kind=EVIDENCE_KIND_MAP[evidence_type],
-            metadata={GROWTH_EVIDENCE_TYPE: evidence_type, GROWTH_CHANNEL: channel},
+            metadata=metadata,
             store=store,
             task_id=task_id,
         )
@@ -191,6 +213,7 @@ def ingest_document(
         kind=source.kind.value,
         evidence_type=evidence_type,
         channel=channel,
+        attribution=attribution,
         passage_count=len(store.get_passages(source_id=source.id)),
     )
 

@@ -1,0 +1,35 @@
+{
+  "purpose": "M3-a 数据边界复核 + 逐表内容哈希锚点（供后续步骤比对）",
+  "real_db": "data/growth.db",
+  "content_level_match_vs_m1g_baseline": true,
+  "match_details": "6/6 evidence（polarity/置信度/引文逐字）与 2/2 claim（陈述/状态）与 artifacts/m1g/r4_evidence.json 一致；3 个 source 的 kind/标签/content_hash 未变",
+  "table_content_sha256": {
+    "sources": "67dc369c58ca0815ba0c20b06c2f2d019ad006243fa152902f51782a4c3a7541",
+    "passages": "bcd27a58f98c98bda901a3c183c3628bffa4f8180c90a89b6d24f4bf0e853974",
+    "entities": "1767b79e44dec6be3eb4a12a5535fdd0adc1386f8dbe796378a3a0bb373b4248",
+    "entity_aliases": "7c1e52e3123d1d5983baa5954c0324b1fa11209c28db457cdfd3dd132e8916a6",
+    "events": "302503d828d13b89d4d5633928e28a5da16d2bdf45c4908f9021fa508d879d22",
+    "claims": "972cba3ea59004e22578b0f16b075fb266167e255771b5373a705816f63e8c0f",
+    "evidence": "1448d68194153ebf9c6e6b2c8a81268e41c968978705bc760c6e1768538ff853",
+    "relations": "1fbba023474246fa766f13a459002bc1e2cb050c68860b7941460561cb95dd1a"
+  },
+  "table_counts": {
+    "sources": 3,
+    "passages": 109,
+    "entities": 60,
+    "entity_aliases": 3,
+    "events": 1,
+    "claims": 2,
+    "evidence": 6,
+    "relations": 2
+  },
+  "audit_log_rows": 1453,
+  "finding_file_hash_is_a_weak_invariant": {
+    "observed": "主库文件哈希由 6ca3205f… 变为 56695a20…",
+    "cause": "audit_log 追加（invariant_audit 共 25 行，最近一次为本轮 QG1 审计）+ WAL 检查点把日志并入主库文件",
+    "conclusion": "“库未被污染”应以**逐表内容哈希 + 计数**为准；文件级哈希只在“预期零写入”的场景（如 M1-g 的 D1 实验）才有意义",
+    "next_time": "后续步骤比较时使用本文件的 table_content_sha256 作为锚点"
+  },
+  "qg1": "pass / 0 violations（10 项检查）",
+  "g_tables_in_real_db": []
+}
