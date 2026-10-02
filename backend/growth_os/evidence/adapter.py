@@ -158,6 +158,7 @@ def ingest_document(
     evidence_type: EvidenceType,
     channel: Channel = "user_evidence",
     attribution: str | None = None,
+    extra_metadata: dict | None = None,
     title: str | None = None,
     task_id: str = "growth_os",
 ) -> IngestResult:
@@ -175,6 +176,9 @@ def ingest_document(
     ``user_declared`` / ``user_asserted`` / ``unknown``（见
     ``growth_os.evidence.attribution``）。**不传表示"未声明"**，
     读取时按 ``unknown`` 处理（fail-closed），不会默认成"用户声明过"。
+
+    ``extra_metadata``（M3-b）：调用方的**附加来源信息**（如"来自哪个归档的哪个条目"）。
+    不允许覆盖保留键（证据类型 / 通道 / 归属）—— 那三类标签只能由本函数的具名参数决定。
     """
     if evidence_type not in EVIDENCE_KIND_MAP:
         raise EvidenceError(f"未知证据类型: {evidence_type!r}")
@@ -186,6 +190,10 @@ def ingest_document(
         except AttributionError as error:
             # 翻译成产品侧错误类型，与其他入参校验保持一致
             raise EvidenceError(str(error)) from error
+    extra = dict(extra_metadata or {})
+    reserved_clash = sorted(set(extra) & {GROWTH_EVIDENCE_TYPE, GROWTH_CHANNEL, ATTRIBUTION_METADATA_KEY})
+    if reserved_clash:
+        raise EvidenceError(f"extra_metadata 不得覆盖保留键: {reserved_clash}")
 
     file_path = Path(path)
     if not file_path.is_file():
@@ -194,6 +202,7 @@ def ingest_document(
     metadata = {GROWTH_EVIDENCE_TYPE: evidence_type, GROWTH_CHANNEL: channel}
     if attribution is not None:
         metadata[ATTRIBUTION_METADATA_KEY] = attribution
+    metadata.update(extra)
     try:
         source = ingest_path(
             file_path,
