@@ -24,6 +24,13 @@ evkg = { path = "../evkg", editable = true }
 
 **发布前动作**：`0.1.0` 前必须把 path 依赖改为 pin 到具体 commit SHA，并记录于 `PROJECT_VERSIONS.md`。
 
+**交付形式补充（B-g1，2026-10-02 用户确认）**：本地 Git bundle 归档（方案 A）+ 裸仓寻址；
+维持"不推送 `redmaplewww/evkg`"约束；私有镜像（方案 B）暂缓，多机/CI 确有需要时再升级。
+已执行：`D:\projects\_evkg-archive\evkg-28afbc0.bundle`（+ C: 第二副本），SHA-256
+`10dafff4…3801`，commit `28afbc0`，`git bundle verify`/克隆/fsck 全部通过（EV-049）。
+开发期保留 path 依赖（editable 循环）；**发布/CI 前切换为 `git + rev`** —— 该 pin 方式
+已在 uv 层实测（`uv lock` 记录 URL+rev）；注意 `editable` 与 `git` 源互斥。
+
 **放弃的选项**：vendor 进本仓库（与上游分叉、失去同步能力）；git 依赖 pin commit（开发期迭代太慢）。
 
 ---
@@ -129,6 +136,7 @@ evkg = { path = "../evkg", editable = true }
 | 2026-10-01 | Q1–Q4 | 提出 | 阻塞 M1 开工 | — |
 | 2026-10-01 | Q1–Q4 | **全部确认，采纳推荐方案** | 用户决策 | M1 解锁；D1/D2/D3/D4/D6 随之确定 |
 | 2026-10-02 | D1（依赖策略） | **由"需要改上游，但改法成立"细化为"有条件依赖（C1–C5）"** | M1-g 实测：当前调用面可用但整体不可直接依赖（双实例污染、抽取模型名缺失、渲染器丢 partial） | 不 fork 的决策不变；新增 5 个使用条件与 2 项阻塞（B-g1/B-g2）；M1 spike 结束 |
+| 2026-10-02 | B-g1 / Q1 补充 | **evkg 交付形式 = 本地 Git bundle 归档（方案 A）**；维持不推送约束；外部私有镜像暂缓 | 用户确认：bundle 满足可获取/可校验/可复现且零授权；实测 bundle 字节可复现、uv `git + rev` pin 成立（`editable` 与 `git` 互斥） | 已执行归档 + 双副本 + 恢复验证（EV-049）；开发期保留 path 依赖，发布/CI 前切换 `git + rev`；M1 正式归档 |
 
 ---
 

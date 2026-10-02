@@ -20,7 +20,7 @@
 
 ## 兼容性与迁移政策
 
-- **evkg 版本**：当前以 `path` 依赖指向 `D:\projects\evkg`（未发布版本，无语义化版本号）。开发期允许跟随 `main`；首次发布 `0.1.0` 前必须 pin 到具体 commit SHA 并记录于本表。
+- **evkg 版本**：当前以 `path` 依赖指向 `D:\projects\evkg`（未发布版本，无语义化版本号）。开发期允许跟随 `main`；首次发布 `0.1.0` 前必须 pin 到具体 commit SHA 并记录于本表。**交付形式（B-g1，2026-10-02 用户确认）**：本地 Git bundle 归档 + 裸仓寻址（方案 A），维持不推送约束；发布/CI 时切换为 `git + rev` 固定到已验证的 commit SHA（uv 层已实测可行；`editable` 与 `git` 源互斥，故开发期保留 path 依赖）。
 - **数据库 schema**：`g_` 表族由本项目自管，MVP 期间允许破坏性变更，但每次变更须在 `PROJECT_FEATURES.md` 或进度历史中留痕。
 - **evkg 表族**：只读叠加，不改其 schema；若确需扩展 `SourceKind` 等上游结构，作为上游 commit 提交而非就地修改（决定 D1）。
 - **配置**：`EVKG_*` 沿用 evkg 命名空间；Growth OS 自有配置用 `GROWTH_*`。**注意** evkg 仓库 `.env.example` 中的 `EVKG_VERIFIER_PROVIDER` 为错误名称，实际变量是 `EVKG_VERIFIER_LLM_PROVIDER`（已核实 `attack/verifier.py:39-40`）。
@@ -30,7 +30,8 @@
 
 | 依赖 | 当前指向 | 解析方式 | 备注 |
 |---|---|---|---|
-| evkg | `D:\projects\evkg` @ `28afbc0`（未发布，worktree） | `path` + editable（Q1 已确认） | 发布 0.1.0 前须改为 commit pin。本地已有 **4** 个上游提交（`a4b15af`、`e432c42`、`068389d`、`28afbc0`），**用户明确要求不得推送到 `redmaplewww/evkg`**（远程停在 `a448f44`） |
+| evkg | `D:\projects\evkg` @ `28afbc0`（未发布，worktree） | `path` + editable（Q1 已确认） | 开发期依赖。发布 0.1.0 前须改为 commit pin。本地已有 **4** 个上游提交（`a4b15af`、`e432c42`、`068389d`、`28afbc0`），**用户明确要求不得推送到 `redmaplewww/evkg`**（远程停在 `a448f44`） |
+| evkg 归档（B-g1） | `D:\projects\_evkg-archive\evkg-28afbc0.bundle`；第二副本 `C:\Users\Lenovo\evkg-archive\` | Git bundle（完整历史，含全部 5 个提交） | **2026-10-02 已归档并验证**：238,807 字节，SHA-256 `10dafff49bb8e627007c4bb5cc3ddfcfce1108ef9b97c42763bf93a8b8c13801`（重新生成字节一致），commit `28afbc0db7061d9717e307bf2bd0833f59fd8f51`；`git bundle verify` = 完整历史/ok，克隆 HEAD 一致、5 提交、fsck 无异常，两副本哈希一致。恢复命令与验证记录见同目录 `evkg-bundle-manifest.txt`（SHA-256 `969d20764db6…`）。**注意**：C:/D: 可能同盘，抗物理损坏需另存移动硬盘/云盘（待用户执行） |
 | project-to-act | `D:\projects\project-to-act`；已装至 `~/.zcode/skills/project-to-act/` | 治理工具，非运行时依赖 | 仅用其脚本与约定 |
 | Python | 3.12.14（uv 托管） | `requires-python >= 3.11` | 系统解释器为 3.7.8，必须走 uv |
 | uv | 0.12.10 | — | 已验证可用 |

@@ -393,28 +393,38 @@ autouse fixture 显式 `activate("default")` 并在结束时重置。个别测�
 | C. 推送 `redmaplewww/evkg` | — | — | — | 违反现行约束，对外发布不可撤回 | 需明确授权（不建议） |
 | D. vendor / 子模块 | 随主仓 | 随主仓 | 是 | 与 Q1「不 fork」冲突，失去上游身份与同步能力 | 无（不建议） |
 
-**建议：维持"不推送"约束，当前采用方案 A；方案 B 作为出现多机/CI 时的升级路径**
-（bundle 可作为 B 的初始种子：从 bundle 克隆 → 推入私有镜像）。理由：A 零授权、
+**决定（用户 2026-10-02 确认）：维持"不推送"约束，采用方案 A；方案 B 作为出现多机/CI 时的
+升级路径**（bundle 可作为 B 的初始种子：从 bundle 克隆 → 推入私有镜像）。理由：A 零授权、
 零外部暴露、已验证；B 的价值（集中更新、CI 拉取）在单机阶段用不上。
 
 pin 的时机与代价：**开发期继续用 path 依赖（保留 editable 循环），发布/CI 前再切换**
 为 `git`+`rev`（步骤已实测）。切换后 evkg 变为只读依赖，改上游要走镜像仓并 bump rev ——
 这是"可复现"的必要代价，应记入发布流程。
 
-落地步骤（方案 A，待用户确认后执行，约 1 分钟）：
+落地结果（**2026-10-02 已完成并验证**，EV-049）：
+
+| 项 | 值 |
+|---|---|
+| 主副本 | `D:\projects\_evkg-archive\evkg-28afbc0.bundle`（238,807 字节） |
+| 第二副本 | `C:\Users\Lenovo\evkg-archive\`（两副本 SHA-256 一致） |
+| bundle SHA-256 | `10dafff49bb8e627007c4bb5cc3ddfcfce1108ef9b97c42763bf93a8b8c13801` |
+| commit | `28afbc0db7061d9717e307bf2bd0833f59fd8f51`（5 提交，含基线 `a448f44`） |
+| 验证 | `git bundle verify` = 完整历史/ok；克隆 HEAD 一致；5 提交；`git fsck` 零输出 |
+| 登记 | 同目录 `evkg-bundle-manifest.txt`（含哈希、commit、验证日期、恢复命令、约束）；`PROJECT_VERSIONS.md` 依赖基线表 |
+| **未完成项** | 第二副本仍在 C: 盘；若与 D: 同物理盘，抗物理损坏需另存移动硬盘/云盘（待用户执行，未计入验收） |
+
+恢复命令（详见 manifest）：
 
 ```bash
-cd D:/projects/evkg
-git bundle create evkg-28afbc0.bundle --all          # 记录 SHA-256
-git clone --bare . <归档位置>/evkg-mirror.git        # 或从 bundle 克隆
-# 需要构建的机器：git clone <bundle> evkg && git rev-parse HEAD 核对
-# 发布/CI：pyproject 改为 { git = "<可寻址 URL>", rev = "28afbc0…" }，uv lock，跑两套测试
+sha256sum <bundle>                      # 期望 10dafff4…3801
+git clone <bundle> evkg && git rev-parse HEAD   # 期望 28afbc0…
+git clone --bare <bundle> evkg-mirror.git       # 供 uv git+rev 寻址
 ```
 
 注意事项：① 方案 A 的"可获取"取决于归档文件放到对方能拿到的地方（CI 亦然）；
 ② 多机时裸仓路径应选**位置无关**的 URL（UNC / ssh），否则各机 `uv.lock` 里的 URL 会不同
-（SHA 仍可校验，但锁文件会漂移）；③ 归档建议存两处（本机固定路径 + 离线/云备份），
-并在 `PROJECT_VERSIONS.md` 依赖基线表登记 bundle SHA-256 与 commit SHA。
+（SHA 仍可校验，但锁文件会漂移）；③ 归档现存两处（D: 主 + C: 第二副本），
+抗物理损坏的第三副本待用户放到移动硬盘/云盘。
 
 ### 9.2 可延后（附触发条件，触发即升级为阻塞）
 
