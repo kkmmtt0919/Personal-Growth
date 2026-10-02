@@ -52,6 +52,31 @@ ACHIEVEMENT_MARKERS = (
 LEVEL_PATTERN = re.compile(r"(?:星级|[1-5]\s*/\s*5|[1-5]\s*星|等级\s*[1-5]|水平\s*[1-5])")
 """能力等级/星级表述：属于 M4；出现在用户口径的陈述里即越权。"""
 
+NEGATION_WORDS = ("不", "未", "无", "非", "没有", "并非", "不代表", "尚未", "仅", "只是", "属于计划")
+"""否定/限定词。**没有这一层会让校验器变成假阳性机器**：实测（M3-e 对历史主张做只读 dry-run 时）
+一条正确的"计划学习"主张被判越权，只因它的陈述写着"…**不代表已具备**相应能力"。
+校验器是**写入闸门**，假阳性会挡掉合法表述，所以必须识别否定语境。"""
+
+NEGATION_WINDOW = 8
+"""在命中词之前多少字符内出现否定词，就认为该次命中处于否定语境。"""
+
+
+def _unnegated_hits(text: str) -> list[str]:
+    """陈述里**未被否定**的成就类命中（否定语境里的命中不算）。
+
+    例："…不代表已具备相应能力" 中的「具备」在 8 字符窗口内出现「不代表」→ 跳过；
+    "用户实现过 X" 中的「实现过」无否定 → 命中。
+    """
+    found: list[str] = []
+    for marker in ACHIEVEMENT_MARKERS:
+        for match in re.finditer(re.escape(marker), text):
+            prefix = text[max(0, match.start() - NEGATION_WINDOW) : match.start()]
+            if any(word in prefix for word in NEGATION_WORDS):
+                continue
+            found.append(marker)
+            break
+    return found
+
 
 @dataclass(frozen=True)
 class OverreachReport:
@@ -74,7 +99,8 @@ def check_overreach(
     user_scoped = any(marker in who for marker in USER_SUBJECT_MARKERS) or any(
         text.startswith(marker) for marker in USER_SUBJECT_MARKERS
     )
-    hits = [marker for marker in ACHIEVEMENT_MARKERS if marker in (predicate or "") or marker in text]
+    hits = [marker for marker in ACHIEVEMENT_MARKERS if marker in (predicate or "")] + _unnegated_hits(text)
+    hits = list(dict.fromkeys(hits))  # 去重且保持稳定顺序
     if user_scoped and hits:
         reasons.append("把材料内容跳成用户的能力/成就结论（命中：" + "、".join(hits[:3]) + "）")
     if user_scoped and LEVEL_PATTERN.search(text):

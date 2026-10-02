@@ -111,3 +111,41 @@ def test_vocabulary_is_locked_and_documented():
     """词汇表被测试锁定：新增/删除标记词必须显式改这里，避免门槛被悄悄放松。"""
     assert "用户" in USER_SUBJECT_MARKERS
     assert {"具备", "掌握", "实现过", "独立完成"} <= set(ACHIEVEMENT_MARKERS)
+
+def test_negated_achievement_markers_are_not_overreach():
+    """否定语境不算命中 —— 实测教训（M3-e 历史主张 dry-run）。
+
+    真实库里那条正确的"计划学习"主张，陈述写着"…不代表已具备相应能力"；
+    若把否定词后的「具备」当成越权命中，写入闸门会挡掉合法表述。
+    """
+    historical_good = {
+        "statement": (
+            "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，"
+            "仅为计划事项，不代表已具备相应能力。"
+        ),
+        "subject": "用户",
+        "predicate": "计划学习",
+    }
+    report = check_overreach(**historical_good)
+    assert report.overreach is False and report.reasons == ()
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "项目材料中没有实现过向量检索优化",
+        "材料显示尚未完成独立部署",
+        "该资料未表明用户掌握 Kubernetes",
+        "原文仅是计划，不代表已经具备相关能力",
+    ],
+)
+def test_negated_statements_do_not_trip_the_gate(statement):
+    assert check_overreach(statement=statement, subject="项目材料", predicate="包含").overreach is False
+
+
+def test_unnegated_assertion_still_trips_the_gate():
+    """反向保证：去掉否定词后必须仍然命中（阈值没有被改松）。"""
+    assert check_overreach(statement="用户已经具备 RAG 能力", subject="用户").overreach is True
+    assert check_overreach(
+        statement="材料描述该用户实现过向量检索优化", subject="用户", predicate="实现过"
+    ).overreach is True

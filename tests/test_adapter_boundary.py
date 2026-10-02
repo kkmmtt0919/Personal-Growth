@@ -123,10 +123,16 @@ def test_adapter_does_not_import_sqlite_or_orm_libraries():
 
 def test_adapter_does_not_call_low_level_store_methods():
     """``passage_ids`` / ``purge_passages`` 属写入语义，是 evkg 内部；
-    适配层只该用 get_source / get_passages / find_sources / save_* 这类公共入口。"""
+    适配层只该用 get_source / get_passages / find_sources / save_* 这类公共入口。
+
+    检查口径（2026-10-02 收紧为 `.<name>`）：本意是"不得**调用 store 的低层方法**"，
+    即属性访问/调用；裸标识符要放行 —— 领域模型自带 `Claim.passage_ids` 字段、
+    适配层的参数也可以叫这个名字。原来的裸子串匹配会误伤这类合法用法
+    （M3-e 新增 `create_material_claim` 时实测踩到）。
+    """
     code = _code_only(ADAPTER)
     for attribute in ("passage_ids", "purge_passages", "delete_passage", "storage_status"):
-        assert attribute not in code, f"适配层不应调用 store 的低层方法 {attribute}"
+        assert f".{attribute}" not in code, f"适配层不应调用 store 的低层方法 {attribute}"
 
 
 def test_adapter_exposes_only_public_helpers():

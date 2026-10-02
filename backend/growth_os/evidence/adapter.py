@@ -40,6 +40,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -273,6 +275,103 @@ def claim_dossier(store: KnowledgeStore, claim_id: str) -> dict | None:
     from evkg.evidence.dossier import claim_dossier as _claim_dossier
 
     return _claim_dossier(store, claim_id)
+
+
+def create_material_claim(
+    store: KnowledgeStore,
+    *,
+    subject: str,
+    predicate: str,
+    object: str,
+    statement: str,
+    passage_ids: list[str],
+    metadata: dict | None = None,
+    task_id: str = "growth_os_material_claim",
+) -> dict:
+    """创建一条**材料口径**的能力证据断言（M3-e 的写入路径）。
+
+    与 M1-c 的 LLM 抽取路径的关键差别：
+
+    * **越权校验前置**：`check_overreach()` 先判定 —— 从"材料里有什么"跳成"用户具备/实现过什么"
+      的表述在这里被**拒绝**（不写半条数据）。这正是 `M3-PLAN` §1 的硬规则接线点。
+    * **置信度不编造**：`score=None` + `assessment_status="unassessed"` ——
+      M3 不做能力评估，星级与分级是 M4 的事。
+    * **逐字引用**：每条证据的 `quote` 就是所引 passage 的原文（审计会核对逐字子串）。
+    * **幂等**：claim id 由内容派生（与 M1-c 同一方案），重复创建命中同一行。
+    """
+    from evkg.domain import Claim, ClaimStatus, Confidence, EvidenceLink, Polarity
+
+    from .claims import check_overreach
+
+    report = check_overreach(statement=statement, subject=subject, predicate=predicate)
+    if report.overreach:
+        raise EvidenceError("越权表述被拒绝（存在证据 ≠ 证明能力）：" + "；".join(report.reasons))
+
+    passages = {item.id: item for item in store.get_passages()}
+    unknown = [pid for pid in passage_ids if pid not in passages]
+    if unknown:
+        raise EvidenceError(f"引用了未知 passage: {unknown}")
+    if not passage_ids:
+        raise EvidenceError("材料口径断言必须至少引用一条 passage")
+
+    claim_id = "clm_" + hashlib.sha256(
+        json.dumps(
+            {
+                "subject": subject,
+                "predicate": predicate,
+                "object": object,
+                "statement": statement,
+                "passage_ids": sorted(passage_ids),
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()[:20]
+    claim = Claim(
+        id=claim_id,
+        subject=subject,
+        predicate=predicate,
+        object=object,
+        statement=statement,
+        status=ClaimStatus.EVIDENCE_LINKED,
+        confidence=Confidence(
+            score=None,
+            source_reliability=None,
+            extraction_quality=1.0,
+            resolution_quality=0.0,
+            corroboration=0.0,
+            contradiction_penalty=0.0,
+            assessment_status="unassessed",
+            rationale="M3-e 材料口径断言：内容可由所引 passage 逐字核对；未做能力评估（score=None）",
+        ),
+        passage_ids=list(passage_ids),
+        metadata={"growth_claim_scope": "material", **(metadata or {})},
+    )
+    store.save_claim(claim, task_id)
+    evidence_ids: list[str] = []
+    for passage_id in passage_ids:
+        evidence_id = "ev_" + hashlib.sha256(f"{claim_id}:{passage_id}".encode()).hexdigest()[:16]
+        store.save_evidence(
+            EvidenceLink(
+                id=evidence_id,
+                claim_id=claim_id,
+                passage_id=passage_id,
+                polarity=Polarity.SUPPORTS,
+                quote=passages[passage_id].text,
+                reasoning="材料口径事实断言的原文绑定（逐字引用，未做能力推断）",
+                confidence=None,
+            ),
+            task_id,
+        )
+        evidence_ids.append(evidence_id)
+    return {
+        "claim_id": claim_id,
+        "evidence_ids": evidence_ids,
+        "passage_ids": list(passage_ids),
+        "assessment_status": "unassessed",
+        "score": None,
+        "overreach": False,
+    }
 
 
 def code_language_for(path: str | Path) -> str | None:

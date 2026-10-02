@@ -99,6 +99,24 @@ M3-c 的 GitHub 通道在 M3 范围内**只做公共仓库**（用户提供 URL�
 
 ## 5. 步骤结构（用户指定顺序；仅到步骤级，不拆实现任务）
 
+**M3-e 结果（2026-10-02）：通过**（`artifacts/m3e/`，EV-064）
+
+* **越权校验已接进写入路径**：`adapter.create_material_claim()` 在写任何数据前先跑
+  `check_overreach()`；越权表述被拒、零写入。置信度**不编造**（`score=None` +
+  `assessment_status="unassessed"`），证据 `quote` 为所引 passage 的**逐字原文**，claim id 由内容派生（幂等）。
+* **材料口径 claim 产出**（完成条件 3 的 claim 部分）：由公共仓库证据确定性构造 **5 条**
+  材料口径断言（RAG/Java 源码/MCP 工具注册/测试用例生成/向量检索），`audit_store` pass/0，
+  provenance（claim → evidence → passage → source）逐跳可走通，全部 `score=None`。
+* **历史主张（M1-c）只读 dry-run**：对真实库做**零写入**扫描（`sqlite mode=ro`）——
+  2 条主张里 **1 条判越权**（`clm_f138…`，用户/实现过，即当时被推翻的那条），
+  1 条判干净（`clm_29f5…`，用户/计划学习）。
+* **顺带发现并修掉校验器自身的假阳性**：dry-run 首轮把"计划学习"也判成越权，只因它的陈述写着
+  "…**不代表已具备**相应能力"——否定语境被当成命中。校验器是**写入闸门**，假阳性会挡掉合法表述，
+  因此加入否定语境识别（8 字符窗口内的 不/未/无/非/没有/并非/不代表/尚未/仅/只是）
+  并补了正反两组测试（否定不误报、去掉否定仍命中）。
+* **待用户决定**：是否在真实库上就地**标注**那条历史越权主张（`growth_overreach_flagged` 元数据，不改内容）
+  —— 默认**不动**（dry-run 已给出结论，档案里也早有披露）。
+
 **M3-d 结果（2026-10-02）：通过**（`artifacts/m3d/`，EV-063）
 
 * 新增 `growth_os/evidence/reference.py`：入口**没有** `channel`/`evidence_type` 参数（通道被**结构锁定**为

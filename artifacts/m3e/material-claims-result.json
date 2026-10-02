@@ -1,0 +1,137 @@
+{
+  "smoke": "M3-e 材料口径断言 + audit + provenance + 历史主张只读标记",
+  "repo": {
+    "name": "kkmmtt0919/mytset-rag",
+    "sha": "c417a096927dbf1f36b1ae1e39fb61b356732d87",
+    "files_ingested": 20,
+    "passages": 179
+  },
+  "tech_stack": {
+    "java": [
+      "pom.xml",
+      "src/main/java/com/hw/Application.java",
+      "src/main/java/com/hw/Main.java",
+      "src/main/java/com/hw/Mybatisgenerator.java",
+      "src/main/java/com/hw/controller/InterfaceDocController.java",
+      "src/main/java/com/hw/controller/McpController.java",
+      "src/main/java/com/hw/controller/TestCaseController.java",
+      "src/main/java/com/hw/controller/TestController.java",
+      "src/main/java/com/hw/dto/VectorSearchResult.java",
+      "src/main/java/com/hw/entity/InterfaceDoc.java",
+      "src/main/java/com/hw/entity/TestCase.java",
+      "src/main/java/com/hw/mapper/InterfaceDocMapper.java",
+      "src/main/java/com/hw/mapper/TestCaseMapper.java",
+      "src/main/java/com/hw/mcp/HttpTool.java",
+      "src/main/java/com/hw/mcp/ToolRegistry.java",
+      "src/main/java/com/hw/mcp/ToolRequest.java",
+      "src/main/java/com/hw/mcp/ToolResponse.java",
+      "src/main/java/com/hw/service/AiService.java",
+      "src/main/java/com/hw/service/IInterfaceDocService.java",
+      "src/main/java/com/hw/service/ITestCaseService.java",
+      "src/main/java/com/hw/service/RagService.java",
+      "src/main/java/com/hw/service/TestGenerationService.java",
+      "src/main/java/com/hw/service/VectorRetrievalService.java",
+      "src/main/java/com/hw/service/impl/InterfaceDocServiceImpl.java",
+      "src/main/java/com/hw/service/impl/TestCaseServiceImpl.java"
+    ],
+    "python": [
+      "scripts/retrieval_service.py",
+      "scripts/vectorize_cases.py"
+    ],
+    "xml": [
+      "pom.xml",
+      "src/main/resources/mapper/InterfaceDocMapper.xml",
+      "src/main/resources/mapper/TestCaseMapper.xml"
+    ],
+    "yaml": [
+      "src/main/resources/application.yml"
+    ]
+  },
+  "claims": [
+    {
+      "claim_id": "clm_008fa4ccd0815307dc4d",
+      "status": "evidence_linked",
+      "score": null,
+      "assessment_status": "unassessed",
+      "scope": "material",
+      "topic": "RAG 检索服务相关实现",
+      "passages": 2
+    },
+    {
+      "claim_id": "clm_293773b2d88d69f44784",
+      "status": "evidence_linked",
+      "score": null,
+      "assessment_status": "unassessed",
+      "scope": "material",
+      "topic": "Java 服务端源码",
+      "passages": 2
+    },
+    {
+      "claim_id": "clm_396e518996965f7e1f49",
+      "status": "evidence_linked",
+      "score": null,
+      "assessment_status": "unassessed",
+      "scope": "material",
+      "topic": "MCP 工具注册与调用相关实现",
+      "passages": 2
+    },
+    {
+      "claim_id": "clm_680b8a385f750ae64917",
+      "status": "evidence_linked",
+      "score": null,
+      "assessment_status": "unassessed",
+      "scope": "material",
+      "topic": "测试用例生成相关内容",
+      "passages": 2
+    },
+    {
+      "claim_id": "clm_6b6d0462be14e017ecf6",
+      "status": "evidence_linked",
+      "score": null,
+      "assessment_status": "unassessed",
+      "scope": "material",
+      "topic": "向量检索与向量库依赖",
+      "passages": 2
+    }
+  ],
+  "audit": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "historical_claim_dry_run": {
+    "mode": "read_only (sqlite mode=ro)",
+    "claims_total": 2,
+    "overreach_flagged": [
+      {
+        "claim_id": "clm_f13861f536d0ffedd12c",
+        "status": "disputed",
+        "subject": "用户",
+        "predicate": "实现过",
+        "reasons": [
+          "把材料内容跳成用户的能力/成就结论（命中：实现过）"
+        ]
+      }
+    ],
+    "clean": [
+      {
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "status": "machine_reviewed",
+        "subject": "用户",
+        "predicate": "计划学习",
+        "reasons": []
+      }
+    ],
+    "mutated_real_db": false
+  },
+  "checks": {
+    "repo_ingested": true,
+    "at_least_3_material_claims": true,
+    "audit_pass": true,
+    "all_claims_material_scoped": true,
+    "no_overreach_in_stored_claims": true,
+    "scores_unassessed": true,
+    "provenance_walkable": true
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}
