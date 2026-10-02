@@ -114,8 +114,13 @@ M3-c 的 GitHub 通道在 M3 范围内**只做公共仓库**（用户提供 URL�
   "…**不代表已具备**相应能力"——否定语境被当成命中。校验器是**写入闸门**，假阳性会挡掉合法表述，
   因此加入否定语境识别（8 字符窗口内的 不/未/无/非/没有/并非/不代表/尚未/仅/只是）
   并补了正反两组测试（否定不误报、去掉否定仍命中）。
-* **待用户决定**：是否在真实库上就地**标注**那条历史越权主张（`growth_overreach_flagged` 元数据，不改内容）
-  —— 默认**不动**（dry-run 已给出结论，档案里也早有披露）。
+* **用户决定（2026-10-02）：不动真实库，不新增 `growth_overreach_flagged`**。理由：① M3-e 目标已达成
+  （写入路径有闸门、dry-run 证明历史问题可识别、结论已进诊断/验收记录）；② 真实库自 M3-a 起维持
+  "逐表内容哈希 + 计数"锚点，M3-e 又专门验证了 dry-run 零写入 —— 为此改 metadata 会引入新的写入事件、
+  需重新解释边界；③ 越权标注更像 **M4 的审计产物**（M3 负责 `source→passage→evidence→material claim`，
+  M4 才负责 `claim→assessment→证据充分性→能力判断`）。当前记录方式：
+  `clm_f138…` = detected_overreach（dry-run）、storage 未变；`clm_29f5…` = clean、storage 未变。
+  **若 M4 需要机器化审计，应设计独立的 audit artifact，而不是改写原始 evidence store。**
 
 **M3-d 结果（2026-10-02）：通过**（`artifacts/m3d/`，EV-063）
 

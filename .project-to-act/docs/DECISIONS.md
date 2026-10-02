@@ -699,6 +699,18 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
    并在活动文档留归档指针。处理前后 `--validate`/`--audit` 均为 `strict_valid`、无 errors/warnings。
 4. **纪律**：归档只**搬移**记录，不改写内容；活动文档始终指向归档，保证可追溯。
 
+### M3-e 收口决定：历史越权主张不就地标注（2026-10-02 用户决定）
+
+* **决定**：真实库保持原样 —— **不新增 `growth_overreach_flagged` 元数据**。
+* **理由**：① M3-e 的目标已达成（写入路径有越权闸门；dry-run 已证明历史问题可被识别；结论已进入
+  诊断与验收记录）；② 真实库自 M3-a 起一直维持"逐表内容哈希 + 计数"锚点，M3-e 又专门验证了
+  dry-run **零写入** —— 现在为"机器可读"去改 metadata 会引入新的写入事件，需要重新解释边界变化；
+  ③ 越权标注更接近 **M4 的审计产物**：M3 的职责止于 `source → passage → evidence → material claim`，
+  `claim → assessment → 证据充分性 → 能力判断` 属 M4。
+* **记录方式**（结论在案、存储不变）：`clm_f13861f536d0ffedd12c` = `detected_overreach`（dry-run）+ storage 未变；
+  `clm_29f55c14c2e760b75d18` = `clean` + storage 未变。
+* **向前约束**：若 M4 需要机器化的越权审计，应产出**独立的 audit artifact**，不得把标注写进原始 evidence store。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
