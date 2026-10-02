@@ -500,6 +500,25 @@ evkg = { path = "../evkg", editable = true }
    实际落地为 `scripts/smoke_ingest.py` + 各步 artifacts 运行器（M1-b 起的既有偏差，
    功能等价，此处如实登记）。
 
+### M2-a 新增发现与设计决定（2026-10-02）
+
+1. **边界守卫的收窄必须带补偿**：M1 的"全包禁 sqlite3/裸 SQL"与 M2 自建 `g_` 表直接
+   冲突。收窄为「证据层（`evidence/`）全禁 + `store/` 白名单」，并同时加三项补偿：
+   静态守卫（`store/` 内 SQL 的表名必须全部 `g_` 前缀）、功能断言（M2 流程跑完后
+   库中不得出现任何 evkg 表）、D1 导入边界继续对全包生效。**缺任何一项即为放宽边界。**
+2. **网关接缝放在 Growth OS 一侧**：`agent/` 只依赖 `StructuredGateway` Protocol 与
+   自己的 `GatewayResult`，evkg 的 `ModelResult` 由适配层转换 —— 否则 `agent/` 会被迫
+   import evkg，违反 D1；这也让 fake gateway 离线回归（C3）成为可能。
+3. **失败路径的记录也要有语义**：成功时 provider/model 取自返回值（实际生效，`result`）；
+   失败时没有返回值，只能取当时配置并**显式标注** `config_on_error`。存储层用
+   `model_source` 与 `status` 的匹配不变式把这条锁死（错配直接报错）。
+4. **把上游缺陷变成自己的设计约束**：M1-g 记录 evkg `KnowledgeStore` 缺 `close()`
+   导致 Windows 锁库（§7-10）。自有 `GrowthStore` 因此必须提供 `close()` 与上下文
+   管理器，并有"关闭后可删除库文件"的回归测试。
+5. **稳定身份规则复用 M1-b.5c 的教训**：能力点 id = hash(goal_id + path + name)，
+   与生成批次/模型/时间无关 —— 否则每次重新生成都会新增一批能力点，`adjusted`
+   保护也会失去稳定的作用对象。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

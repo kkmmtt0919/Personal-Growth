@@ -40,6 +40,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -48,6 +49,8 @@ from evkg.config import Profile, activate
 from evkg.domain import SourceKind
 from evkg.ingest import ingest_path, logical_source_id
 from evkg.store import KnowledgeStore
+
+from ..agent.gateway import GatewayResult, StructuredGateway
 
 # ---------------------------------------------------------------------------
 # 常量与映射（这些是 Growth OS 的领域知识，不是 evkg 的）
@@ -269,3 +272,78 @@ def damage_selftest(db_path: str | Path) -> dict:
     from evkg.attack import run_damage_selftest
 
     return run_damage_selftest(str(db_path))
+
+
+# ---------------------------------------------------------------------------
+# Agent 模型网关（M2）
+# ---------------------------------------------------------------------------
+
+GROWTH_AGENT_ENV = {
+    "GROWTH_AGENT_LLM_PROVIDER": "LLM_PROVIDER",
+    "GROWTH_AGENT_MODEL": "MODEL",
+    "GROWTH_AGENT_BASE_URL": "BASE_URL",
+    "GROWTH_AGENT_API_KEY": "API_KEY",
+    "GROWTH_AGENT_CHAT_PATH": "CHAT_PATH",
+}
+"""`GROWTH_AGENT_*` → 网关 overrides 的键映射（与 `.env.example` 的 B 段一致）。
+
+留空的变量不产生 override，网关按 evkg 的规则回落到 `EVKG_*` —— 这样 Agent 推理
+可以用与流水线不同的模型，而**不必触碰进程级全局配置**：overrides 是实例级的
+（M1-g 已验证这条路径安全；进程级 profile 全局状态才是风险源）。
+"""
+
+
+def growth_agent_overrides() -> dict[str, str]:
+    """收集 Growth OS Agent 的实例级网关配置。"""
+    overrides = {
+        target: value
+        for source, target in GROWTH_AGENT_ENV.items()
+        if (value := os.getenv(source))
+    }
+    return overrides
+
+
+class GrowthAgentGateway:
+    """把 evkg `ModelGateway` 的结果适配为 Growth OS 的 `GatewayResult`。
+
+    存在的两条理由：
+    1. **不泄漏上游类型** —— `agent/` 只认识 `GatewayResult`，换网关不必改 Agent；
+    2. **失败路径也要有标签** —— 成功时 provider/model 取自返回值（实际生效）；
+       失败时没有返回值，只能用当时的配置值，并如实标为 `config_on_error`
+       （`M2-PLAN.md` 补充约束 C2 要求区分这两者）。
+    """
+
+    def __init__(self, gateway) -> None:
+        self.gateway = gateway
+        self.overrides = dict(gateway.overrides or {})
+
+    def describe(self) -> tuple[str, str]:
+        provider = self.overrides.get("LLM_PROVIDER") or os.getenv("EVKG_LLM_PROVIDER") or "anthropic"
+        if "MODEL" in self.overrides:
+            model = self.overrides["MODEL"]
+        else:
+            model = os.getenv("EVKG_MODEL") or (
+                "claude-3-5-sonnet-latest" if provider == "anthropic" else "gpt-4o-mini"
+            )
+        return provider, model
+
+    async def structured(self, *, system: str, user: str, schema, task: str) -> GatewayResult:
+        result = await self.gateway.structured(system=system, user=user, schema=schema, task=task)
+        return GatewayResult(
+            value=result.value,
+            provider=result.provider,
+            model=result.model,
+            input_tokens=result.input_tokens,
+            output_tokens=result.output_tokens,
+        )
+
+
+def agent_gateway() -> StructuredGateway:
+    """构造 Growth OS Agent 的模型网关（实例级 overrides）。
+
+    只在适配层 import evkg（决定 D1）；调用方拿到的是 `StructuredGateway`，
+    测试可注入 `FakeGateway` 做完全离线的回归（补充约束 C3）。
+    """
+    from evkg.model_gateway import ModelGateway
+
+    return GrowthAgentGateway(ModelGateway(growth_agent_overrides() or None))

@@ -4,7 +4,7 @@
 
 ## 当前验收结论
 
-- 结论：**M0 至 M1-g 全部通过；M1 技术 spike 已结束并正式归档**。evkg 依赖策略判定为**有条件依赖（C1–C5）**；交付形式已按用户确认落定为**本地 Git bundle 归档（方案 A，维持不推送）**，归档与双副本验证完成（EV-049）。完整判定见 `docs/M1-SPIKE-CONCLUSION.md`
+- 结论：**M0 至 M1-g 全部通过，M1 已正式归档**；**M2 进行中**（计划基线 v1.0 已冻结，M2-a 完成并通过阶段检查）。evkg 依赖策略 = **有条件依赖（C1–C5）**，交付形式 = 本地 Git bundle 归档（方案 A）。详见 `docs/M1-SPIKE-CONCLUSION.md` 与 `docs/M2-PLAN.md`
 - 验收范围：M0 收口项 + M1-a…M1-f（见下方历史行）+ **M1-g（R1–R4 收口、D1 双实例实测、上游缺陷复现、覆盖盲区界定、M1 完成条件补跑 init/reindex、依赖策略判定）+ B-g1（bundle 归档与恢复验证）**
 - 最后检查：2026-10-02
 - 遗留问题：**B-g2** 富格式（PDF/docx/xlsx）上传路径 0 端到端验证，M3 开工前须先 spike；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**M4 前**必须解决抽取模型持久化；**多领域包或并发 profile 前**必须改上游 profile 作用域；归属层缺失使项目产物暂不能作为能力证据（待 M2/M4 决策）；G1–G6 与 QG2–QG5 未开始
@@ -93,6 +93,8 @@
 | EV-047 | 2026-10-02 | **M1 完成条件补跑：`init`（CLI）与 `reindex`（FTS5）** `artifacts/m1g/run_reindex_search_check.py`（真实材料副本 + 临时空库） | exit 0 | script `8532375183a8`；`reindex_search_evidence.json` `316a1fb1af07` | ROADMAP M1 第 1 条含 `init → … → reindex`，此前两步均无实际输出（R3 覆盖显示 cli/index 0%），本次补齐：① `evkg --db <tmp> init` = exit 0，**建立 35 张 schema 表**、全部计数为 0、profile=default；② `rebuild_index` = `mode=fts`，**109 段落 + 2 主张**入索引，重复重建**幂等**；③ 索引后 `audit_store` 两轮均 **pass/0**；④ 检索 5 个真实词条 4 命中（RAG/ChromaDB/Dubbo/检索服务 均有 passage 与 claim 命中），`计划学习` 为 2 字词按设计回落 LIKE 且 predicate 不在索引字段 → 0 命中（记为检索边界）。真实库哈希前后一致。**顺带发现**：`KnowledgeStore` 无 `close()`/上下文管理器，Windows 上连接泄漏会锁库文件（首次运行 `WinError 32`） | 命令输出；`artifacts/m1g/reindex_search_evidence.json` | 90d |
 | EV-048 | 2026-10-02 | **B-g1 交付方案实测**（临时目录，未改动工程文件）：`git bundle` 生成/校验/克隆 + 裸仓镜像 + uv `file://`+`rev` pin 探针 | exit 0 | bundle SHA-256 `10dafff49bb8e627007c4bb5cc3ddfcfce1108ef9b97c42763bf93a8b8c13801`（238,807 字节） | ① bundle 重新生成**字节一致**；`git bundle verify` = 完整历史/ok；从 bundle 克隆 HEAD=`28afbc0db7061d9717e307bf2bd0833f59fd8f51`、5 提交、fsck 无异常；② 裸仓 `git ls-remote` 可解析 HEAD/main；③ **uv 层 pin 成立**：scratch 项目 `{ git = "file:///…", rev = "28afbc0…" }` → `uv lock` 解析 24 包，lock 记录 URL+rev；④ `editable` 与 `git` 互斥（uv 报 `cannot specify both`）→ pin 与开发期 editable 循环不可兼得，故建议开发期保留 path、发布/CI 前再 pin。比较与建议见 `docs/M1-SPIKE-CONCLUSION.md` §9.1 | 命令输出（本会话）；`docs/M1-SPIKE-CONCLUSION.md` §9.1 | 长期（B-g1 决策依据） |
 | EV-049 | 2026-10-02 | **B-g1 方案 A 落地：bundle 归档 + 双副本 + 恢复验证**（用户确认后执行） | exit 0 | bundle SHA-256 `10dafff4…3801`（238,807 字节）；manifest SHA-256 `969d20764db6…`（3,480 字节） | **归档完成并逐项验证**：① 主副本 `D:\projects\_evkg-archive\evkg-28afbc0.bundle`，第二副本 `C:\Users\Lenovo\evkg-archive\`（两副本 SHA-256 一致）；② `git bundle verify` = 4 refs（main/HEAD=`28afbc0`，origin/main=`a448f44`）、"complete history"、ok；③ 临时目录从归档克隆：HEAD=`28afbc0db7061d9717e307bf2bd0833f59fd8f51`、5 提交、`git fsck` 零输出；④ 同目录 `evkg-bundle-manifest.txt` 登记归档位置、哈希、commit、验证日期、恢复命令与约束。**未完成项（如实登记）**：第二副本仍在 C: 盘，若与 D: 同物理盘则不具备抗物理损坏能力——需用户另存移动硬盘/云盘 | `D:\projects\_evkg-archive\`、`C:\Users\Lenovo\evkg-archive\`（含 manifest） | 长期（依赖交付） |
+| EV-050 | 2026-10-02 | **M2 基线冻结**：5 项决策确认 + C1–C3 补充约束 + 开工前 4 项检查 | 通过 | `docs/M2-PLAN.md` v1.0（执行基线） | 5 项决策按用户确认写入（R5 纯 LLM + `unverified` 标注；G1 截图豁免仅替代形式；最小运行时且不建通用编排平台；三层树 + `adjusted` 保护；首版 `current_level` 固定"尚未评估"）；C1–C3 附验收方式；4 项检查（设计级）通过，其中发现并解决一处设计冲突：**M1 的"全包禁 sqlite3"与自建 `g_` 表冲突** → 收窄为"证据层全禁 + `store/` 白名单"，并新增 3 项补偿检查；12 条验收项逐项映射到测试或归档证据 | `docs/M2-PLAN.md`；账本 validate/audit 无告警 | 长期 |
+| EV-051 | 2026-10-02 | **M2-a 实现与验证**：`g_` 四表存储 + 最小运行时 + 网关接缝 + 边界守卫收窄与补偿 | exit 0 | 新增 `growth_os/store/growth_store.py`、`growth_os/agent/{gateway,runtime}.py`、`adapter.py` 增补；测试 73→**97** | **97 项全绿**（新增 24：store 14 + runtime 8 + 边界 2）、evkg 101 项全绿、ruff 全过。关键验证：① 成功运行记录 provider/model **取自返回值**（`model_source=result`），失败记录标注 `config_on_error` 且保留错误（C2/AC8）；② **离线三保险**（fake 注入 + 无密钥 + httpx 实例化即失败）通过（C3/AC7）；③ 静态守卫：`store/` 只碰 `g_` 表；功能断言：M2 流程跑完后库中只有 5 张 `g_` 表、**无任何 evkg 表**（AC12）；④ 冻结语义被测试锁定：confirmed 四要素 + `source_quote`、确认过的目标不可清空、`adjusted` 再生成不被覆盖（C1）、`current_level` 非空即报错、自有存储有 `close()` 可删文件（M1-g 锁库教训不重演）；⑤ QG1 真实库 = pass/0，真实库 `g_` 表仍为空、证据表计数不变（3/109/2/6） | 命令输出；`tests/test_growth_store.py`、`tests/test_agent_runtime.py`、`tests/test_adapter_boundary.py` | 90d |
 
 ## Gate 记录
 
@@ -145,6 +147,8 @@
 | M1-g | 2026-10-02 | **R1–R4/D1 收口 + 依赖策略判定** | `docs/M1-SPIKE-CONCLUSION.md` | 通过（判定：有条件依赖 C1–C5） | EV-042…EV-046 | 用户（待确认收口） |
 | M1-g | 2026-10-02 | M1 完成条件补跑：`reindex`（FTS5 索引 + 检索）在真实材料上产出实际输出 | `data/growth.db` 副本 | 通过 | EV-047 | — |
 | B-g1 | 2026-10-02 | **evkg 依赖交付**：bundle 归档 + 双副本 + 恢复验证（用户确认方案 A） | evkg @ `28afbc0` | 通过 | EV-048 EV-049 | 用户（已确认方案 A） |
+| M2 | 2026-10-02 | 计划基线冻结（5 项决策 + C1–C3 + 开工前 4 项检查） | `docs/M2-PLAN.md` | 通过 | EV-050 | 用户 |
+| M2-a | 2026-10-02 | `g_` 表族 + 最小运行时 + 网关接缝 + 边界守卫收窄（含 3 项补偿检查） | `growth_os/{store,agent}` | 通过 | EV-051 | — |
 
 ## 验收记录
 
@@ -163,5 +167,7 @@
 | 2026-10-01 | M1-f（damage selftest：伪造数据发现与恢复） | EV-037 EV-038 EV-039 EV-040 | 通过 | 上游两项建议（partial 渲染、caught 样本截断） | **M1-f 验收通过** |
 | 2026-10-02 | M1-g（技术 spike 收口：R1–R4 + D1 依赖边界） | EV-042 EV-043 EV-044 EV-045 EV-046 EV-047 | 通过 | 阻塞：B-g1（evkg 依赖 pin/可获取）、B-g2（M3 富格式路径未验证）；延后：实例级 profile、抽取模型持久化（M4 前）、渲染器 partial、caught 判定等（见结论文档 §9） | **M1-g 验收通过；M1 技术 spike 结束，依赖策略 = 有条件依赖（C1–C5）** |
 | 2026-10-02 | B-g1（evkg 交付：方案 A 本地 bundle 归档） | EV-048 EV-049 | 通过 | 第二副本与主副本可能同物理盘，抗物理损坏的异地/离线副本待用户另存（未计入验收）；发布/CI 前切换 `git + rev` pin | **B-g1 已解除（交付形式落定并验证）；M1 正式归档** |
+| 2026-10-02 | M2 计划基线冻结（决策 / 约束 / 开工前检查） | EV-050 | 通过 | 4 项检查为设计级，须在 M2-a…d 转为可执行断言 | **M2 开工条件成立，`M2-PLAN.md` v1.0 生效** |
+| 2026-10-02 | M2-a（g_ 表族、最小运行时、网关接缝、边界守卫收窄） | EV-051 | 通过 | M2-b…d 待推进 | **M2-a 阶段检查通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

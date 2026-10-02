@@ -1,0 +1,15 @@
+"""Agent 层：网关接缝 + 最小运行时（决定 D4）。"""
+
+from .gateway import FakeGateway, GatewayResult, StructuredGateway
+from .runtime import AgentContext, AgentRuntime, ToolNotFound, ToolRegistry, ToolSpec
+
+__all__ = [
+    "AgentContext",
+    "AgentRuntime",
+    "FakeGateway",
+    "GatewayResult",
+    "StructuredGateway",
+    "ToolNotFound",
+    "ToolRegistry",
+    "ToolSpec",
+]
