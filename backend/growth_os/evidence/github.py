@@ -155,6 +155,19 @@ def parse_repo_reference(text: str) -> tuple[str, str]:
     return parts[0], parts[1]
 
 
+def run_command(args: list[str], *, timeout: int = TIMEOUT_SECONDS) -> subprocess.CompletedProcess:
+    """跑一个子进程并把输出解成文本。
+
+    `errors="replace"` 是必须的：中文 Windows 上 git 的报错输出并不总是 UTF-8，
+    严格解码会在 reader 线程里抛 `UnicodeDecodeError`（实测踩到），把"仓库不存在"
+    这种可解释的失败变成难以诊断的崩溃。
+    """
+    return subprocess.run(
+        args, env=clone_env(), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=timeout, check=False,
+    )
+
+
 def clone_env() -> dict[str, str]:
     """git 子进程环境：禁用交互提示（公共仓库无凭据也能工作，私有仓库立即失败）。"""
     return {**os.environ, **CLONE_ENV_EXTRA}
@@ -190,23 +203,15 @@ def materialize_repo(repo: str, ref: str | None, dest: Path, *, timeout: int = T
         command += ["--branch", ref]
     command += [f"https://github.com/{owner}/{name}.git", str(dest)]
     try:
-        done = subprocess.run(
-            command, env=clone_env(), capture_output=True, text=True, encoding="utf-8", timeout=timeout, check=False
-        )
+        done = run_command(command, timeout=timeout)
     except subprocess.TimeoutExpired as error:
         raise adapter.EvidenceError(f"克隆超时（>{timeout}s）: {owner}/{name}") from error
     if done.returncode != 0:
         detail = (done.stderr or done.stdout or "").strip().splitlines()
         hint = "（私有仓库或不存在：本步只支持公共仓库，不接 OAuth）" if "could not read" in (done.stderr or "").lower() else ""
         raise adapter.EvidenceError(f"克隆失败: {owner}/{name} rc={done.returncode} {detail[-1] if detail else ''} {hint}".strip())
-    sha = subprocess.run(
-        ["git", "-C", str(dest), "rev-parse", "HEAD"],
-        env=clone_env(), capture_output=True, text=True, encoding="utf-8", check=True,
-    ).stdout.strip()
-    files = subprocess.run(
-        ["git", "-C", str(dest), "ls-files"],
-        env=clone_env(), capture_output=True, text=True, encoding="utf-8", check=True,
-    ).stdout.splitlines()
+    sha = run_command(["git", "-C", str(dest), "rev-parse", "HEAD"]).stdout.strip()
+    files = run_command(["git", "-C", str(dest), "ls-files"]).stdout.splitlines()
     return MaterializedRepo(root=dest, sha=sha, files=[item for item in (line.strip() for line in files) if item])
 
 

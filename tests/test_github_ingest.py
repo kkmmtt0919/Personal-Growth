@@ -242,3 +242,16 @@ def test_clone_environment_disables_interactive_prompts():
     env = github.clone_env()
     assert env["GIT_TERMINAL_PROMPT"] == "0"
     assert env["GIT_ASKPASS"] == "echo"
+
+def test_run_command_tolerates_non_utf8_output():
+    """中文 Windows 上 git 的报错输出不是 UTF-8：严格解码会在 reader 线程里崩
+    （实测：M3 Gate 里克隆不存在的仓库时抛 UnicodeDecodeError，掩盖了真正的失败原因）。
+    用一段非 UTF-8 字节做回归：必须返回替换后的文本而不是抛异常。
+    """
+    import sys
+
+    script = "import sys; sys.stdout.buffer.write(bytes([0xbe, 0xa1]) + b' ok')"
+    done = github.run_command([sys.executable, "-c", script], timeout=30)
+    assert done.returncode == 0
+    assert "ok" in done.stdout
+    assert "�" in done.stdout  # 非法字节被替换，而不是崩溃

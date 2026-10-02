@@ -1,0 +1,102 @@
+{
+  "gate": "M3 · 证据接入（完成条件 1–5 + 质量门）",
+  "conditions": {
+    "1_pdf_and_markdown_searchable": {
+      "markdown": {
+        "source_id": "src_2cd14d8c3139bc60",
+        "passages": 1
+      },
+      "pdf": {
+        "job_status": "awaiting_clarification",
+        "source_id": "src_7a512e1317c0d7e1",
+        "passages": 40,
+        "query": "关于做好"
+      },
+      "index": {
+        "mode": "fts",
+        "passages": 237,
+        "claims": 5
+      },
+      "hits": {
+        "markdown": {
+          "passages": 1,
+          "claims": 0,
+          "mode": "fts"
+        },
+        "pdf": {
+          "passages": 1,
+          "claims": 0,
+          "mode": "fts"
+        },
+        "github": {
+          "passages": 4,
+          "claims": 0,
+          "mode": "fts"
+        }
+      }
+    },
+    "2_code_zip": {
+      "ok": 3,
+      "skipped": 0,
+      "languages": [
+        "java",
+        "python"
+      ]
+    },
+    "3_public_repo": {
+      "files": 20,
+      "tech_stack_terms": [
+        "java",
+        "python",
+        "xml",
+        "yaml"
+      ],
+      "claims": 5
+    },
+    "4_unauthorized_and_secrets": {
+      "unauthorized": {
+        "clone_env_disables_prompts": true,
+        "private_or_missing_fails_fast": true,
+        "error": "克隆失败: kkmmtt0919/definitely-not-a-real-repo-xyz rc=128 fatal: repository 'https://github.com/kkmmtt0919/definitely-not-a-real-repo-xyz.git/' not found"
+      },
+      "secrets": {
+        "scanned_files": 119,
+        "hits": [],
+        "hit_count": 0
+      }
+    },
+    "5_jd_domain_reference": {
+      "channel": "domain_reference",
+      "cannot_support_user_claim": true,
+      "in_user_evidence": false,
+      "tech_terms": 27
+    }
+  },
+  "quality": {
+    "audit": {
+      "status": "pass",
+      "violations": 0
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true
+    }
+  },
+  "checks": {
+    "cond1_markdown_passages": true,
+    "cond1_pdf_passages": true,
+    "cond1_markdown_searchable": true,
+    "cond1_pdf_searchable": true,
+    "cond2_zip_code_evidence": true,
+    "cond3_github_tech_stack": true,
+    "cond3_at_least_3_claims": true,
+    "cond3_github_searchable": true,
+    "cond4_no_credentials_used": true,
+    "cond4_no_plaintext_secrets": true,
+    "cond5_jd_domain_reference": true,
+    "quality_audit_pass": true,
+    "quality_real_db_untouched": true
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}

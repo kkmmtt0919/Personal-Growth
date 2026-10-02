@@ -66,11 +66,13 @@
 | EV-062 | 2026-10-02 | **M3-c：GitHub 公共仓库接入（无 OAuth）** —— 真克隆入库 / 技术栈清单 / 归属通道贯穿 | exit 0 | 新增 `growth_os/evidence/github.py`、`adapter.code_language_for`；`artifacts/m3c/`；测试 222→**243** | ① 真实冒烟（`kkmmtt0919/mytset-rag`）：无凭据浅克隆 `c417a096…`；35 文件 → 选中 20（12 条上限/3 条格式）→ **20 ok / 0 failed**、**179 段**、**audit pass/0**；技术栈 java/python/xml/yaml；同 ref **幂等**；② 归属/通道贯穿（`repo_artifact`/`user_evidence`/`user_declared`，`can_support_user_claim=True`）＋来源记 `growth_github_{repo,ref,sha,path,url}`；③ 无旁路：spy 断言逐文件走单入口；④ 决策：改 git 浅克隆（API 配额耗尽）、目录按 owner-name-ref 稳定、SHA 写 metadata；⑤ Windows pack 只读坑已处理；⑥ 边界：未接 OAuth/私有仓库/UI/评估，**claims 与可检索留 M3-e / Gate**；⑦ 243 + evkg 107 + ruff 全过、真实库对基一致 | 命令输出；`artifacts/m3c/` | 90d |
 | EV-063 | 2026-10-02 | **M3-d：外部参考通道（JD / domain_reference）** —— 通道结构锁定 + 参考抽取只读 | exit 0 | 新增 `growth_os/evidence/reference.py`；`tests/test_reference_ingest.py`（8 项）；`artifacts/m3d/`；测试 243→**251** | ① 三条"不得"由**结构**保证：入口签名无 `channel`/`evidence_type`（API 层不可达 user_evidence）、消费侧 `can_support_user_claim` 一票否决、抽取只读（不写 claim/evidence/entity，不评分不差距）；② 冒烟（合成 JD）：13 段、**27 技术词**（全带 passage 证据）、4 条要求条目、`audit_store` pass/0；③ **8 项边界检查全过**（通道锁定、不在 user_evidence、不能支撑用户断言、抽取前后计数不变、claims/evidence/entities=0、reference_kind 记录）；④ 用例：ASCII 词边界（"go" 不命中 "google"）、多份参考分别列出、非参考来源抽取被拒；⑤ 素材如实标注：无现成真实 JD，用写实合成样本；⑥ 边界守恒：未接 UI、未做匹配评分/差距，claim 留 M3-e；⑦ 251 + evkg 107 + ruff 全过、真实库对基一致、临时库无残留 | 命令输出；`artifacts/m3d/` | 90d |
 | EV-064 | 2026-10-02 | **M3-e：材料口径 claim + audit + provenance**（越权校验接线 + 历史主张只读 dry-run） | exit 0 | `adapter.create_material_claim`；`tests/test_material_claims.py`（9 项）、`test_claim_overreach.py` 扩充；`artifacts/m3e/`；测试 251→**266** | ① **越权校验接进写入路径**：写入前判定，越权即拒且**零写入**；置信度 `score=None`+`unassessed`；证据 quote 为逐字原文；claim id 由内容派生（幂等）；② **5 条材料口径 claim**（完成条件 3 的 claim 部分），`audit_store` pass/0，provenance 逐跳可走通；③ **历史主张只读 dry-run**（真实库零写入，`mode=ro`）：1 条判越权（用户/实现过，即 M1-d 被推翻那条）、1 条判干净（用户/计划学习）；④ **修掉校验器假阳性**：dry-run 首轮把"计划学习"误判（陈述含"不代表已具备"）→ 加否定语境识别 + 正反测试；⑤ 边界：材料口径为唯一形态，星级仍留 M4；⑥ 回归 266 + evkg 107 + ruff 全过、真实库逐表哈希与计数与 M3-a 锚点一致 | 命令输出；`artifacts/m3e/` | 90d |
+| EV-065 | 2026-10-02 | **M3 Gate：证据接入（完成条件 1–5 + 质量门）端到端** | exit 0 | `artifacts/m3gate/`、`artifacts/gates/M3/README.md`；测试 266→**267** | **13/13 全过**：① PDF（真实中文 5 页 → 40 段）与 Markdown 均可检索（FTS：237 段 + 5 claim，查询各命中）；② ZIP → 3 文件全入库、code-kind 带 language（java/python）；③ 公共仓库 → 20 文件 + 技术栈 4 类 + **5 条材料口径 claim**；④ 克隆禁交互、不存在仓库 `rc=128` 快速失败、**119 跟踪文件 0 密钥**；⑤ JD 落 domain_reference 且不能支撑用户断言；质量门：audit pass/0、真实库逐表哈希与计数对基一致、临时库已删。**修掉两处**：git 非 UTF-8 输出致崩溃、密钥扫描误报。**边界保留**：PDF 适配层 V1 入口未建、页码级 locator 仍缺 | 命令输出；`artifacts/gates/M3/` | 长期 |
 
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
 | M3-e | 2026-10-02 | 材料口径 claim + audit + provenance（越权校验接线；历史主张只读标记） | `adapter.create_material_claim` | 通过 | EV-064 | — |
+| M3 Gate | 2026-10-02 | **证据接入完成条件 1–5 + 质量门**（PDF/Markdown 可检索、ZIP、公共仓库、无授权与密钥、JD 隔离） | `artifacts/gates/M3/` | 通过 | EV-065 | 用户 |
 | M3-d | 2026-10-02 | 外部参考通道（JD / domain_reference；通道结构锁定 + 抽取只读） | `growth_os/evidence/reference.py` | 通过 | EV-063 | — |
 | M3-c | 2026-10-02 | GitHub 公共仓库接入（浅克隆、无凭据、无 OAuth；归属/通道贯穿） | `growth_os/evidence/github.py` | 通过 | EV-062 | — |
 | B-g2 | 2026-10-02 | PDF spike 重跑（上游 `db2de3a` 最小修复后三项验证） | evkg @ `db2de3a` | 通过（含明确边界） | EV-061 | 用户（批准选项 A） |
@@ -137,6 +139,7 @@
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
 | 2026-10-02 | M3-e（Claim + audit + provenance） | EV-064 | 通过 | 仅剩 **M3 Gate**（含 PDF/Markdown 可检索性、证据链逐项核对）；历史主张是否就地标注待用户决定 | **M3-e 阶段检查通过** |
+| 2026-10-02 | **M3 Gate（证据接入）** | EV-065 | 通过 | 边界保留：PDF 适配层 V1 入口未建、页码级 locator 仍缺；M4 待确认 | **M3 正式收口** |
 | 2026-10-02 | M3-d（JD / domain_reference） | EV-063 | 通过 | capability claim 留 M3-e；M3-e（Claim + audit + provenance）待推进 | **M3-d 阶段检查通过** |
 | 2026-10-02 | M3-c（GitHub 公共仓库接入） | EV-062 | 通过 | ≥3 条 capability claim 与可检索性留 M3-e / Gate；M3-d（JD）待推进 | **M3-c 阶段检查通过** |
 | 2026-10-02 | B-g2 重跑（PDF，上游修复后） | EV-061 | 通过（含边界） | 页码级 locator 为独立开放项；PDF 接入产品需适配层 V1 入口（后续步骤） | **B-g2 通过；PDF 基础 ingestion 可用（边界见 M3-PLAN §5）** |

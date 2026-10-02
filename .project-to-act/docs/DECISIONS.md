@@ -711,6 +711,24 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
   `clm_29f55c14c2e760b75d18` = `clean` + storage 未变。
 * **向前约束**：若 M4 需要机器化的越权审计，应产出**独立的 audit artifact**，不得把标注写进原始 evidence store。
 
+### M3 收口（2026-10-02）：证据接入完成，Gate 通过
+
+1. **Gate 结论**：完成条件 1–5 + 质量门 **13/13**（EV-065，`artifacts/gates/M3/README.md`）。
+   四个通道全部验证：本地材料（含 ZIP）、公共仓库、JD 外部参考、PDF；证据链
+   `source → passage → evidence → material claim` 端到端可走通且 `audit_store` pass/0。
+2. **Gate 过程中修掉的两个问题**（都不是业务逻辑问题，但会掩盖真实失败）：
+   * **git 子进程解码崩溃**：中文 Windows 上 git 的错误输出不是 UTF-8，严格解码会在 reader 线程抛
+     `UnicodeDecodeError`，把"仓库不存在"这种可解释的失败变成难诊断的崩溃 → 抽出
+     `github.run_command()`（`errors="replace"`）并补非 UTF-8 字节的回归测试；
+   * **密钥扫描的两处误报**：扫描范围应为**被 git 跟踪的文件**（`data/`、`.env`、`artifacts/**/tmp/`、
+     `*.bak` 都已 gitignore），且正则 `\s*` 会跨行把空值后面的下一行变量名当成密钥 → 改为
+     `[ 	]*` 且占位符放行；修正后 119 个跟踪文件 0 命中。
+3. **两条保留边界**（Gate 通过不等于它们已解决）：① **PDF 的适配层 V1 入口仍未建** ——
+   条件 1 的 PDF 由 V1 状态机直接驱动达成；② **页码级 locator 仍缺**（上游第 14 项）。
+4. **M3 之后**：`assessment`（证据充分性 → 星级）属 **M4**；M3 的产物（材料口径 claim + 证据链 + 归属/通道标签）
+   就是 M4 的输入。M4 开工前建议先确认：G2/G3 的判定方式、**归属层的正式设计**、
+   以及 M2 遗留的"再生成并集语义"决策。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
