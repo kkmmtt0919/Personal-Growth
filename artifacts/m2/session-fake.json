@@ -10,8 +10,8 @@
     "measurable_result": "完成两个可演示的 Agent 项目并通过 20 道面试题",
     "status": "confirmed",
     "source_quote": "好，就以这个为目标",
-    "created_at": "2026-10-02 08:16:23",
-    "updated_at": "2026-10-02 08:16:23"
+    "created_at": "2026-10-02 08:20:58",
+    "updated_at": "2026-10-02 08:20:58"
   },
   "clarification": {
     "rounds": [
@@ -22,7 +22,8 @@
         "ready_to_confirm": false,
         "answer": "应用方向（偏 AI 应用，不是算法或基础设施）",
         "answer_matched": true,
-        "answer_field": "direction"
+        "answer_field": "direction",
+        "answer_inferred": false
       },
       {
         "round": 2,
@@ -36,7 +37,8 @@
         "ready_to_confirm": false,
         "answer": "找一份 AI 应用工程师的工作",
         "answer_matched": true,
-        "answer_field": "purpose"
+        "answer_field": "purpose",
+        "answer_inferred": false
       },
       {
         "round": 3,
@@ -50,7 +52,8 @@
         "ready_to_confirm": false,
         "answer": "六个月",
         "answer_matched": true,
-        "answer_field": "horizon"
+        "answer_field": "horizon",
+        "answer_inferred": false
       },
       {
         "round": 4,
@@ -64,7 +67,8 @@
         "ready_to_confirm": false,
         "answer": "完成两个可演示的 Agent 项目并通过 20 道面试题",
         "answer_matched": true,
-        "answer_field": "measurable_result"
+        "answer_field": "measurable_result",
+        "answer_inferred": false
       },
       {
         "round": 5,
@@ -78,7 +82,8 @@
         "ready_to_confirm": true,
         "answer": "好，就以这个为目标",
         "answer_matched": true,
-        "answer_field": "confirmation"
+        "answer_field": "confirmation",
+        "answer_inferred": false
       }
     ],
     "goal": {
@@ -91,8 +96,8 @@
       "measurable_result": "完成两个可演示的 Agent 项目并通过 20 道面试题",
       "status": "confirmed",
       "source_quote": "好，就以这个为目标",
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     "rounds_used": 5
   },
@@ -187,8 +192,8 @@
     "current_level": null,
     "current_level_status": "unassessed",
     "weight": null,
-    "created_at": "2026-10-02 08:16:23",
-    "updated_at": "2026-10-02 08:16:23"
+    "created_at": "2026-10-02 08:20:58",
+    "updated_at": "2026-10-02 08:20:58"
   },
   "capabilities": [
     {
@@ -207,8 +212,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_462310c3f4804bb820a4",
@@ -226,8 +231,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_02d53fd10b22f378b7bd",
@@ -245,8 +250,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_7583289663d80caeaa5d",
@@ -264,8 +269,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_3ccd4d56a44513be8993",
@@ -283,8 +288,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_23ca2744dc0398bb1dae",
@@ -302,8 +307,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_d609e8d1335db978318f",
@@ -321,8 +326,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_54d0a62f2e6bb4a91f69",
@@ -340,8 +345,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_f077ae8abb0f71900534",
@@ -359,8 +364,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_08d5b52ebf360d2c1ca3",
@@ -378,8 +383,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_e73999c9ad3eba355067",
@@ -397,8 +402,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_607b1cbe695ff24a94a5",
@@ -416,8 +421,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_bd165f9faa25a4f2e26e",
@@ -435,8 +440,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_61163ab886c9fb512ea0",
@@ -454,8 +459,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_b6ae559a31715ca40b4d",
@@ -473,8 +478,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_2009aac268049d57560a",
@@ -492,8 +497,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_aa618fdada9274246a2e",
@@ -511,8 +516,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_cf88fc4982b0360eedea",
@@ -530,8 +535,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_cf8ba128d12b36fce76d",
@@ -549,8 +554,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_6cd1ab505699b85592af",
@@ -568,8 +573,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_6b30e9af711c544d9b7e",
@@ -587,8 +592,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_99624196792564a25834",
@@ -606,8 +611,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_2ff13e36c611445e7636",
@@ -625,8 +630,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     },
     {
       "id": "cap_c5355143d616b066c473",
@@ -644,8 +649,8 @@
       "current_level": null,
       "current_level_status": "unassessed",
       "weight": null,
-      "created_at": "2026-10-02 08:16:23",
-      "updated_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58",
+      "updated_at": "2026-10-02 08:20:58"
     }
   ],
   "runs": [
@@ -665,7 +670,7 @@
       "error": null,
       "tokens": 567,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_002",
@@ -683,7 +688,7 @@
       "error": null,
       "tokens": 664,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_003",
@@ -701,7 +706,7 @@
       "error": null,
       "tokens": 767,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_004",
@@ -719,7 +724,7 @@
       "error": null,
       "tokens": 838,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_005",
@@ -737,7 +742,7 @@
       "error": null,
       "tokens": 966,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_006",
@@ -755,7 +760,7 @@
       "error": null,
       "tokens": 2580,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     },
     {
       "id": "fake_run_007",
@@ -773,7 +778,7 @@
       "error": null,
       "tokens": 2580,
       "latency_ms": 0,
-      "created_at": "2026-10-02 08:16:23"
+      "created_at": "2026-10-02 08:20:58"
     }
   ],
   "budget": {

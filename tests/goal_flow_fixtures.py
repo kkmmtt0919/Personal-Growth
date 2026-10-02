@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from growth_os.goal import MAX_ROUNDS, ClarificationLimitReached, GoalAgent
@@ -36,14 +37,33 @@ QUESTION_CATALOG = {
     "measurable_result": ["达到什么样的结果才算实现目标？", "有什么可衡量的验收标准？"],
 }
 
-MARKERS = {
-    "measurable_result": ("可衡量", "衡量", "验收", "指标", "达标", "量化", "证明", "结果"),
-    "horizon": ("多长时间", "多久", "时间", "周期", "期限", "什么时候", "几个月"),
-    "direction": ("方向", "偏向", "哪一类", "应用", "算法", "基础设施", "领域"),
-    "purpose": ("目的", "为了什么", "就业", "求职", "研究", "工作", "目标"),
+INTENT_PATTERNS = {
+    "measurable_result": (
+        r"可衡量", r"衡量", r"什么(样|样的)?结果", r"怎样的结果", r"验收", r"达标", r"量化",
+    ),
+    "horizon": (
+        r"多长时间", r"多久", r"时间周期", r"期限", r"什么时候", r"几个月", r"几年", r"时间(上|大概)",
+    ),
+    "purpose": (
+        r"为什么", r"目的", r"动机", r"根本原因", r"原因", r"为了", r"图什么",
+        r"就业", r"求职", r"转型", r"新工作", r"工作", r"期望", r"研究", r"产品",
+    ),
+    "direction": (
+        r"哪[个种].{0,6}方向", r"什么.{0,6}方向", r"方向(是|为|上)", r"偏向", r"哪一类",
+        r"更偏", r"具体指", r"领域",
+    ),
 }
-PRECEDENCE = ("measurable_result", "horizon", "direction", "purpose")
-"""冲突时的判定顺序：先看"可衡量"，再看"时间"，再看"方向"，最后"目的"。"""
+"""提问式意图模式（不是宽泛关键词）。
+
+M2-d 尝试 5 的教训：模型问"目的"时，问句里作为**上下文**出现的"方向"被粗匹配当成了焦点，
+导致模拟用户四次答错。因此现在的规则是：
+
+1. 只看**问句主干**（第一个「？」之前）—— 排除"比如…"这类举例带来的干扰；
+2. 找出所有命中的意图候选；
+3. **优先尚未回答过的要素**（跨轮次维护状态）；
+4. 平票时取主干中**位置最靠后**的候选（复合句的真正焦点通常在末尾）；
+5. 判断不了且恰好只剩一个未答要素 → 回答它并标注 `inferred`；否则返回明确的"未匹配"。
+"""
 
 UNMATCHED_REPLY = "（脚本用户没有匹配到该问题对应的信息，请换一个更具体的问法）"
 """未匹配时的回答：明确表态"没匹配到"，不编造内容。"""
@@ -57,26 +77,53 @@ class SimulatedAnswer:
     text: str
     matched: bool
     field: str | None
+    inferred: bool = False
+    """`inferred=True` 表示这一轮不是靠问题内容判断的，而是"只剩一个未答要素"推出来的。"""
 
 
 class SimulatedUser:
-    """确定性用户：按问题语义给出对应要素的答案。"""
+    """确定性用户：按问题语义给出对应要素的答案，并跨轮次记住已答过什么。"""
 
     def __init__(self, answers: dict[str, str] | None = None) -> None:
         self.answers = {**ELEMENT_ANSWERS, **(answers or {})}
+        self.answered: set[str] = set()
+
+    @staticmethod
+    def _head(question: str | None) -> str:
+        """问句主干：第一个「？」之前的部分（举例与追问都排除在焦点判断之外）。"""
+        text = question or ""
+        head = re.split(r"[？?]", text, maxsplit=1)[0]
+        return head or text
+
+    def _candidates(self, question: str | None) -> dict[str, int]:
+        """主干里命中的意图候选 → 该要素在主干中最后一次出现的位置。"""
+        head = self._head(question)
+        found: dict[str, int] = {}
+        for field, patterns in INTENT_PATTERNS.items():
+            positions = [match.start() for pattern in patterns for match in re.finditer(pattern, head)]
+            if positions:
+                found[field] = max(positions)
+        return found
 
     def classify(self, question: str) -> str | None:
-        text = question or ""
-        for field in PRECEDENCE:
-            if any(marker in text for marker in MARKERS[field]):
-                return field
-        return None
+        """这个问题在问哪个要素；判断不了返回 None（不做宽泛猜测）。"""
+        candidates = self._candidates(question)
+        if not candidates:
+            missing = [field for field in ELEMENT_ORDER if field not in self.answered]
+            return missing[0] if len(missing) == 1 else None
+        pool = {field: pos for field, pos in candidates.items() if field not in self.answered}
+        pool = pool or candidates
+        return max(pool, key=lambda field: pool[field])
 
     def answer(self, question: str) -> SimulatedAnswer:
+        candidates = self._candidates(question)
         field = self.classify(question)
         if field is None:
             return SimulatedAnswer(text=UNMATCHED_REPLY, matched=False, field=None)
-        return SimulatedAnswer(text=self.answers[field], matched=True, field=field)
+        self.answered.add(field)
+        return SimulatedAnswer(
+            text=self.answers[field], matched=True, field=field, inferred=not candidates
+        )
 
 
 def scripted_turns(user: SimulatedUser, *, max_questions: int = 6) -> list[dict]:
@@ -88,10 +135,11 @@ def scripted_turns(user: SimulatedUser, *, max_questions: int = 6) -> list[dict]
     """
     known: dict[str, str] = {}
     turns: list[dict] = []
+    clone = SimulatedUser(user.answers)  # 不污染传入实例的"已答"状态
     for field in ELEMENT_ORDER:
         question = QUESTION_CATALOG[field][0]
         turns.append({"question": question, "proposed": dict(known) or None, "ready_to_confirm": False})
-        simulated = user.answer(question)
+        simulated = clone.answer(question)
         if not simulated.matched or simulated.field != field:
             raise AssertionError(f"目录问题未被语义匹配到正确要素: {question!r} -> {simulated}")
         known[field] = simulated.text
@@ -149,6 +197,7 @@ async def drive_clarification(    agent: GoalAgent,
                 "answer": answer,
                 "answer_matched": matched,
                 "answer_field": field,
+                "answer_inferred": False,
             }
         )
 
@@ -163,6 +212,7 @@ async def drive_clarification(    agent: GoalAgent,
         rounds[-1]["answer"] = simulated.text
         rounds[-1]["answer_matched"] = simulated.matched
         rounds[-1]["answer_field"] = simulated.field
+        rounds[-1]["answer_inferred"] = simulated.inferred
         turn = await agent.answer(goal_id, simulated.text)
         record(turn, None, None, None)
 

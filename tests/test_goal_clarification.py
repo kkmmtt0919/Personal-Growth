@@ -228,13 +228,20 @@ def _scripted_agent(store: GrowthStore, turns: list[dict]) -> GoalAgent:
     return GoalAgent(store=store, runtime=runtime)
 
 
-def test_simulated_user_resolves_conflicting_markers_by_precedence():
-    """冲突用显式优先级处理：时间 > 方向（"多长时间内找到 AI 应用工程师的工作"判为时间）。"""
+def test_simulated_user_prefers_unanswered_element_over_context_mentions():
+    """优先"尚未回答过"的要素：问句里作为上下文出现的词不得抢走焦点。
+
+    真实场景：方向与目的已答过之后，模型问"多长时间内找到工作"，
+    末尾的"工作"是上下文，焦点是时间周期。
+    """
     user = SimulatedUser()
+    user.answered.update({"direction", "purpose"})
     assert user.classify("你希望在多长时间内找到一份 AI 应用工程师的工作？") == "horizon"
-    assert user.classify("你更偏向应用、算法还是基础设施？") == "direction"
-    assert user.classify("主要目标是就业、项目能力，还是长期研究？") == "purpose"
-    assert user.classify("达到什么样的结果才算实现目标？") == "measurable_result"
+
+    fresh = SimulatedUser()
+    assert fresh.classify("你更偏向应用、算法还是基础设施？") == "direction"
+    assert fresh.classify("主要目标是就业、项目能力，还是长期研究？") == "purpose"
+    assert fresh.classify("达到什么样的结果才算实现目标？") == "measurable_result"
 
 
 def test_simulated_user_returns_explicit_unmatched_instead_of_inventing():
@@ -349,3 +356,81 @@ def test_complete_elements_without_ready_are_never_auto_confirmed(store):
     assert goal["status"] != "confirmed"
     assert goal["source_quote"] is None
     assert goal["direction"] == ELEMENT_ANSWERS["direction"]  # 信息在，但没有"同意"
+
+# ---------------------------------------------------------------------------
+# 真实会话回归：把尝试 4/5 的真实问句逐条锁定（诊断 m2d-03 / m2d-04）
+# ---------------------------------------------------------------------------
+
+
+Q5_R1 = (
+    "你说的“成为 AI Agent Engineer”，具体指哪种方向？"
+    "比如偏向构建 Agent 产品、研究 Agent 架构，还是企业内部落地实施？"
+)
+Q5_R2 = (
+    "你想在这个方向上达到目标，是为了什么目的？"
+    "比如拿到 AI Agent 工程师的岗位、在现有工作中转型做 Agent 开发，还是做出自己的 Agent 产品？"
+)
+Q5_R3 = (
+    "刚才问目的时，你的回答和方向重复了，能再说说你为什么想成为 AI Agent Engineer 吗？"
+    "是为了换工作、在现有岗位上转型，还是做出自己的产品？"
+)
+Q5_R4 = (
+    "如果这个方向已经定了，那能告诉我一个具体的动机场景吗？"
+    "比如你希望在一年后的某一天，自己在做什么样的工作或做出什么样的东西？"
+)
+Q5_R5 = (
+    "我想确认一下：除了“偏 AI 应用”之外，你能否说说背后更具体的期望？"
+    "比如是为了找一份 Agent 开发的新工作，还是在现在的工作里转做 Agent 项目？"
+)
+Q5_R6 = (
+    "这是最后一轮了，还缺目的、时间周期和可衡量结果，其中最关键的是："
+    "你想成为 AI Agent Engineer 的根本原因是什么——是为了找新工作、"
+    "在现有岗位转型，还是做出自己的产品？"
+)
+Q4_R2 = "你希望在多长时间内（比如半年、一年）拿到这份 AI 应用工程师的工作？"
+Q4_R3 = (
+    "在这六个月结束时，你希望用什么样的具体结果来衡量自己已达成目标"
+    "（比如拿到 offer、完成若干个 Agent 项目作品集）？"
+)
+
+
+@pytest.mark.parametrize(
+    ("question", "pre_answered", "expected"),
+    [
+        # 尝试 5 R1（举例从句里含"产品/研究"，主干焦点是方向）
+        (Q5_R1, set(), "direction"),
+        # 尝试 5 R2 —— 当时失败的那条：主干含上下文"在这个方向上"，焦点是"为了什么目的"
+        (Q5_R2, {"direction"}, "purpose"),
+        # 尝试 5 R3（模型指出回答重复后继续追问原因）
+        (Q5_R3, {"direction", "purpose"}, "purpose"),
+        # 尝试 5 R4（"动机场景"）
+        (Q5_R4, {"direction", "purpose"}, "purpose"),
+        # 尝试 5 R5（"期望"）
+        (Q5_R5, {"direction", "purpose"}, "purpose"),
+        # 尝试 5 R6（复合句：先列出还缺什么，最后才问焦点——而那个焦点 purpose 已经答过）
+        # 期望：回答仍然缺失的要素，而不是被上下文里的 purpose 抢走焦点；
+        # 按"位置最靠后"的消歧规则，两个缺失项里取"可衡量结果"。
+        (Q5_R6, {"direction", "purpose"}, "measurable_result"),
+        # 尝试 4 R2（不能末尾的"工作"带偏成目的；时间与可衡量未答 → 取时间）
+        (Q4_R2, {"direction", "purpose"}, "horizon"),
+        # 尝试 4 R3（可衡量结果）
+        (Q4_R3, {"direction", "purpose", "horizon"}, "measurable_result"),
+    ],
+)
+def test_real_transcript_questions_map_to_the_right_element(question, pre_answered, expected):
+    user = SimulatedUser()
+    user.answered.update(pre_answered)
+    assert user.answer(question).field == expected
+
+
+def test_inferred_answer_only_when_exactly_one_element_is_missing():
+    """判断不了时：只剩一个未答要素才回答它（并标注 inferred），否则明确未匹配。"""
+    user = SimulatedUser()
+    user.answered.update({"direction", "purpose", "horizon"})
+    answer = user.answer("你还有什么想补充的吗？")
+    assert answer.matched and answer.field == "measurable_result" and answer.inferred
+
+    partial = SimulatedUser()
+    partial.answered.add("direction")
+    blocked = partial.answer("你还有什么想补充的吗？")
+    assert blocked.matched is False and blocked.text == UNMATCHED_REPLY

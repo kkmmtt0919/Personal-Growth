@@ -4,8 +4,8 @@
 
 ## 当前验收结论
 
-- 结论：**M0 至 M1-g 全部通过，M1 已正式归档**；**M2 进行中**（基线 v1.0 已冻结；M2-a/b/c 完成，M2-d 待授权）。evkg 依赖策略 = **有条件依赖（C1–C5）**，交付形式 = 本地 Git bundle 归档（方案 A）。详见 `docs/M1-SPIKE-CONCLUSION.md` 与 `docs/M2-PLAN.md`
-- 验收范围：M0 收口项 + M1-a…M1-f（见下方历史行）+ **M1-g（R1–R4 收口、D1 双实例实测、上游缺陷复现、覆盖盲区界定、M1 完成条件补跑 init/reindex、依赖策略判定）+ B-g1（bundle 归档与恢复验证）**
+- 结论：**M0、M1、M2 全部通过并归档/收口**。**M2 已正式收口**：G1 验收门通过（真实模型会话 `glm-5.3-flash`，含两条反例；截图豁免待 M8 补证），AC1–AC12 全满足，全量回归 Growth OS 143 / evkg 101 全绿，真实库未被污染。evkg 依赖策略 = 有条件依赖（C1–C5），交付 = 本地 bundle 归档。**当前停在 M3 门前**（不提前启动 B-g2 或 M3 实现）。详见 `artifacts/m2/acceptance-report.md`、`artifacts/gates/G1/README.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2（基线冻结、a/b/c、两层预算、G1 真实会话、AC1–AC12 验收）**
 - 最后检查：2026-10-02
 - 遗留问题：**B-g2** 富格式（PDF/docx/xlsx）上传路径 0 端到端验证，M3 开工前须先 spike；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**M4 前**必须解决抽取模型持久化；**多领域包或并发 profile 前**必须改上游 profile 作用域；归属层缺失使项目产物暂不能作为能力证据（待 M2/M4 决策）；G1–G6 与 QG2–QG5 未开始
 
@@ -100,6 +100,8 @@
 
 | EV-054 | 2026-10-02 | **M2-d 演练脚本修复（尝试 1 失败后，用户确认方案）**：用户侧改为按问题语义匹配 + 状态驱动假模型 + ≤6 轮驱动；runner 增加 HTTP 请求计数与逐轮匹配记录 | exit 0（离线） | `tests/goal_flow_fixtures.py`；`artifacts/m2/run_goal_flow_offline.py`；`artifacts/m2/fix-verification.json`；测试 116→**128** | **修好了被掩盖的真实性缺陷**：① 用户侧四要素各自独立答案 + **显式优先级**处理关键词冲突（时间 > 方向），未匹配时返回明确的"未匹配"回答并**不编造**；② 假模型每轮 `proposed` 只复述用户真正回答过的内容（新增用例断言"最后一轮的提议逐字来自用户回答"）；③ 新增 12 项测试覆盖：冲突/未知/重复提问、乱序收敛、增量累积、六轮耗尽不自动补齐、四要素齐全但模型未置 `ready_to_confirm` 时**不得自动确认**；④ 离线端到端 **13/13** 通过，5 轮、全部回答匹配、7 次结构化调用（上限 8）；⑤ ruff 全过、边界检查随 pytest 通过、真实库哈希与证据计数（3/109/2/6）未变；⑥ **原始失败记录 `463a73b` 与诊断文件保持原样，未改写**。真实调用仍未发起 | 命令输出；`artifacts/m2/fix-verification.json`、`session-fake.json` | 90d |
 | EV-055 | 2026-10-02 | **M2-d 两层预算口径实现与验证**（应用层 ≤8 结构化调用；传输层 HTTP 硬上限 + 零额外重试；失败即停并留档） | exit 0（离线） | `tests/test_http_budget.py`；`tests/goal_flow_fixtures.py`（HttpRequestBudget）；`artifacts/m2/budget-and-limits.json`；测试 128→**133** | ① **包装器覆盖性先核对再定上限**：静态确认 evkg 网关唯一 HTTP 调用点是 `client.post`（三个 provider 分支共用重试循环），动态用 MockTransport 断言"计数=实际尝试数（重试也计入）"；② **零额外重试**：真实模式强制 `EVKG_HTTP_RETRIES=1`，单次调用只发 1 个请求（有测试）；③ **硬上限立即生效**：cap=2 且允许重试时第 3 次请求被拦下，`HttpBudgetExceeded` 穿透重试循环不再尝试（有测试）；④ **失败即停**：轮次耗尽 → 退出码 3 + 诊断记录（应用层 6 次、HTTP 0、tokens>0、失败原因、四要素未被自动补齐），不自动重跑（有测试）；⑤ 授权开关仍然有效：未设 `M2_ALLOW_REAL_MODEL` 时拒绝执行（subprocess 测试，且清空密钥双保险）；⑥ 真实库哈希与证据计数未变、**真实调用 0 次** | 命令输出；`artifacts/m2/budget-and-limits.json` | 90d |
+| EV-056 | 2026-10-02 | **M2-d 真实会话端到端通过（G1 证据）**：`glm-5.3-flash`，应用层 6 次调用 / HTTP 6 个请求 / 零额外重试 | exit 0 | `artifacts/m2/session-real.json`；`artifacts/gates/G1/README.md`；测试 143 项 | **首次在同一次真实运行内闭环**：澄清 4 轮（3 要素 + 1 确认）→ 四要素齐全 + 用户原话确认 → 能力树 6 领域/12 组/31 个三层能力点 → 人工上调为 5 → 再生成后仍保留 5/理由/`origin=adjusted`；13/13 自检全绿（轮次、四要素、形状、未校验标注、`current_level=unassessed`、lineage、实际 provider/model、预算）；6 条运行记录均为 `openai_compatible/glm-5.3-flash`、`model_source=result`；真实库哈希与证据计数 3/109/2/6 未变 | 命令输出；`session-real.json`、`artifacts/gates/G1/` | 长期（G1 证据） |
+| EV-057 | 2026-10-02 | **M2 验收（AC1–AC12 逐项 + 全量回归 + 数据边界）** | 全部满足 | `artifacts/m2/acceptance-report.md`；测试 143（Growth OS）/ 101（evkg） | **AC1–AC12 全部 ✅**（逐项证据见验收报告）：G1 通过；未确认拒绝发生在调用模型前；形状违规整体拒绝；`adjusted` 保护（同 id 覆盖的强证据来自自动化测试，已如实标注）；`g_agent_runs` 记录实际 provider/model；lineage 可追；离线三保险；证据层零写入。全量回归：Growth OS **143 项**、evkg **101 项**、ruff 全过、账本无告警；QG1 `pass/0`（10/10 检查），真实库未被污染。**遗留（不阻塞）**：再生成目前为"并集"语义（不同命名会累积，M4 前需决策替换/合并/留history） | `artifacts/m2/acceptance-report.md` | 长期 |
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
@@ -156,6 +158,8 @@
 | M2-b | 2026-10-02 | Goal Agent 与澄清状态机（≤6 轮硬上限、显式确认、未确认拒绝能力分析） | `growth_os/goal/agent.py` | 通过 | EV-052 | — |
 | M2-c | 2026-10-02 | 能力树生成（≥3 领域/≥12 能力点/≤3 层）+ 调整保护 + 未校验标注 | `growth_os/goal/capability_model.py` | 通过 | EV-053 | — |
 | M2-d 预备 | 2026-10-02 | 演练脚本修复 + 两层预算（应用层 ≤8 / 传输层 HTTP ≤8 + 零额外重试 + 失败即停留档） | `tests/goal_flow_fixtures.py`、`tests/test_http_budget.py`、`artifacts/m2/` | 通过（离线） | EV-054 EV-055 | — |
+| G1 | 2026-10-02 | **Goal Clarification（真实模型会话，含两条反例）** | `artifacts/gates/G1/` | 通过 | EV-056 | 用户（截图豁免） |
+| M2 | 2026-10-02 | **M2 验收（AC1–AC12 + ROADMAP 完成条件）** | `docs/M2-PLAN.md` v1.0 | 通过 | EV-057 | — |
 
 ## 验收记录
 
@@ -179,5 +183,7 @@
 | 2026-10-02 | M2-b（澄清状态机与三条硬约束） | EV-052 | 通过 | M2-c 待推进 | **M2-b 阶段检查通过** |
 | 2026-10-02 | M2-c（能力树生成、调整保护、来源与校验标注） | EV-053 | 通过 | **M2-d（G1 真实会话）未开始，真实模型调用需用户明确授权**（预估 5 次结构化调用） | **M2-c 阶段检查通过** |
 | 2026-10-02 | M2-d 预备（脚本修复 + 两层预算与失败留档） | EV-054 EV-055 | 通过（离线） | 真实会话仍未执行：需用户再次授权；两层上限 = 应用层 8 次结构化调用 / HTTP 8 个请求（零额外重试） | **准备就绪，等待真实调用授权** |
+| 2026-10-02 | M2-d（G1 真实会话端到端） | EV-056 | 通过 | 无 | **G1 通过（截图豁免，M8 补证）** |
+| 2026-10-02 | **M2 验收（AC1–AC12 + 回归 + 数据边界）** | EV-057 | 通过 | 再生成"并集"语义待 M4 前决策；归档第三副本待用户另存 | **M2 正式收口** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。
