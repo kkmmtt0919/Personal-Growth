@@ -53,7 +53,10 @@ class StructuredGateway(Protocol):
 class FakeGateway:
     """确定性网关：按 `task` 返回预设响应；不触网、不需要密钥。
 
-    * `responses`：`task -> payload`（payload 可以是 schema 实例，或可直接校验的 dict）
+    * `responses`：`task -> payload`。payload 可以是：
+      - 一个 schema 实例或可直接校验的 dict（每次都返回它）；
+      - **一个列表**：按调用顺序依次返回（多轮对话用），用尽后报错而不是重复；
+      - **一个可调用对象** `(index, system, user) -> payload`（按上下文应答）。
     * `fail_with`：`task -> Exception`，用于验证失败路径也会落库（C2）
     * `calls`：记录每次调用的 task/system/user，供测试断言（例如"只调用了一次"）
     """
@@ -66,7 +69,10 @@ class FakeGateway:
         provider: str = "fake",
         model: str = "fake-deterministic",
     ) -> None:
-        self.responses = dict(responses or {})
+        self.responses = {
+            task: list(payload) if isinstance(payload, list) else payload
+            for task, payload in (responses or {}).items()
+        }
         self.fail_with = dict(fail_with or {})
         self.provider = provider
         self.model = model
@@ -75,13 +81,23 @@ class FakeGateway:
     def describe(self) -> tuple[str, str]:
         return self.provider, self.model
 
+    def _next_payload(self, task: str) -> Any:
+        if task not in self.responses:
+            raise KeyError(UNCONFIGURED_TASK.format(task=task))
+        entry = self.responses[task]
+        if callable(entry):
+            return entry(len(self.calls) - 1, self.calls[-1]["system"], self.calls[-1]["user"])
+        if isinstance(entry, list):
+            if not entry:
+                raise KeyError(f"FakeGateway 的 task={task!r} 响应序列已用尽（脚本轮次少于实际轮次）")
+            return entry.pop(0)
+        return entry
+
     async def structured(self, *, system: str, user: str, schema: type[T], task: str) -> GatewayResult:
         self.calls.append({"task": task, "system": system, "user": user})
         if task in self.fail_with:
             raise self.fail_with[task]
-        if task not in self.responses:
-            raise KeyError(UNCONFIGURED_TASK.format(task=task))
-        payload = self.responses[task]
+        payload = self._next_payload(task)
         value = payload if isinstance(payload, schema) else schema.model_validate(payload)
         return GatewayResult(
             value=value,

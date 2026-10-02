@@ -92,6 +92,19 @@ def _truncate(text: str) -> str:
     return text[:MAX_TEXT_CHARS] + f"\n……（截断，共 {len(text)} 字符）"
 
 
+@dataclass(frozen=True)
+class RunOutcome:
+    """一次运行的完整结果：网关返回值 + 运行号。
+
+    运行号需要回传给上层（例如能力树写入 `g_capabilities.generated_by_run_id`，
+    以满足 AC9 的 `capability → goal → agent_run` 可追溯），因此不能只返回
+    `GatewayResult`。
+    """
+
+    run_id: str
+    result: GatewayResult
+
+
 class AgentRuntime:
     """跑一次模型调用并留痕；不负责提示词与业务逻辑（那是各 Agent 的事）。"""
 
@@ -123,6 +136,21 @@ class AgentRuntime:
         context: AgentContext | None = None,
     ) -> GatewayResult:
         """执行一次结构化调用；成功与失败都会写入 `g_agent_runs`。"""
+        outcome = await self.call_model_with_run(
+            system=system, user=user, schema=schema, task=task, context=context
+        )
+        return outcome.result
+
+    async def call_model_with_run(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: type[T],
+        task: str,
+        context: AgentContext | None = None,
+    ) -> RunOutcome:
+        """同上，但把运行号一并返回（供写入可追溯字段）。"""
         ctx = context or AgentContext(user_id=self.user_id)
         run_id = self.id_factory()
         started = self.timer()
@@ -169,7 +197,7 @@ class AgentRuntime:
                 "latency_ms": latency_ms,
             }
         )
-        return result
+        return RunOutcome(run_id=run_id, result=result)
 
 
 def _dump(value: Any) -> str:
