@@ -275,6 +275,17 @@ def claim_dossier(store: KnowledgeStore, claim_id: str) -> dict | None:
     return _claim_dossier(store, claim_id)
 
 
+def code_language_for(path: str | Path) -> str | None:
+    """某个文件会被当成什么语言（`None` = 不是源码/配置）。
+
+    用途是**报告类**判断（如 M3-c 的技术栈清单），不参与入库路由 —— 路由仍由
+    ``ingest_path`` 决定。把语言的单一事实来源留在 evkg 的语言表里，避免本仓再抄一份。
+    """
+    from evkg.config import code_language_for as evkg_code_language_for
+
+    return evkg_code_language_for(str(path))
+
+
 def logical_id_for(path: str | Path) -> str:
     """某个文件会得到的 ``source_id``（纯计算，不落库）。
 

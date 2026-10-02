@@ -1,0 +1,261 @@
+{
+  "smoke": "M3-c GitHub 公共仓库接入（git 浅克隆，无凭据、无 LLM）",
+  "repo": "kkmmtt0919/mytset-rag",
+  "ref": "default",
+  "sha": "c417a096927dbf1f36b1ae1e39fb61b356732d87",
+  "clone_dir": "D:\\projects\\Personal Growth\\artifacts\\m3c\\tmp\\clones\\kkmmtt0919-mytset-rag-default",
+  "files_total": 35,
+  "files_selected": 20,
+  "tech_stack": {
+    "java": [
+      "pom.xml",
+      "src/main/java/com/hw/Application.java",
+      "src/main/java/com/hw/Main.java",
+      "src/main/java/com/hw/Mybatisgenerator.java",
+      "src/main/java/com/hw/controller/InterfaceDocController.java",
+      "src/main/java/com/hw/controller/McpController.java",
+      "src/main/java/com/hw/controller/TestCaseController.java",
+      "src/main/java/com/hw/controller/TestController.java",
+      "src/main/java/com/hw/dto/VectorSearchResult.java",
+      "src/main/java/com/hw/entity/InterfaceDoc.java",
+      "src/main/java/com/hw/entity/TestCase.java",
+      "src/main/java/com/hw/mapper/InterfaceDocMapper.java",
+      "src/main/java/com/hw/mapper/TestCaseMapper.java",
+      "src/main/java/com/hw/mcp/HttpTool.java",
+      "src/main/java/com/hw/mcp/ToolRegistry.java",
+      "src/main/java/com/hw/mcp/ToolRequest.java",
+      "src/main/java/com/hw/mcp/ToolResponse.java",
+      "src/main/java/com/hw/service/AiService.java",
+      "src/main/java/com/hw/service/IInterfaceDocService.java",
+      "src/main/java/com/hw/service/ITestCaseService.java",
+      "src/main/java/com/hw/service/RagService.java",
+      "src/main/java/com/hw/service/TestGenerationService.java",
+      "src/main/java/com/hw/service/VectorRetrievalService.java",
+      "src/main/java/com/hw/service/impl/InterfaceDocServiceImpl.java",
+      "src/main/java/com/hw/service/impl/TestCaseServiceImpl.java"
+    ],
+    "python": [
+      "scripts/retrieval_service.py",
+      "scripts/vectorize_cases.py"
+    ],
+    "xml": [
+      "pom.xml",
+      "src/main/resources/mapper/InterfaceDocMapper.xml",
+      "src/main/resources/mapper/TestCaseMapper.xml"
+    ],
+    "yaml": [
+      "src/main/resources/application.yml"
+    ]
+  },
+  "entries": {
+    "ok": [
+      {
+        "path": "README.md",
+        "source_id": "src_130bc9e43f423c11",
+        "passages": 57
+      },
+      {
+        "path": "pom.xml",
+        "source_id": "src_1395a46e08509157",
+        "passages": 23
+      },
+      {
+        "path": "scripts/retrieval_service.py",
+        "source_id": "src_423a9eddeb012dbb",
+        "passages": 9
+      },
+      {
+        "path": "scripts/vectorize_cases.py",
+        "source_id": "src_0b110ace0890dc83",
+        "passages": 15
+      },
+      {
+        "path": "src/main/java/com/hw/Application.java",
+        "source_id": "src_6b628b534e93cc71",
+        "passages": 2
+      },
+      {
+        "path": "src/main/java/com/hw/Main.java",
+        "source_id": "src_883155bfe1c895af",
+        "passages": 1
+      },
+      {
+        "path": "src/main/java/com/hw/Mybatisgenerator.java",
+        "source_id": "src_ed5a250032a69639",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/controller/InterfaceDocController.java",
+        "source_id": "src_1884016536466ede",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/controller/McpController.java",
+        "source_id": "src_fc0663498257a0cd",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/controller/TestCaseController.java",
+        "source_id": "src_a3400db841e0d5ed",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/controller/TestController.java",
+        "source_id": "src_3214635875e2d76a",
+        "passages": 7
+      },
+      {
+        "path": "src/main/java/com/hw/dto/VectorSearchResult.java",
+        "source_id": "src_aeeb1d468c6ba1ab",
+        "passages": 2
+      },
+      {
+        "path": "src/main/java/com/hw/entity/InterfaceDoc.java",
+        "source_id": "src_7439ab5c51c5bdbe",
+        "passages": 9
+      },
+      {
+        "path": "src/main/java/com/hw/entity/TestCase.java",
+        "source_id": "src_a738e4e9c27c4757",
+        "passages": 8
+      },
+      {
+        "path": "src/main/java/com/hw/mapper/InterfaceDocMapper.java",
+        "source_id": "src_73e3e29dd4913702",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/mapper/TestCaseMapper.java",
+        "source_id": "src_802d8ff6de36e8b2",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/mcp/HttpTool.java",
+        "source_id": "src_fa188363460f6adf",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/mcp/ToolRegistry.java",
+        "source_id": "src_382ae8b908ecdd3a",
+        "passages": 5
+      },
+      {
+        "path": "src/main/java/com/hw/mcp/ToolRequest.java",
+        "source_id": "src_895dcbb3695be356",
+        "passages": 2
+      },
+      {
+        "path": "src/main/java/com/hw/mcp/ToolResponse.java",
+        "source_id": "src_10353d945845f244",
+        "passages": 4
+      }
+    ],
+    "skipped": [
+      {
+        "path": ".gitignore",
+        "reason": "格式不在文本/代码白名单"
+      },
+      {
+        "path": "LICENSE",
+        "reason": "格式不在文本/代码白名单"
+      },
+      {
+        "path": "src/main/java/com/hw/service/AiService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/IInterfaceDocService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/ITestCaseService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/RagService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/TestGenerationService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/VectorRetrievalService.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/impl/InterfaceDocServiceImpl.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/java/com/hw/service/impl/TestCaseServiceImpl.java",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/resources/application.yml",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/resources/mapper/InterfaceDocMapper.xml",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/resources/mapper/TestCaseMapper.xml",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/resources/prompts/test_case_generation.txt",
+        "reason": "文件数超上限 20"
+      },
+      {
+        "path": "src/main/resources/static/index.html",
+        "reason": "格式不在文本/代码白名单"
+      }
+    ],
+    "failed": []
+  },
+  "counts": {
+    "sources": 20,
+    "passages": 179,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 0,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 0,
+    "evidence": 0,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 398
+  },
+  "audit": {
+    "status": "pass",
+    "total_violations": 0,
+    "checks_all_zero": true
+  },
+  "idempotent_same_ref": true,
+  "sample_metadata": {
+    "evidence_type": "repo_artifact",
+    "channel": "user_evidence",
+    "attribution": "user_declared",
+    "can_support_user_claim": true,
+    "github_repo": "kkmmtt0919/mytset-rag",
+    "github_ref": "default",
+    "github_sha": "c417a096927dbf1f36b1ae1e39fb61b356732d87",
+    "github_path": "README.md",
+    "github_url": "https://github.com/kkmmtt0919/mytset-rag/blob/c417a096927dbf1f36b1ae1e39fb61b356732d87/README.md"
+  },
+  "checks": {
+    "cloned_public_without_credentials": true,
+    "files_ingested": true,
+    "audit_pass": true,
+    "idempotent_same_ref": true,
+    "labels_propagated": true,
+    "repo_provenance_recorded": true
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}

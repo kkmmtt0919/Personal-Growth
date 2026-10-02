@@ -99,6 +99,18 @@ M3-c 的 GitHub 通道在 M3 范围内**只做公共仓库**（用户提供 URL�
 
 ## 5. 步骤结构（用户指定顺序；仅到步骤级，不拆实现任务）
 
+**M3-c 结果（2026-10-02）：通过**（`artifacts/m3c/`，EV-062）
+
+* 对**公共**仓库 `kkmmtt0919/mytset-rag`（用户自己的项目）真实浅克隆并入库：
+  跟踪文件 35 → 选中 **20**（上限）→ **20 ok / 0 failed**，段落合计 **179**；`audit_store` = **pass/0**；
+  技术栈清单产出（java / python / xml / yaml，触发路径即证据）；同 ref 重复接入**命中同一批 `source_id`**（幂等）。
+* 两个实现决策：① **用 git 浅克隆而不是 REST API**——实测无凭据 API 配额已耗尽（403/remaining 0），
+  git 无凭据、无该配额，并能拿到提交 SHA；私有/不存在仓库因"不交互"而快速失败。
+  ② **克隆目录按 `owner-name-ref` 稳定**，提交 SHA 写进 metadata（不写进路径），避免每次提交产生新来源。
+* 附带修复：Windows 上 git pack 文件是**只读**，`rmtree` 会 `WinError 5` → 加"先去只读位再删"；
+  另再次观测到 `audit_store` 内部连接不关闭导致临时库被锁（M1-g 上游清单 §7-10 的又一实例）。
+* **仍未做**（按边界）：≥3 条 capability claim 属 **M3-e**；"可检索"与证据链验收属 **M3 Gate**。
+
 ```text
 M3-a  Evidence 基础模型与归属层
       ↓

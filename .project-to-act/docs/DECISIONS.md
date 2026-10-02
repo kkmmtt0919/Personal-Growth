@@ -651,6 +651,27 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
    **产品接入前仍需适配层新增 V1 入口并保证归属/通道策略贯穿**（M3 后续步骤）。
 5. **待办**：归档刷新（B-g1 的 bundle 指向 `28afbc0`，本地现领先 5 个提交）；PDF 段落的"可检索"（FTS）留 M3 Gate 判定。
 
+### M3-c 新增发现与设计决定（2026-10-02）
+
+1. **用 git 浅克隆代替 REST API**（实测决定）：无凭据的 GitHub API 配额（60/h/IP）在本机**已耗尽**
+   （`403` 且 `x-ratelimit-remaining: 0`）。git 协议无凭据、无该配额，并能拿到**提交 SHA**（可追溯的关键）；
+   私有/不存在的仓库因"不交互"（`GIT_TERMINAL_PROMPT=0`、`GIT_ASKPASS=echo`）而**快速失败**，
+   不会卡在输入提示上。代价：拿不到只有 API 才有的元数据（stars/language 统计等），本步不需要。
+2. **克隆目录按 `owner-name-ref` 稳定，SHA 写 metadata 而非路径**：与 ZIP 的处理同源 ——
+   若把 SHA 放进路径，每次提交都会产生一批新来源（身份按路径）；放进 metadata 才能让
+   "同一仓库同一 ref"重复接入命中同一批 `source_id`（实测幂等），内容变化由 `content_hash` 表达。
+3. **技术栈清单是确定性的、带证据路径**：语言判定复用 `adapter.code_language_for`（转发 evkg 语言表，
+   不再抄第三份后缀表）；框架/工具用文件名与路径标记（requirements.txt、package.json、Dockerfile、
+   `.github/workflows/` 等）。检测覆盖**全部跟踪文件**（含未入库的大文件），与入库选择解耦。
+4. **Windows 的 git pack 只读坑**：`git clone` 会把 `.git/objects/pack/*.idx` 设为只读，
+   `shutil.rmtree` 因此以 `WinError 5` 失败（实测踩到）→ 实现 `force_remove_tree()`（先清只读位再删），
+   删不掉时给出可操作的产品错误而不是裸 OSError。
+5. **`audit_store` 不关连接的问题再次咬人**（M1-g 上游清单 §7-10 的又一实例）：它内部打开的
+   `KnowledgeStore` 不关闭，Windows 上锁住临时库（本次以 `gc.collect()` + 重试处理，并确认无残留）。
+   这为上游那条"给 `KnowledgeStore` 加 `close()`/上下文管理器"增加了第二个真实案例。
+6. **边界守恒**（按用户锁定项）：本步**未**接 OAuth / 私有仓库 / 完整 UI / 能力评估；
+   **≥3 条 capability claim 与"可检索"分别留给 M3-e 与 M3 Gate** —— 不因"接入跑通"而替代证据链验收。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
