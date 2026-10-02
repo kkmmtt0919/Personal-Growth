@@ -80,6 +80,11 @@
 | EV-034 | 2026-10-01 | `uv run --env-file .env python artifacts/m1e/run_dossier.py`（生成 + 核对） | exit 0 | runner `c23a3bc9815a`；`verification.json` | **核对 35/35 通过**。产出 2 份档案 + 1 份索引，并逐项核对：claim 状态/分数/`verifier_independent` 与库一致；每条 attack 的 verdict 与 `missing_evidence` 与 `artifacts/m1d/attack_reports.json` 一致；**`partial` 复核证据未被漏掉**；并含空跑防护（先断言 M1-d 留档非空）。`audit_store` = pass，0/10 violations | `artifacts/m1e/` | 90d |
 | EV-035 | 2026-10-01 | ★ 回归：`partial` 极性证据必须被呈现 | pass | `dossier.py` `dabe53d1b567` | 两条用例锁死 —— `test_partial_polarity_evidence_is_rendered`（`polarity=\`partial\`` 与复核意见正文都在档案里）与 `test_partial_is_not_listed_as_support`（不得被误标成反对证据）。**这是本模块存在的直接原因**：evkg 的 `render_claim_markdown` 只输出 supports/refutes，会漏掉 `partial`，而被推翻的真实主张恰恰是 `partial` | 命令输出；`tests/test_dossier.py` | 长期 |
 | EV-036 | 2026-10-01 | 真实产物 ↔ 真实库一致性（`skipif`，本机执行） | pass | `artifacts/m1e/dossier-*.md` | `test_committed_dossiers_match_real_database` 对真实库中每条主张逐项核对已提交的档案：主张 ID、最终状态、3 位小数置信度、`independent_verifier` 取值，以及**真实 `partial` 复核意见的正文必须出现**。真实库已 gitignore，缺失时该用例自动跳过；本机已实际执行并通过。另：`adapter.audit` = pass | `artifacts/m1e/`；`data/growth.db` | 90d |
+| EV-037 | 2026-10-01 | `uv run --env-file .env python artifacts/m1f/run_damage.py`（副本库上三场景） | exit 0 | `run_damage.py` `a99704c8b50d`；`damage_result.json` `c08102b731aa` | **三场景全部 caught**：① evkg 内置自测 `status=caught`（`quote_violations_after_injection=1`）；② 受控伪造引文 0→1 违规、审计 `fail`、样本点名注入行；③ 受控 dangling passage（用户指定场景）0→1、`fail`、点名。三场景清理后均 `audit=pass`、总违规 0、数据表零差异（`audit_log` 增量来自本流程自身审计，已注明）。**真实库逐表计数零差异** | 命令输出；`artifacts/m1f/` | 90d |
+| EV-038 | 2026-10-01 | `uv run pytest tests/test_damage_selftest.py`（新增 10 项） | exit 0 | `tests/test_damage_selftest.py` `7c4ed1888835` | **10 passed**。每场景断言三件事：注入确实落库（防「没抓到」实为假阴性）、目标不变量违规条数上升且审计转 `fail`、清理后回到 `pass`/0 且数据表计数复原。另含：干净图自身必须 pass、注入前目标不变量必须为 0、**子串引文不得被误判为伪造**（防检查过宽）、内置自测无残留、空库应如实 `skipped`、以及两项**内容级**断言（逐行 payload 哈希） | 命令输出 | 90d |
+| EV-039 | 2026-10-01 | 交叉印证：内置自测的自报 vs 受控注入的独立测量 | 一致 | 同上 | 内置自测自报 `quote_violations_after_injection=1`，与受控伪造引文注入独立测得的 0→1 **数值一致**。说明其 `caught` 结论可被外部测量印证，而非仅凭自述。同时记录脆弱点：`caught` 依赖被截断到 10 行的 sample（保守方向：可能漏报、不会虚报），建议上游改为按违规条数或 id 直接查询 | 命令输出 | 90d |
+| EV-040 | 2026-10-01 | 真实库未被触碰 + 全量回归 | pass | `data/growth.db`；Growth OS 73 项 / evkg 101 项 | 三场景全程在真实库**副本**上执行，执行后真实库逐表计数与基线**零差异**。全量回归：Growth OS **73 passed**、evkg **101 passed**、lint 全过、`audit_store` = pass/0 | 命令输出 | 90d |
+| EV-041 | 2026-10-01 | **内容级**恢复核对 `artifacts/m1f/verify_no_content_change.py`（计数级加固） | exit 0 | script `b782aa143533`；`recovery_content_check.json` `94fe6e6d71a4` | **通过**。按用户给定最小攻击重跑：基线 sources=3 / passages=109 / claims=2 / evidence=6 / audit=PASS → 注入（已存在 claim+source、`passage_id=p_nonexistent`、引文「代码证明用户完成实现」）→ `evidence_missing_passage` 0→1、audit=FAIL → 清理后四张表**逐行 payload sha256 完全一致**（新增 0 / 删除 0 / 内容变更 0）、audit 回到 PASS/0；真实库同样**内容级一致**。补这一步的原因：计数级核对验不出「条数不变但既有行被改写」 | 命令输出；`artifacts/m1f/recovery_content_check.json` | 90d |
 
 ## Gate 记录
 
@@ -121,7 +126,7 @@
 | M1-e | 2026-10-01 | **partial 复核证据不被漏掉** | `dossier.py` | 通过 | EV-035 | — |
 | M1-e | 2026-10-01 | 已提交档案与真实库一致 | `data/growth.db` | 通过 | EV-036 | — |
 | M1-f | 2026-10-01 | 伪造数据可被发现 + 清理可恢复（3 场景） | `artifacts/m1f/` | 通过 | EV-037 | — |
-| M1-f | 2026-10-01 | 检测行为被测试固化（8 项） | `tests/test_damage_selftest.py` | 通过 | EV-038 | — |
+| M1-f | 2026-10-01 | 检测行为被测试固化（10 项，含内容级） | `tests/test_damage_selftest.py` | 通过 | EV-038 | — |
 | M1-f | 2026-10-01 | 自报与独立测量交叉印证 | 副本库 | 通过 | EV-039 | — |
 | M1-f | 2026-10-01 | 真实库未被触碰 + 全量回归 | `data/growth.db` | 通过 | EV-040 | — |
 

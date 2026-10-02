@@ -213,3 +213,55 @@ def test_builtin_selftest_skips_when_no_passages(tmp_path):
         assert "no passages" in result["reason"]
     finally:
         store.db.close()
+
+
+# ---------------------------------------------------------------------------
+# 内容级恢复：计数一致不足以证明"原有行未被改写"
+# ---------------------------------------------------------------------------
+
+WATCHED = ("sources", "passages", "claims", "evidence")
+
+
+def _payload_hashes(store, table: str) -> dict[str, str]:
+    import hashlib
+
+    rows = store.db.execute(f"SELECT id, payload FROM {table} ORDER BY id").fetchall()
+    return {row[0]: hashlib.sha256(row[1].encode("utf-8")).hexdigest() for row in rows}
+
+
+def test_recovery_preserves_row_contents_not_just_counts(seeded):
+    """计数一致**不能**证明内容未变 —— 条数不变而行被改写同样能骗过计数比对。
+
+    用户规格要求的是「真实 evidence 不变」，故这里逐行比对 payload 哈希：
+    注入前后，原有每一行的内容都必须完全一致，且不得有新增/删除。
+    """
+    before = {table: _payload_hashes(seeded, table) for table in WATCHED}
+
+    _inject(seeded, evidence_id="ev_content", passage_id="p_nope", quote=FAKE_QUOTE)
+    during = {table: _payload_hashes(seeded, table) for table in WATCHED}
+    # 注入期间：只有 evidence 表多出一行，其余表必须逐行不变
+    for table in ("sources", "passages", "claims"):
+        assert during[table] == before[table], f"注入过程改动了 {table} 的既有行"
+    assert set(during["evidence"]) - set(before["evidence"]) == {"ev_content"}
+    assert all(during["evidence"][k] == v for k, v in before["evidence"].items()),         "注入过程改写了既有 evidence 行"
+
+    _cleanup(seeded, "ev_content")
+
+    after = {table: _payload_hashes(seeded, table) for table in WATCHED}
+    assert after == before, "清理后未能逐行还原原有内容"
+
+
+def test_real_claim_is_untouched_by_injection_cycle(seeded):
+    """真实 claim 的内容在整个注入-清理循环里必须保持不变。"""
+    import hashlib
+
+    def claim_hash() -> str:
+        row = seeded.db.execute("SELECT payload FROM claims WHERE id='clm_t'").fetchone()
+        return hashlib.sha256(row[0].encode("utf-8")).hexdigest()
+
+    before = claim_hash()
+    _inject(seeded, evidence_id="ev_cycle", passage_id="p_nope2", quote=FAKE_QUOTE)
+    adapter.audit(str(seeded.path))
+    _cleanup(seeded, "ev_cycle")
+    adapter.audit(str(seeded.path))
+    assert claim_hash() == before, "注入-清理循环改动了真实 claim 的内容"

@@ -1,0 +1,105 @@
+{
+  "purpose": "把『真实 evidence 不变』从计数级加固到内容级（逐行 payload sha256）",
+  "attack": "fake_citation_dangling_passage",
+  "baseline": {
+    "sources": 3,
+    "passages": 109,
+    "claims": 2,
+    "evidence": 6,
+    "audit": "pass"
+  },
+  "detected": true,
+  "violations": [
+    "evidence_missing_passage"
+  ],
+  "injected": {
+    "evidence_id": "ev_fake_citation",
+    "claim_id": "clm_29f55c14c2e760b75d18",
+    "source_id": "src_bb2159281c69a158",
+    "passage_id": "p_nonexistent",
+    "quote": "代码证明用户完成实现",
+    "row_present_after_injection": 1
+  },
+  "recovery": {
+    "audit_status": "pass",
+    "audit_violations": 0,
+    "per_table": {
+      "sources": {
+        "count_before": 3,
+        "count_after": 3,
+        "count_unchanged": true,
+        "rows_added": [],
+        "rows_removed": [],
+        "rows_content_changed": [],
+        "content_identical": true
+      },
+      "passages": {
+        "count_before": 109,
+        "count_after": 109,
+        "count_unchanged": true,
+        "rows_added": [],
+        "rows_removed": [],
+        "rows_content_changed": [],
+        "content_identical": true
+      },
+      "claims": {
+        "count_before": 2,
+        "count_after": 2,
+        "count_unchanged": true,
+        "rows_added": [],
+        "rows_removed": [],
+        "rows_content_changed": [],
+        "content_identical": true
+      },
+      "evidence": {
+        "count_before": 6,
+        "count_after": 6,
+        "count_unchanged": true,
+        "rows_added": [],
+        "rows_removed": [],
+        "rows_content_changed": [],
+        "content_identical": true
+      }
+    }
+  },
+  "real_db_content_identical": true,
+  "real_db_per_table": {
+    "sources": {
+      "count_before": 3,
+      "count_after": 3,
+      "count_unchanged": true,
+      "rows_added": [],
+      "rows_removed": [],
+      "rows_content_changed": [],
+      "content_identical": true
+    },
+    "passages": {
+      "count_before": 109,
+      "count_after": 109,
+      "count_unchanged": true,
+      "rows_added": [],
+      "rows_removed": [],
+      "rows_content_changed": [],
+      "content_identical": true
+    },
+    "claims": {
+      "count_before": 2,
+      "count_after": 2,
+      "count_unchanged": true,
+      "rows_added": [],
+      "rows_removed": [],
+      "rows_content_changed": [],
+      "content_identical": true
+    },
+    "evidence": {
+      "count_before": 6,
+      "count_after": 6,
+      "count_unchanged": true,
+      "rows_added": [],
+      "rows_removed": [],
+      "rows_content_changed": [],
+      "content_identical": true
+    }
+  },
+  "passed": true
+}

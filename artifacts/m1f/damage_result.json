@@ -9,8 +9,8 @@
     "injected_data_type": "存在的 passage + 伪造引文（由 evkg 内部注入并清理）",
     "raw_selftest": {
       "status": "caught",
-      "injected_claim": "clm_damage_a9efbd30",
-      "injected_evidence": "ev_damage_a9efbd30",
+      "injected_claim": "clm_damage_e209f8af",
+      "injected_evidence": "ev_damage_e209f8af",
       "quote_violations_after_injection": 1,
       "audit_status_during_injection": "fail"
     },
