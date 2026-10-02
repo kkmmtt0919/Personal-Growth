@@ -21,9 +21,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from pydantic import BaseModel  # noqa: E402
-
-from growth_os.evidence import adapter  # noqa: E402
+from growth_os.evidence import adapter
+from pydantic import BaseModel
 
 
 class Ping(BaseModel):
@@ -62,7 +61,7 @@ async def main() -> int:
     width = 12
     print(f"{'':<{width}} {'主网关':<34} {'复核网关':<34}")
     for key in ("provider", "model", "base_url", "chat_path", "reply_who", "tokens"):
-        print(f"{key:<{width}} {str(main_info[key]):<34} {str(verifier_info[key]):<34}")
+        print(f"{key:<{width}} {main_info[key]!s:<34} {verifier_info[key]!s:<34}")
 
     checks = [
         ("verifier_gateway() 报告 independent=True", independent is True),

@@ -15,9 +15,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from pydantic import BaseModel  # noqa: E402
-
-from growth_os.evidence import adapter  # noqa: E402
+from growth_os.evidence import adapter
+from pydantic import BaseModel
 
 
 class Probe(BaseModel):
@@ -30,7 +29,10 @@ async def main() -> int:
     from evkg.model_gateway import ModelGateway
 
     profile = adapter.configure()
-    print(f"领域包: {profile.name}  （切分边界取自成长包: {'\\n{2,}' in profile.splitting.boundary}）")
+    # 把判断提到 f-string 外面：f-string 表达式里含反斜杠是 3.12+ 才有，
+    # 而本仓声明 requires-python >= 3.11，写在里面会在 3.11 上直接语法错误。
+    uses_growth_boundary = "\n{2,}" in profile.splitting.boundary
+    print(f"领域包: {profile.name}  （切分边界取自成长包: {uses_growth_boundary}）")
 
     gateway = ModelGateway()
     result = await gateway.structured(

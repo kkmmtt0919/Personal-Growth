@@ -224,6 +224,22 @@ def counts(store: KnowledgeStore) -> dict:
     return store.counts()
 
 
+def claim_dossier(store: KnowledgeStore, claim_id: str) -> dict | None:
+    """取某条主张的结构化证据档案（evidence / attacks / review_trail / conflicts）。
+
+    只做转发，不改写内容 —— 呈现层的领域语义（两个"独立"的区别、缺失证据的措辞、
+    证据局限）属于 Growth OS，在 ``growth_os.evidence.dossier`` 里处理，不在这里。
+
+    注意：**不要**直接用 evkg 的 ``render_claim_markdown`` 渲染 Growth OS 的档案。
+    它只输出 polarity 为 ``supports`` / ``refutes`` 的证据行，**``partial`` 会落空** ——
+    而本库里被推翻的那条主张恰恰是 `partial`（独立复核的结论），漏掉它就等于
+    把"复核认为只有部分支持"这件事从档案里抹掉。
+    """
+    from evkg.evidence.dossier import claim_dossier as _claim_dossier
+
+    return _claim_dossier(store, claim_id)
+
+
 def logical_id_for(path: str | Path) -> str:
     """某个文件会得到的 ``source_id``（纯计算，不落库）。
 

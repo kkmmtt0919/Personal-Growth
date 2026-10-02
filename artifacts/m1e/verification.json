@@ -1,0 +1,22 @@
+{
+  "generated": [
+    {
+      "claim_id": "clm_29f55c14c2e760b75d18",
+      "status": "machine_reviewed",
+      "output": "artifacts\\m1e\\dossier-29f55c14c2e760b75d18.md",
+      "confidence": 0.697,
+      "markdown_chars": 3490
+    },
+    {
+      "claim_id": "clm_f13861f536d0ffedd12c",
+      "status": "disputed",
+      "output": "artifacts\\m1e\\dossier-f13861f536d0ffedd12c.md",
+      "confidence": 0.17,
+      "markdown_chars": 6089
+    }
+  ],
+  "index": "artifacts\\m1e\\INDEX.md",
+  "checks_total": 35,
+  "checks_failed": 0,
+  "failures": []
+}

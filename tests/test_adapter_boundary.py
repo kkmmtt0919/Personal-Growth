@@ -13,6 +13,10 @@
 
 实现要点：只检查**可执行代码**。注释与文档字符串里出现 `sqlite3`、`SELECT`
 这类词是允许的 —— 那些地方正是用来解释"为什么不这么做"的。
+
+范围：`adapter.py` 的**内容**检查（不得有裸 SQL 等）+ **整个包**的导入检查
+（只有 `adapter.py` 可以 import evkg）。后者把 D1「evkg 只允许在适配层被 import」
+从约定变成可执行约束 —— M1-e 新增的 `dossier.py` 就是靠它保证不绕过适配层。
 """
 
 from __future__ import annotations
@@ -23,7 +27,9 @@ from pathlib import Path
 
 import pytest
 
-ADAPTER = Path(__file__).resolve().parents[1] / "backend" / "growth_os" / "evidence" / "adapter.py"
+BACKEND = Path(__file__).resolve().parents[1] / "backend"
+ADAPTER = BACKEND / "growth_os" / "evidence" / "adapter.py"
+PACKAGE = BACKEND / "growth_os"
 
 ALLOWED_EVKG_MODULES = (
     "evkg.config",
@@ -31,9 +37,14 @@ ALLOWED_EVKG_MODULES = (
     "evkg.ingest",
     "evkg.store",
     "evkg.attack",
+    "evkg.evidence",
 )
 """允许从 evkg 导入的模块。这些都是公共入口所在；`evkg.ingest.connectors` 之类
-实现细节文件不在其中。"""
+实现细节文件不在其中。
+
+新增条目前必须先确认它是**稳定的公共入口**，而不是"能用就行"的实现细节：
+`evkg.evidence.dossier` 是证据档案的公开 API，故在列；
+`evkg.ingest.connectors` 只是实现文件，故不在列。"""
 
 FORBIDDEN_IN_CODE = {
     r"\bsqlite3\b": "不能直接依赖 sqlite3",
@@ -62,41 +73,38 @@ def _strip_docstrings(tree: ast.AST) -> ast.AST:
     return tree
 
 
-def _code_only() -> str:
-    """适配层的可执行代码（无注释、无 docstring），重新生成后用于模式匹配。"""
-    return ast.unparse(_strip_docstrings(ast.parse(ADAPTER.read_text(encoding="utf-8"))))
+def _code_only(path: Path) -> str:
+    """某个文件的可执行代码（无注释、无 docstring），重新生成后用于模式匹配。"""
+    return ast.unparse(_strip_docstrings(ast.parse(path.read_text(encoding="utf-8"))))
 
 
-@pytest.mark.parametrize(("pattern", "why"), sorted(FORBIDDEN_IN_CODE.items()))
-def test_adapter_code_has_no_storage_internals(pattern: str, why: str):
-    code = _code_only()
-    hits = re.findall(pattern, code)
-    assert not hits, f"{why}；命中 {len(hits)} 处：{sorted(set(hits))[:3]}"
-
-
-def test_adapter_only_imports_allowed_evkg_modules():
-    tree = ast.parse(ADAPTER.read_text(encoding="utf-8"))
+def _modules_of(path: Path) -> list[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
     modules: list[str] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             modules.extend(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             modules.append(node.module)
+    return modules
 
-    evkg_modules = [name for name in modules if name.startswith("evkg")]
+
+@pytest.mark.parametrize(("pattern", "why"), sorted(FORBIDDEN_IN_CODE.items()))
+def test_adapter_code_has_no_storage_internals(pattern: str, why: str):
+    code = _code_only(ADAPTER)
+    hits = re.findall(pattern, code)
+    assert not hits, f"{why}；命中 {len(hits)} 处：{sorted(set(hits))[:3]}"
+
+
+def test_adapter_only_imports_allowed_evkg_modules():
+    evkg_modules = [name for name in _modules_of(ADAPTER) if name.startswith("evkg")]
     assert evkg_modules, "适配层应当导入 evkg（它是唯一入口）"
     for name in evkg_modules:
         assert name.startswith(ALLOWED_EVKG_MODULES), f"导入了允许清单之外的 evkg 模块: {name}"
 
 
 def test_adapter_does_not_import_sqlite_or_orm_libraries():
-    tree = ast.parse(ADAPTER.read_text(encoding="utf-8"))
-    modules: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            modules.update(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            modules.add(node.module)
+    modules = set(_modules_of(ADAPTER))
     for banned in ("sqlite3", "sqlalchemy", "peewee", "dataset"):
         assert banned not in modules, f"适配层不应依赖 {banned}"
 
@@ -104,7 +112,7 @@ def test_adapter_does_not_import_sqlite_or_orm_libraries():
 def test_adapter_does_not_call_low_level_store_methods():
     """``passage_ids`` / ``purge_passages`` 属写入语义，是 evkg 内部；
     适配层只该用 get_source / get_passages / find_sources / save_* 这类公共入口。"""
-    code = _code_only()
+    code = _code_only(ADAPTER)
     for attribute in ("passage_ids", "purge_passages", "delete_passage", "storage_status"):
         assert attribute not in code, f"适配层不应调用 store 的低层方法 {attribute}"
 
@@ -118,3 +126,50 @@ def test_adapter_exposes_only_public_helpers():
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("_")
     ]
     assert private == [], f"适配层不应再有私有辅助（曾经的 _tag_source 之类）：{private}"
+
+
+# ---------------------------------------------------------------------------
+# 包级：D1「evkg 只允许在适配层被 import」的可执行版本
+# ---------------------------------------------------------------------------
+
+
+def _package_modules() -> list[Path]:
+    return sorted(path for path in PACKAGE.rglob("*.py") if path.is_file())
+
+
+def test_package_modules_were_found():
+    """防止路径写错导致下面的检查变成空跑（空集合会让断言全部通过）。"""
+    modules = _package_modules()
+    assert len(modules) >= 3, f"未找到足够多的包模块，检查可能空跑: {modules}"
+    assert any(path.name == "dossier.py" for path in modules), "预期包含 M1-e 新增的 dossier.py"
+
+
+def test_only_adapter_imports_evkg():
+    """D1 的可执行版本：整个 growth_os 包里只有 adapter.py 可以 import evkg。
+
+    否则任何模块都能绕过适配层直接碰 evkg，边界就名存实亡。
+    """
+    offenders: list[str] = []
+    for path in _package_modules():
+        if path == ADAPTER:
+            continue
+        evkg_imports = [name for name in _modules_of(path) if name.startswith("evkg")]
+        if evkg_imports:
+            offenders.append(f"{path.relative_to(BACKEND)}: {evkg_imports}")
+    assert offenders == [], "以下模块绕过了适配层直接 import evkg：" + "；".join(offenders)
+
+
+def test_no_package_module_touches_sqlite_directly():
+    """包内任何模块都不得直接依赖 sqlite3 或执行裸 SQL（不止 adapter）。"""
+    offenders: list[str] = []
+    for path in _package_modules():
+        modules = set(_modules_of(path))
+        if "sqlite3" in modules:
+            offenders.append(f"{path.relative_to(BACKEND)}: import sqlite3")
+            continue
+        code = _code_only(path)
+        for pattern in (r"\.db\s*\.\s*execute\s*\(", r"\b(?:SELECT|INSERT\s+INTO|UPDATE\s+\w+\s+SET|DELETE\s+FROM)\b"):
+            if re.search(pattern, code):
+                offenders.append(f"{path.relative_to(BACKEND)}: {pattern}")
+    assert offenders == [], "包内出现裸 SQL/sqlite3：" + "；".join(offenders)
+

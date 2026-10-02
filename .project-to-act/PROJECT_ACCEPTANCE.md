@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d / M1-c / M1-d 均通过**；M1 的三层基础已闭环；已产出首批可逐字回溯的能力断言（2 条）并经**独立复核**攻击验证；M1-e（dossier）未开始
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）+ M1-d（独立复核核对、攻击运行、样例留档、越权主张被推翻）
+- 结论：**M0 至 M1-e 全部通过**；M1 的三层基础已闭环；已产出首批可逐字回溯的能力断言（2 条）并经**独立复核**攻击验证；已产出可读的证据档案（含证据链、缺失证据、两类独立、证据局限）。M1-f（damage selftest）未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）+ M1-d（独立复核核对、攻击运行、样例留档、越权主张被推翻）+ M1-e（档案渲染、35 项一致性核对、partial 回归、真实库对照）
 - 最后检查：2026-10-01
-- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；归属层缺失使项目产物暂不能作为能力证据（M1-d 已能识别并推翻这类越权主张，但“如何正当地建立归属”仍待 M2/M4 决策）
+- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；归属层缺失使项目产物暂不能作为能力证据（M1-d 已能识别并推翻这类越权主张，M1-e 的档案也明示了该局限，但“如何正当地建立归属”仍待 M2/M4 决策）
 
 ## 验收标准
 
@@ -76,6 +76,10 @@
 | EV-030 | 2026-10-01 | `uv run --env-file .env python artifacts/m1d/run_attack.py data/growth.db`（5 模块，不含 damage） | exit 0 | runner `e2141c6af6d2`；`attack_result.json` | summary：deterministic=`pending_model_review`（正常状态：候选已生成待复核）、verifier=`complete`、contradiction=`complete`、adversarial=`complete`、audit=`pass`。**无模块级错误**（`failures_and_details.json` 的 module_errors 为空）。产出 4 条对抗报告、2 条冲突候选（均来自对抗模块对 broken 主张的记录）、0 条已确认冲突。QG1 = pass，0/10 violations | 命令输出；`artifacts/m1d/` | 90d |
 | EV-031 | 2026-10-01 | 攻击样例留档：红队质疑 + 裁决全文 | — | `attack_reports.json` `2860ad893982` | 4 条 probe/verdict 全部留档。`clm_f138…`（`实现过`）两次 `broken`，质疑角度为「仅基于 README 自述、用户角色不明」与「代码独立性与二手资料风险（是否只是调现成 API 的教程式组合、92% 指标有无代码与实验佐证）」——**直接落实 PRD §8 的质疑清单**；`clm_29f5…`（`计划学习`）两次 `sustained` | `artifacts/m1d/attack_reports.json` | 长期 |
 | EV-032 | 2026-10-01 | ★ 攻击判别结果：越权主张被推翻、措辞正确的主张被保住 | pass | `claims_after_attack.json` | **`实现过 RAG 检索服务`**：抽取自评 0.35 → 复核 polarity=`partial`、0.17 → 对抗裁决 `broken` → 最终 `disputed`/0.17；理由写明“README 属于项目自述，**不能证明用户本人承担开发角色**”（`review_state=disputed_by_adversarial`，`verifier_model=deepseek-flash`，`verifier_independent=True`）。**`计划学习`**：`machine_reviewed`/0.697，裁决 `sustained`，理由“缺失实践证据不削弱该主张，因为其核心是『仅为计划』”。→ 同一次攻击同时做到“推翻越权”与“保住正确”，即 PRD §33 第 3 条的首次实证 | `artifacts/m1d/claims_after_attack.json` | 长期 |
+| EV-033 | 2026-10-01 | `uv run pytest tests/test_dossier.py`（M1-e 新增 22 项） | exit 0 | `tests/test_dossier.py` `843910021c54` | **22 passed**。覆盖用户五条标准：六环节证据链齐全；模型判断被标注为判断（"模型产出，非事实"/"不是已被证实的事实"/"可复核的判断，而非定论"）；final status 推导过程；状态与分数与库一致（3 位小数）；`verifier_independent` 取自 metadata（用 SQL 改成 0 后档案随之变 0，证明非渲染时臆测）；缺失证据单列且含"不等于造假""不构成用户没做过的判断"；两个"独立"分别给值且声明不可互换；生成信息五字段；**抽取模型缺失被如实标注**；标题用三元组而非整段 statement；无攻击/无复核时的降级文案；未知主张报错；`write` 落盘一致 | 命令输出；`tests/test_dossier.py` | 90d |
+| EV-034 | 2026-10-01 | `uv run --env-file .env python artifacts/m1e/run_dossier.py`（生成 + 核对） | exit 0 | runner `c23a3bc9815a`；`verification.json` | **核对 35/35 通过**。产出 2 份档案 + 1 份索引，并逐项核对：claim 状态/分数/`verifier_independent` 与库一致；每条 attack 的 verdict 与 `missing_evidence` 与 `artifacts/m1d/attack_reports.json` 一致；**`partial` 复核证据未被漏掉**；并含空跑防护（先断言 M1-d 留档非空）。`audit_store` = pass，0/10 violations | `artifacts/m1e/` | 90d |
+| EV-035 | 2026-10-01 | ★ 回归：`partial` 极性证据必须被呈现 | pass | `dossier.py` `dabe53d1b567` | 两条用例锁死 —— `test_partial_polarity_evidence_is_rendered`（`polarity=\`partial\`` 与复核意见正文都在档案里）与 `test_partial_is_not_listed_as_support`（不得被误标成反对证据）。**这是本模块存在的直接原因**：evkg 的 `render_claim_markdown` 只输出 supports/refutes，会漏掉 `partial`，而被推翻的真实主张恰恰是 `partial` | 命令输出；`tests/test_dossier.py` | 长期 |
+| EV-036 | 2026-10-01 | 真实产物 ↔ 真实库一致性（`skipif`，本机执行） | pass | `artifacts/m1e/dossier-*.md` | `test_committed_dossiers_match_real_database` 对真实库中每条主张逐项核对已提交的档案：主张 ID、最终状态、3 位小数置信度、`independent_verifier` 取值，以及**真实 `partial` 复核意见的正文必须出现**。真实库已 gitignore，缺失时该用例自动跳过；本机已实际执行并通过。另：`adapter.audit` = pass | `artifacts/m1e/`；`data/growth.db` | 90d |
 
 ## Gate 记录
 
@@ -112,6 +116,10 @@
 | M1-d | 2026-10-01 | 攻击运行完整、无模块级错误、库自洽 | 5 个模块 | 通过 | EV-030 | — |
 | M1-d | 2026-10-01 | 攻击样例留档 | `artifacts/m1d/` | 通过 | EV-031 | — |
 | M1-d | 2026-10-01 | **越权主张被推翻 + 正确主张被保住** | 2 条主张 | 通过 | EV-032 | — |
+| M1-e | 2026-10-01 | 档案渲染行为（22 项，含 partial 回归） | `tests/test_dossier.py` | 通过 | EV-033 | — |
+| M1-e | 2026-10-01 | 档案 ↔ 数据库 ↔ M1-d 留档一致性（35/35） | `artifacts/m1e/` | 通过 | EV-034 | — |
+| M1-e | 2026-10-01 | **partial 复核证据不被漏掉** | `dossier.py` | 通过 | EV-035 | — |
+| M1-e | 2026-10-01 | 已提交档案与真实库一致 | `data/growth.db` | 通过 | EV-036 | — |
 
 ## 验收记录
 
@@ -126,5 +134,6 @@
 | 2026-10-01 | M1-b.5d（适配层边界、公共 API 补齐） | EV-021 EV-022 EV-023 EV-024 | 通过 | — | **M1-b.5d 验收通过；M1 的 a/b/c 三层闭环** |
 | 2026-10-01 | M1-c（extract：证据 → 能力断言） | EV-025 EV-026 EV-027 EV-028 | 通过 | 归属层待 M2/M4 决策；独立 verifier 未配置 | **M1-c 验收通过** |
 | 2026-10-01 | M1-d（attack：独立复核 + 对抗攻击） | EV-029 EV-030 EV-031 EV-032 | 通过 | 归属层待 M2/M4 决策 | **M1-d 验收通过（独立复核，结果可用）** |
+| 2026-10-01 | M1-e（dossier：能力证据档案） | EV-033 EV-034 EV-035 EV-036 | 通过 | 归属层待 M2/M4 决策；抽取模型未入库 | **M1-e 验收通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。
