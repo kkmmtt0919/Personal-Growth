@@ -1,0 +1,89 @@
+{
+  "attempt": "M2-d real #1",
+  "model": "glm-5.3-flash",
+  "outcome": "failed (harness defect, not a model defect)",
+  "calls_used": 3,
+  "calls_budgeted": "澄清 3 + 生成 2 = 5",
+  "generation_calls_used": 0,
+  "total_tokens_recorded": 2269,
+  "goal_status_after": "clarifying",
+  "goal_elements_after": {
+    "direction": null,
+    "purpose": null,
+    "horizon": null,
+    "measurable_result": null
+  },
+  "runs": [
+    {
+      "id": "real_run_001",
+      "status": "ok",
+      "provider": "openai_compatible",
+      "model": "glm-5.3-flash",
+      "model_source": "result",
+      "tokens": 696,
+      "error": null,
+      "output": {
+        "question": "你希望多长时间内实现成为 AI Agent Engineer 这个目标？",
+        "proposed": null,
+        "ready_to_confirm": false
+      }
+    },
+    {
+      "id": "real_run_002",
+      "status": "ok",
+      "provider": "openai_compatible",
+      "model": "glm-5.3-flash",
+      "model_source": "result",
+      "tokens": 769,
+      "error": null,
+      "output": {
+        "question": "你说\"应用方向\"，是指你希望成为哪一类 AI Agent 工程师（例如做智能体产品开发、Agent 框架研发，还是企业业务中的 Agent 落地）？",
+        "proposed": null,
+        "ready_to_confirm": false
+      }
+    },
+    {
+      "id": "real_run_003",
+      "status": "ok",
+      "provider": "openai_compatible",
+      "model": "glm-5.3-flash",
+      "model_source": "result",
+      "tokens": 804,
+      "error": null,
+      "output": {
+        "question": "你希望在多长时间内找到一份 AI 应用工程师的工作（例如 3 个月、6 个月或 1 年）？",
+        "proposed": null,
+        "ready_to_confirm": false
+      }
+    }
+  ],
+  "clarifications": [
+    {
+      "round": 1,
+      "question": "你希望多长时间内实现成为 AI Agent Engineer 这个目标？",
+      "answer": "应用方向"
+    },
+    {
+      "round": 2,
+      "question": "你说\"应用方向\"，是指你希望成为哪一类 AI Agent 工程师（例如做智能体产品开发、Agent 框架研发，还是企业业务中的 Agent 落地）？",
+      "answer": "找一份 AI 应用工程师的工作"
+    },
+    {
+      "round": 3,
+      "question": "你希望在多长时间内找到一份 AI 应用工程师的工作（例如 3 个月、6 个月或 1 年）？",
+      "answer": null
+    }
+  ],
+  "exception": "GoalStateError: 当前状态 clarifying 不能确认（应先由澄清给出完整提议）",
+  "root_cause": "脚本化用户回答与真实模型的提问顺序不对位：模型第 1 问即问「多长时间」，而脚本回答是「应用方向」；第 3 问仍在追问时间周期，脚本回答是「找一份 AI 应用工程师的工作」。两个回答都没有提供时间周期与可衡量结果，因此四要素始终不全，模型（正确地）一直不返回ready_to_confirm 的完整提议，confirm() 按状态机设计拒绝。离线 fake 之所以通过，是因为手写响应在第三轮直接给出了含时间与可衡量结果的完整提议 —— 而这两项信息从未由脚本用户提供，也就是说离线脚本掩盖了这个缺口。",
+  "proposed_fix": {
+    "scope": "只改 artifacts/m2/run_goal_flow_offline.py 的「用户侧」脚本，不动编排逻辑与提示词",
+    "change_1": "固定顺序的回答改为按问题关键词取答案的确定性函数：时间/多久/周期 → 六个月；就业/研究/目的/目标 → 找工作；应用/算法/基础设施 → 应用方向；可衡量/结果/证明/验收 → 完成两个可演示的 Agent 项目并通过 20 道面试题；兜底 → 交由用户侧逐条补充",
+    "change_2": "驱动循环改为最多 MAX_ROUNDS(6) 轮，直到 ready_to_confirm 才 confirm；轮次用尽仍未就绪则如实失败",
+    "why": "用户侧保持确定性（不引入第二个模型、不产生语义漂移），同时能对真实模型的任意提问顺序给出对应信息",
+    "revised_budget_worst_case": "澄清最多 6 次 + 能力树生成 2 次 = 8 次结构化调用"
+  },
+  "cost_so_far": "3 次调用，记录 tokens 合计约 2.3k（flash 价目下远低于 0.01 元）",
+  "data_boundary_check": "data/growth.db 哈希与 g_ 表/证据计数均未变化；本尝试只写入临时库 artifacts/m2/tmp/m2-real.db",
+  "auto_retry": "未发生（按约定停在此处等待确认）"
+}

@@ -214,7 +214,15 @@ async def run_session(store: GrowthStore, gateway, mode: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description="M2 端到端演练（默认离线）")
     parser.add_argument("--gateway", choices=["fake", "real"], default="fake")
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="真实模式下覆盖 Agent 模型（等价于 GROWTH_AGENT_MODEL，但显式且不受 .env 优先级影响）",
+    )
     args = parser.parse_args()
+
+    if args.model:
+        os.environ["GROWTH_AGENT_MODEL"] = args.model
 
     tmp = HERE / "tmp"
     tmp.mkdir(parents=True, exist_ok=True)
@@ -224,6 +232,7 @@ def main() -> int:
     with GrowthStore(str(db)) as store:
         store.upsert_user("local", "本地用户")
         report = asyncio.run(run_session(store, build_gateway(args.gateway), args.gateway))
+    report["requested_model_override"] = args.model
 
     out = HERE / f"session-{args.gateway}.json"
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
