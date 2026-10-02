@@ -368,6 +368,54 @@ autouse fixture 显式 `activate("default")` 并在结束时重置。个别测�
 | B-g1 | evkg 依赖不可从他机复现：本地领先远程 4 个提交且不得推送 | 任何"可复现构建/换机/CI"要求（M2 起随时可能触发；M8 端到端验收必然触发） | 用户决定一种可获取形式（私有镜像 / 本地归档 / 允许推送），并把 `pyproject.toml` pin 到 commit SHA |
 | B-g2 | 富格式（PDF/docx/xlsx）上传路径 0 端到端验证 | M3（Upload）开工 | M3 开工前先做一个 spike：真实 PDF 走 V1 状态机入库 + audit + locator 可核对性结论 |
 
+#### B-g1 交付方案比较（2026-10-02 实测，evkg @ `28afbc0`，5 个提交）
+
+判定标准（用户指定）：**可获取、可校验、可复现**。SHA 只解决"锁定哪一个版本"，
+不解决"别处怎么拿到代码"，因此三者必须同时满足。
+
+实测事实（全部在临时目录中完成，未改动任何工程文件）：
+
+| 机制 | 实测结果 |
+|---|---|
+| `git bundle create --all` | **238,807 字节**；SHA-256 `10dafff49bb8e627007c4bb5cc3ddfcfce1108ef9b97c42763bf93a8b8c13801`；重新生成**字节一致**（同一状态可复现同一归档） |
+| `git bundle verify` | HEAD = `28afbc0db7061d9717e307bf2bd0833f59fd8f51`，`records a complete history`，校验 ok |
+| 从 bundle 克隆 | HEAD 与上述 SHA 一致，5 个提交，`git fsck` 无异常 |
+| 裸仓镜像（bare clone） | HEAD 一致；`git ls-remote` 可解析 `HEAD`/`refs/heads/main` |
+| **uv 层 pin**（scratch 项目，`file://` + `rev`） | `uv lock` 解析成功（24 包），`uv.lock` 记录 `source = { git = "file:///…?rev=28afbc0…#28afbc0…" }` —— **可复现 pin 在 uv 层成立** |
+| `editable` + `git` | uv 拒绝：`cannot specify both git and editable` —— **pin 与当前 editable 开发循环不可兼得** |
+
+方案对比：
+
+| 方案 | 可获取 | 可校验 | 可复现 | 代价 | 需要授权 |
+|---|---|---|---|---|---|
+| **A. 本地归档**：bundle（传输/归档）+ 裸仓（git 可寻址） | 文件可放任意介质/共享盘；裸仓供 uv 寻址 | bundle SHA-256（字节可复现）+ commit SHA | 是（uv `file://`+`rev` 已实测） | 手工分发；无集中更新通道；每台构建机需放置裸仓 | 无 |
+| **B. 私有镜像**（私有 GitHub / 自建 Gitea / NAS 裸仓 + ssh） | URL 克隆 | commit SHA（可加签名 tag） | 是（uv `git`+`rev`） | 需建服务/账号与凭据；代码离开本机；维护成本 | **需要**用户创建并授权 |
+| C. 推送 `redmaplewww/evkg` | — | — | — | 违反现行约束，对外发布不可撤回 | 需明确授权（不建议） |
+| D. vendor / 子模块 | 随主仓 | 随主仓 | 是 | 与 Q1「不 fork」冲突，失去上游身份与同步能力 | 无（不建议） |
+
+**建议：维持"不推送"约束，当前采用方案 A；方案 B 作为出现多机/CI 时的升级路径**
+（bundle 可作为 B 的初始种子：从 bundle 克隆 → 推入私有镜像）。理由：A 零授权、
+零外部暴露、已验证；B 的价值（集中更新、CI 拉取）在单机阶段用不上。
+
+pin 的时机与代价：**开发期继续用 path 依赖（保留 editable 循环），发布/CI 前再切换**
+为 `git`+`rev`（步骤已实测）。切换后 evkg 变为只读依赖，改上游要走镜像仓并 bump rev ——
+这是"可复现"的必要代价，应记入发布流程。
+
+落地步骤（方案 A，待用户确认后执行，约 1 分钟）：
+
+```bash
+cd D:/projects/evkg
+git bundle create evkg-28afbc0.bundle --all          # 记录 SHA-256
+git clone --bare . <归档位置>/evkg-mirror.git        # 或从 bundle 克隆
+# 需要构建的机器：git clone <bundle> evkg && git rev-parse HEAD 核对
+# 发布/CI：pyproject 改为 { git = "<可寻址 URL>", rev = "28afbc0…" }，uv lock，跑两套测试
+```
+
+注意事项：① 方案 A 的"可获取"取决于归档文件放到对方能拿到的地方（CI 亦然）；
+② 多机时裸仓路径应选**位置无关**的 URL（UNC / ssh），否则各机 `uv.lock` 里的 URL 会不同
+（SHA 仍可校验，但锁文件会漂移）；③ 归档建议存两处（本机固定路径 + 离线/云备份），
+并在 `PROJECT_VERSIONS.md` 依赖基线表登记 bundle SHA-256 与 commit SHA。
+
 ### 9.2 可延后（附触发条件，触发即升级为阻塞）
 
 | ID | 事项 | 延后理由 | 触发条件（tripwire） |
@@ -395,3 +443,4 @@ autouse fixture 显式 `activate("default")` 并在结束时重置。个别测�
 | EV-045 | 三项上游缺陷在真实数据/副本上复现（partial 哨兵对照 / 模型名缺失 / caught 截断） | 同上 `r4_evidence.json` |
 | EV-046 | R3 行级覆盖实测（无新依赖，`sys.settrace` 插件） | `artifacts/m1g/line_coverage_plugin.py` `971a1fad02b0`、`r3_coverage.json` `22b7f1ce87ff` |
 | EV-047 | M1 完成条件补跑：`init`（CLI，35 张 schema 表）与 `reindex`（FTS5：109 段落 + 2 主张、幂等、审计仍 pass、检索 4/5 命中）在真实材料/临时空库上的实际输出 | `artifacts/m1g/run_reindex_search_check.py` `8532375183a8`、`reindex_search_evidence.json` `316a1fb1af07` |
+| EV-048 | B-g1 交付方案实测：bundle 字节可复现（238,807 字节 / SHA-256 `10dafff4…3801`）、bundle 校验与克隆、裸仓镜像、uv `file://`+`rev` pin 成立、`editable` 与 `git` 互斥 | 见 §9.1 与 `PROJECT_ACCEPTANCE.md` EV-048（命令输出，临时目录已清理） |
