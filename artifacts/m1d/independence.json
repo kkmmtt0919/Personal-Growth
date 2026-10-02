@@ -1,0 +1,11 @@
+{
+  "independent_flag_from_evkg": true,
+  "verifier_provider": "openai_compatible",
+  "verifier_model": "deepseek-flash",
+  "verifier_base_url": "https://api.deepseek.com",
+  "main_provider": "openai_compatible",
+  "main_model": "glm-5.3",
+  "main_base_url": "https://open.bigmodel.cn",
+  "genuinely_independent": true,
+  "caveat": "evkg 的 verifier_gateway() 返回的布尔值只表示『配置了 overrides』，并不比对模型是否真的不同；genuinely_independent 是本脚本按模型名+端点另行判定的。另外实测发现：直接问模型『你是谁』不可靠 —— deepseek-flash 回答 'ChatGPT'。因此模型身份只以解析后的配置与接口返回为准。"
+}

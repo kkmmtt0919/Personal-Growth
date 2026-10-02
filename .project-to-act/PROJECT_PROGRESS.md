@@ -15,7 +15,8 @@
 | M1-b.5c | evkg 写入语义：逻辑身份 id + `content_hash` + 显式 upsert + passage 级联替换 | 已完成 | ZCode | evkg 93 项 + 本仓 27 项全绿；三态循环与 A→B 性质在真实材料上验证；lint 未新增 | EV-017…EV-020 | 2026-10-01 |
 | M1-b.5d | adapter 变薄：删除裸 SQL / metadata 补丁 / 自造路由；加边界检查防回潮 | 已完成 | ZCode | evkg 101 项 + 本仓 38 项全绿；边界检查 11 项；b.5b/b.5c 实证复跑通过 | EV-021…EV-024 | 2026-10-01 |
 | M1-c | extract：证据 → 能力断言（用户已提供 API Key） | 已完成 | ZCode | 109/109 passage 完成抽取；claim 可逐字回溯；QG1 pass | EV-025…EV-028 | 2026-10-01 |
-| M1-d | attack：对能力断言做攻击（五件套 + 独立复核） | 待确认 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | 无 | 2026-10-01 |
+| M1-d | attack：对能力断言做攻击（deterministic/verifier/contradiction/adversarial/audit） | 已完成 | ZCode | 攻击样例与复核结果留档；QG1 pass；独立复核已核实生效 | EV-029…EV-032 | 2026-10-01 |
+| M1-e | dossier 输出（证据档案） | 待确认 | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | 无 | 2026-10-01 |
 | M1 | 证据底座打通（技术 spike） | 进行中（a/b/c 三层已闭环，M1-c 未启动） | ZCode | 见 `docs/ROADMAP.md` M1 完成条件 | EV-004…EV-024 | 2026-10-01 |
 | M2 | 目标澄清与能力模型 | 已规划 | — | 通过验收门 G1 | 无 | 2026-10-01 |
 | M3 | 证据接入（Upload + GitHub） | 已规划 | — | 见 `docs/ROADMAP.md` M3 | 无 | 2026-10-01 |
@@ -39,9 +40,15 @@
 M1 的三层基础已闭环（用户 2026-10-01 确认）：**a 入库 → b 证据模型 → c 适配层边界**；
 M1-c（extract）已完成，109/109 passage 抽取完毕，产出 2 条可逐字回溯的能力断言。
 
-**剩余**：M1-d（attack）、M1-e（dossier）、M1-f（damage selftest）、M1-g（spike 结论）。
+**剩余**：M1-e（dossier）、M1-f（damage selftest）、M1-g（spike 结论）。M1-d 已完成，且**独立复核已核实真正生效**（主 GLM @ 智谱 / 复核 deepseek-flash @ DeepSeek，模型与端点均不同）。
 其中 M1-d 需要模型（主模型已可用；**独立 verifier 尚未配置**，此时攻击环节会回落到主模型
 即"自己审自己"，`verifier_gateway()` 会返回 `independent=False` —— M1-d 验收时必须如实标注）。
+
+**M1-d 的关键结论**：攻击环节**独立地**推翻了一条越权主张 —— 抽取器以自评 0.35 产出
+「用户 实现过 RAG 检索服务」，独立复核（DeepSeek）判为 polarity=`partial`、对抗裁决判为
+`broken`，最终该主张降为 `disputed`/0.17，理由写明"README 属于项目自述，不能证明用户本人
+承担开发角色"。同一次攻击**保住**了另一条措辞正确的主张（「计划学习」判为 `sustained`）。
+这正是 PRD §33 第 3 条（识别"用户说自己会但证据不足"）的首次实证。
 
 **M1-c 暴露的产品级缺口（待 M2/M4 决策，非缺陷）**：抽取器**正确地**拒绝把项目成果
 归因为个人能力（其中一条主张自己写明"未明确用户本人在项目中的具体角色与贡献"）。
@@ -70,6 +77,7 @@ M1-c（extract）已完成，109/109 passage 抽取完毕，产出 2 条可逐�
 | 2026-10-01 | 架构评审 | 用户指出 adapter 正在替 evkg 打业务补丁，应改为修 evkg 通用能力、让 adapter 变薄；据此把 M1-c 挂起，改为 M1-b.5（四小步） | 我核实后收窄范围并提出三点修正：`Passage.locator` 本就存在（缺的是填充而非结构）；三个"缺口"实为 `_save_source_passages` 单一有损交接点；`SourceKind.UNKNOWN`（类型未知，合理低先验）与"未评估"（缺失值）是两件事。用户接受修正并选定 b.5c 用方案 (a) | — | — | M1-b.5a 开工 |
 | 2026-10-01 | M1-b.5a | 修 evkg：`SourceKind.CODE`、`CodeConfig`+`code_language_for`、`CodeReader`、`split_code_passages`、`ingest_code_file`、CLI 分派、默认 readers 顺序；本仓：growth 领域包加 code、adapter 改走 `ingest_code_file` 并**删掉自造 text_like 路由** | ① `normalize_document` 会折叠空白并重排行（8 行 Java 塌成 3 行、缩进全失）→ 经 V1 状态机无法保真行号；② passage id 含切分方案 → 换切分器后旧 passage 只累积不替换（实测混入 11 条被撕裂的旧片段）→ 移入 b.5c；③ 切分器经四轮实测修正才收敛；④ **D1 的预测被证伪**（"MVP 大概率不需要改 evkg"），但 D1 的决策成立 | EV-009…EV-012 | symbol 级精度需解析器；累积问题待 b.5c | M1-b.5b 待开工确认 |
 | 2026-10-01 | M1-b.5b | 修 evkg assessment 语义：`ASSESSED`/`UNASSESSED` 与 `assess_unassessed()`/`resolve_source_assessment()`；两处 `default=0.25` 移除；`Confidence.score`/`source_reliability` 与 `EvidenceLink.confidence` 可空并加 `assessment_status`；三个消费者同步 | ① **危害实测**：kind=code 来源无缓存分级就按 0.25 计权，同源同内容差 **0.55** 且静默 → 修复后 0.00；② 按 kind 推导不是"发明数字"（同一份策略表的确定性函数），并用 `origin` 标出"未逐来源评估"；③ 缺失必须**双向设防**：既不得兜底低分，也不得兜底高分；④ 未新建 claim 生命周期（沿用 `ClaimStatus`，未分级记为 `DISPUTED`）；⑤ 测试按"先写后改"，并用实证脚本单独留证旧行为 | EV-013…EV-016 | — | M1-b.5c 待开工确认 |
+| 2026-10-01 | M1-d | 配置独立复核模型（DeepSeek）；核对其**真正生效**；运行 5 个攻击模块；留档攻击样例与复核结果 | ① 用户要求先配独立复核并**核对实际生效的 provider/模型名**，理由是 `independent=True` 只检查变量是否设置 —— 实测确认：主 glm-5.3@bigmodel / 复核 deepseek-flash@deepseek，模型与端点均不同，`genuinely_independent=True`；② **实测发现模型自称不可靠**：问 deepseek-flash"你是谁"它回答 "ChatGPT"，故模型身份只能以解析后的配置与接口返回为准；③ 两个易混淆的"独立"概念须分开记：`independent_verifier`（复核模型不同→True）与 `evidence.independent_source`（证据跨多来源→False，本次两条主张都只引一个来源）；④ `deterministic` 的 `pending_model_review` 是**正常状态**（表示候选已生成待模型复核），非错误；⑤ 本次 0 冲突、2 条冲突候选均来自对抗模块对 broken 主张的记录 | EV-029…EV-032 | 归属层待 M2/M4 决策 | M1-e 待确认 |
 | 2026-10-01 | M1-c | 配好 `.env`（用户提供 API Key）+ 探针 + 全量抽取：109/109 passage，2 claims / 60 entities / 3 aliases / 1 event | ① **evkg 自带 `.env.example` 对 glm-5.3 无效**：它同时写 `REASONING_EFFORT=none` 与 `EXTRA_BODY={"thinking":{"type":"disabled"}}`，而该模型实测返回 400「该模型始终思考，不支持关闭思考」→ 改为 `REASONING_EFFORT=low` 后可用；② 另一处：`.env.example` 里 `EVKG_EXTRA_BODY={...}` 裸写，标准 dotenv 解析器会剥掉内部双引号使其不是合法 JSON，必须整体加单引号；③ **抽取器正确地拒绝把项目成果归因为个人能力** —— 一条主张的陈述自己写明"未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身"，这是成长领域包「不作能力推断」规则在起作用，但也说明项目产物需要**显式的归属层**才能变成能力证据（属 L2 职责，不该让 LLM 推断）；④ 「严禁升级」规则验证通过：README 的「未来规划」TODO 被抽成 predicate=`计划学习` 且陈述明写"仅为计划事项，不代表已具备相应能力" | EV-025…EV-028 | 归属层待 M2/M4 决策；独立 verifier 未配置 | M1-d 待确认 |
 | 2026-10-01 | M1-b.5d | 适配层变薄：删掉 `_tag_source` 的裸 SQL、自造后缀路由与 metadata 补丁；evkg 补 `ingest_path()` 统一路由与 `find_sources()` 按 metadata 检索；新增边界检查测试防止耦合回潮 | ① 用户把目标收窄为「**证明 Growth OS 不再需要知道 evkg 内部存储细节**」，并要求加一项**适配层依赖检查** —— 我做成静态 AST 检查（禁 `sqlite3` / `.db.execute` / `json_set` / `json_extract` / 内联 SQL / 下划线成员 / `evkg.ingest.connectors`），因为"M1-b.5c 期间我自己就复用了 OR-IGNORE 的 helper"，证明靠小心守不住；② `IngestResult.route` 被删除：路由是 evkg 的实现细节，`kind=="code"` 已能表达同一事实；③ 检查最初误报文档字符串（我写的"不做什么"说明里含这些词）→ 改为先剥 docstring 再匹配 | EV-021…EV-024 | symbol 级精度待解析器；evkg 不得推送远程 | 待用户确认进入 M1-c |
 | 2026-10-01 | M1-b.5c | 修 evkg 写入语义：`logical_source_id()` 统一两套 id 方案、`Source.content_hash`（基于换行规范化文本）、`save_source` 返回 inserted/updated/unchanged 且 metadata 合并、`_put` 对 sources 改真 upsert、`save_passages` 整体替换、新增 `purge_passages()` 级联清理；pipeline 透传 kind 与 content_hash | ① **我自己踩了用户警告过的坑**：更新分支复用了 `_put`（`INSERT OR IGNORE`），`save_source` 报 updated 但库里仍是旧值 → 已把 `_put` 对 sources 改成真 upsert 从根上消除；② **content_hash 不能用原始字节**：manifest 路径早已按规范化文本取哈希，而快路径用原始字节，两条路径互相矛盾；且原始字节哈希会让一次 git checkout 换行把所有来源判成"已变"→ 统一为「content_hash 相同 ⟺ 段落所依据的文本相同」；③ **新增发现：删 passage 必须级联**，否则同时点亮四条不变量（留下自己审计不过的库）→ 实现 `purge_passages()` 并返回各表清理数量（级联删除是真实数据损失，必须可见）；④ `read_bytes().decode()` 不做换行翻译，CRLF 会让 `\r` 混进 passage 文本并让 locator 校验失败 → 新增 `decode_text()` 显式统一换行 | EV-017…EV-020 | symbol 级精度需解析器；evkg 不得推送远程 | M1-b.5d 待开工确认 |

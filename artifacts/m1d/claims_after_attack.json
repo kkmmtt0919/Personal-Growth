@@ -1,0 +1,30 @@
+[
+  {
+    "id": "clm_29f55c14c2e760b75d18",
+    "statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。",
+    "predicate": "计划学习",
+    "status": "machine_reviewed",
+    "score": 0.697,
+    "source_reliability": 0.82,
+    "assessment_status": "assessed",
+    "rationale": "证据段落以未勾选复选框列出“支持更多协议（Dubbo、gRPC）的 MCP 工具扩展”“接入本地大模型（如 Qwen、Llama）”等事项，直接对应原文“未来规划”的性质，支持该主张：这些内容仅为计划事项，并不代表已具备相应能力。",
+    "review_state": "machine_reviewed",
+    "verifier_model": "deepseek-flash",
+    "verifier_independent": true,
+    "assessment_status_meta": "assessed"
+  },
+  {
+    "id": "clm_f13861f536d0ffedd12c",
+    "statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。",
+    "predicate": "实现过",
+    "status": "disputed",
+    "score": 0.17,
+    "source_reliability": 0.82,
+    "assessment_status": "assessed",
+    "rationale": "原文仅展示 MYtest 项目的 README 目录结构与量化指标，能够证明该项目包含 RagService.java、ChromaDB 数据及 RAG 相关模块，但没有直接说明用户本人在其中承担开发、实现或独立贡献的角色。README 属于项目自述/二手描述，代码目录与指标表也不等同于用户个人实现能力的直接证据，因此不足以直接支持“用户实现过 RAG 检索服务”这一主张。",
+    "review_state": "disputed_by_adversarial",
+    "verifier_model": "deepseek-flash",
+    "verifier_independent": true,
+    "assessment_status_meta": "assessed"
+  }
+]

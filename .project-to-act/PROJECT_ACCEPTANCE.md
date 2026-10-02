@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d / M1-c 均通过**；M1 的三层基础已闭环，且已产出首批可逐字回溯的能力断言（2 条）；M1-d（attack）未开始
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）
+- 结论：**M0 / M1-a / M1-b / M1-b.5a / M1-b.5b / M1-b.5c / M1-b.5d / M1-c / M1-d 均通过**；M1 的三层基础已闭环；已产出首批可逐字回溯的能力断言（2 条）并经**独立复核**攻击验证；M1-e（dossier）未开始
+- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）+ M1-d（独立复核核对、攻击运行、样例留档、越权主张被推翻）
 - 最后检查：2026-10-01
-- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；独立 verifier 未配置（M1-d 攻击环节将退化为自己审自己）；归属层缺失使项目产物暂不能作为能力证据
+- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；归属层缺失使项目产物暂不能作为能力证据（M1-d 已能识别并推翻这类越权主张，但“如何正当地建立归属”仍待 M2/M4 决策）
 
 ## 验收标准
 
@@ -72,6 +72,10 @@
 | EV-026 | 2026-10-01 | 小样本试跑（12 条 passage，库副本） | exit 0 | 副本库（已清理） | 12 条 = 全部 9 条代码 passage + README 前 3 条；产出 **0 条主张**（9 entities / 2 aliases）。**这是正确行为**：`package com.hw.service;`、`import …` 不含能力断言，README 描述的是项目而非个人 —— 即成长领域包「不作能力推断」规则生效。先试跑再全量的做法在此避免了直接对真实库跑 109 条的盲跑 | 命令输出 | 90d |
 | EV-027 | 2026-10-01 | 全量抽取 `uv run --env-file .env python artifacts/m1b5/run_extract.py data/growth.db` | exit 0 | script `9f9319a3984c` | **109/109 passage 完成**（6 批，0 失败批）。产出 **2 claims / 60 entities / 3 aliases / 1 event / 3 evidence / 2 relations**；抽取账本覆盖 109/109。`audit_store` = pass，0/10 violations | 命令输出；`data/growth.db` | 90d |
 | EV-028 | 2026-10-01 | 两条主张的证据链逐字回溯 + 引文完整性 + 「严禁升级」实例验证 | pass | 同上 | ① **「严禁升级」通过**：README「未来规划」的未勾选 TODO 被抽为 `用户 \| 计划学习 \| Dubbo、gRPC…`，陈述明写"仅为计划事项，不代表已具备相应能力"，predicate **未**被升级为"具备能力"；② 另一条 `用户 \| 实现过 \| RAG 检索服务` 的陈述自带限定"**但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身**"（抽取质量自评 0.35，受来源基线 0.82 上限约束）；③ 3 条 evidence 的引文**逐字**存在于对应 passage；④ 每条主张都能沿 claim → evidence → passage → source 走通，代码来源的 passage 带 `line_start/line_end` 与 `language` | 命令输出；`data/growth.db` | 90d |
+| EV-029 | 2026-10-01 | 独立复核核对 `artifacts/m1b5/probe_verifier.py`：对主网关与复核网关各发一次真实请求，比对**实际生效**的 provider/模型名/base_url | exit 0 | probe `cf0a5b313bea`；`artifacts/m1d/independence.json` | **真正独立**。主=glm-5.3 @ open.bigmodel.cn；复核=deepseek-flash @ api.deepseek.com；模型名与端点均不同，`independent_flag_from_evkg=True`，`genuinely_independent=True`。四项断言全过：independent 标志、模型名差异、base_url 差异、复核网关确有真实响应（非回落）。**顺带实测**：问 deepseek-flash“你是谁”它回答 “ChatGPT” → 模型自称不可用于验证身份 | 命令输出；`artifacts/m1d/independence.json` | 90d |
+| EV-030 | 2026-10-01 | `uv run --env-file .env python artifacts/m1d/run_attack.py data/growth.db`（5 模块，不含 damage） | exit 0 | runner `e2141c6af6d2`；`attack_result.json` | summary：deterministic=`pending_model_review`（正常状态：候选已生成待复核）、verifier=`complete`、contradiction=`complete`、adversarial=`complete`、audit=`pass`。**无模块级错误**（`failures_and_details.json` 的 module_errors 为空）。产出 4 条对抗报告、2 条冲突候选（均来自对抗模块对 broken 主张的记录）、0 条已确认冲突。QG1 = pass，0/10 violations | 命令输出；`artifacts/m1d/` | 90d |
+| EV-031 | 2026-10-01 | 攻击样例留档：红队质疑 + 裁决全文 | — | `attack_reports.json` `2860ad893982` | 4 条 probe/verdict 全部留档。`clm_f138…`（`实现过`）两次 `broken`，质疑角度为「仅基于 README 自述、用户角色不明」与「代码独立性与二手资料风险（是否只是调现成 API 的教程式组合、92% 指标有无代码与实验佐证）」——**直接落实 PRD §8 的质疑清单**；`clm_29f5…`（`计划学习`）两次 `sustained` | `artifacts/m1d/attack_reports.json` | 长期 |
+| EV-032 | 2026-10-01 | ★ 攻击判别结果：越权主张被推翻、措辞正确的主张被保住 | pass | `claims_after_attack.json` | **`实现过 RAG 检索服务`**：抽取自评 0.35 → 复核 polarity=`partial`、0.17 → 对抗裁决 `broken` → 最终 `disputed`/0.17；理由写明“README 属于项目自述，**不能证明用户本人承担开发角色**”（`review_state=disputed_by_adversarial`，`verifier_model=deepseek-flash`，`verifier_independent=True`）。**`计划学习`**：`machine_reviewed`/0.697，裁决 `sustained`，理由“缺失实践证据不削弱该主张，因为其核心是『仅为计划』”。→ 同一次攻击同时做到“推翻越权”与“保住正确”，即 PRD §33 第 3 条的首次实证 | `artifacts/m1d/claims_after_attack.json` | 长期 |
 
 ## Gate 记录
 
@@ -104,6 +108,10 @@
 | M1-c | 2026-10-01 | 抽取不越权（项目描述不产生个人能力断言） | 12 条试跑 | 通过 | EV-026 | — |
 | M1-c | 2026-10-01 | 全量抽取完成且库自洽 | `data/growth.db` | 通过 | EV-027 | — |
 | M1-c | 2026-10-01 | **「严禁升级」**（计划 ≠ 具备）+ 证据链逐字可回溯 | 2 条主张 | 通过 | EV-028 | — |
+| M1-d | 2026-10-01 | 独立复核**真正生效**（非仅设变量） | GLM vs DeepSeek | 通过 | EV-029 | — |
+| M1-d | 2026-10-01 | 攻击运行完整、无模块级错误、库自洽 | 5 个模块 | 通过 | EV-030 | — |
+| M1-d | 2026-10-01 | 攻击样例留档 | `artifacts/m1d/` | 通过 | EV-031 | — |
+| M1-d | 2026-10-01 | **越权主张被推翻 + 正确主张被保住** | 2 条主张 | 通过 | EV-032 | — |
 
 ## 验收记录
 
@@ -117,5 +125,6 @@
 | 2026-10-01 | M1-b.5c（逻辑身份、content_hash、显式 upsert、级联替换） | EV-017 EV-018 EV-019 EV-020 | 通过 | symbol 级精度待解析器；evkg 不得推送远程 | **M1-b.5c 验收通过** |
 | 2026-10-01 | M1-b.5d（适配层边界、公共 API 补齐） | EV-021 EV-022 EV-023 EV-024 | 通过 | — | **M1-b.5d 验收通过；M1 的 a/b/c 三层闭环** |
 | 2026-10-01 | M1-c（extract：证据 → 能力断言） | EV-025 EV-026 EV-027 EV-028 | 通过 | 归属层待 M2/M4 决策；独立 verifier 未配置 | **M1-c 验收通过** |
+| 2026-10-01 | M1-d（attack：独立复核 + 对抗攻击） | EV-029 EV-030 EV-031 EV-032 | 通过 | 归属层待 M2/M4 决策 | **M1-d 验收通过（独立复核，结果可用）** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

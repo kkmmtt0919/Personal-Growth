@@ -1,0 +1,113 @@
+[
+  {
+    "id": "atk_fd54e2a47966ca979723",
+    "task_id": "adversarial_95f0a31cafeb",
+    "kind": "adversarial",
+    "target_id": "clm_f13861f536d0ffedd12c",
+    "payload": {
+      "probe": {
+        "target_claim_id": "clm_f13861f536d0ffedd12c",
+        "angle": "仅基于 README 自述，无独立验证（用户角色不明）",
+        "question": "MYtest 项目的量化指标（Hit@5 92% 等）全部来自项目 README 自述，且未说明用户在项目中的角色——这是个人独立完成、团队协作还是照抄教程/开源项目？是否存在证明用户本人写了 RAG 检索服务的代码提交记录或可运行产物？"
+      },
+      "verdict": {
+        "target_claim_id": "clm_f13861f536d0ffedd12c",
+        "verdict": "broken",
+        "reasoning": "给定证据仅包含项目 README 的目录结构和自述量化指标，能够证明 MYtest 项目包含 RagService.java 等文件，但无法证明用户本人实现过 RAG 检索服务。主张将项目存在等同于用户个人实现，加入了原文没有的信息（用户角色与贡献）。攻击质疑成立，且无任何直接证据（如提交记录、署名、可运行产物）支持用户独立完成或参与开发。因此，该主张在现有证据下无法成立。",
+        "missing_evidence": [
+          "用户本人在项目中的角色说明（如个人独立/团队协作）",
+          "证明用户编写了 RAG 检索服务代码的提交记录、代码署名或可运行产物",
+          "排除照抄教程或开源项目的证据（如原创性说明、开发过程记录）",
+          "独立于 README 的第三方验证（如代码仓库链接、部署实例）"
+        ]
+      },
+      "claim_statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。",
+      "claim_confidence": 0.17,
+      "judge_model": "deepseek-flash"
+    },
+    "created_at": "2026-10-02 02:54:17"
+  },
+  {
+    "id": "atk_1582cbcd2e03ba1194e9",
+    "task_id": "adversarial_95f0a31cafeb",
+    "kind": "adversarial",
+    "target_id": "clm_f13861f536d0ffedd12c",
+    "payload": {
+      "probe": {
+        "target_claim_id": "clm_f13861f536d0ffedd12c",
+        "angle": "代码独立性与二手资料风险",
+        "question": "该项目的 RAG 检索是否只是调用 ChromaDB 与现成大模型 API 的标准教程式组合（如 LangChain/Spring AI 模板），还是包含用户独立设计的检索优化？声称召回率从 65% 提升到 92% 的优化手段是否有对应代码与实验记录佐证，还是仅在 README 中口头给出？"
+      },
+      "verdict": {
+        "target_claim_id": "clm_f13861f536d0ffedd12c",
+        "verdict": "broken",
+        "reasoning": "给定证据仅包含 README 目录结构与一张量化指标表。目录确实显示项目存在 RagService.java、VectorRetrievalService.java、retrieval_service.py、chroma_data 等 RAG 相关文件，但这只能证明 MYtest 项目包含 RAG 检索模块，不能证明用户本人“实现过”该服务，更不能证明其独立设计的检索优化。指标表虽列出 Hit@5 从 65% 提升到 92%，但没有任何实验记录、基准说明、评测脚本、代码 diff、提交作者或设计文档佐证。质疑所指出的“标准教程式组合”风险（如仅拼接 ChromaDB 与现成大模型 API）在现有证据中无法排除。主张本身也承认未明确用户角色与贡献，仅基于项目 README 描述。因此，该主张在只允许使用给定证据的前提下无法成立，质疑成立。",
+        "missing_evidence": [
+          "用户本人承担 MYtest 项目中 RAG 检索服务开发/实现的直接证据（如提交记录、作者归属、项目角色说明）",
+          "声称召回率从 65% 提升到 92% 的检索优化具体设计与代码 diff",
+          "该指标对应的实验记录：评测数据集、基线配置、评测脚本、复现命令与测量方法",
+          "排除该项目仅为 ChromaDB、LangChain/Spring AI 模板等标准教程式组合的证据",
+          "RagService.java、VectorRetrievalService.java、retrieval_service.py 之间的具体实现逻辑与用户独立贡献说明"
+        ]
+      },
+      "claim_statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。",
+      "claim_confidence": 0.17,
+      "judge_model": "deepseek-flash"
+    },
+    "created_at": "2026-10-02 02:54:17"
+  },
+  {
+    "id": "atk_4605c073728f52de2398",
+    "task_id": "adversarial_95f0a31cafeb",
+    "kind": "adversarial",
+    "target_id": "clm_29f55c14c2e760b75d18",
+    "payload": {
+      "probe": {
+        "target_claim_id": "clm_29f55c14c2e760b75d18",
+        "angle": "证据只是计划而非实践（缺失实践产物证据）",
+        "question": "该主张仅为待办清单中的计划事项，是否存在任何开始学习的证据（如学习笔记、Dubbo/gRPC 或本地大模型接入的代码提交）？若无，这完全是缺失证据，能力主张本身是否应视为不存在而非待验证？"
+      },
+      "verdict": {
+        "target_claim_id": "clm_29f55c14c2e760b75d18",
+        "verdict": "sustained",
+        "reasoning": "证据段落以未勾选复选框列出「支持更多协议（Dubbo、gRPC）的 MCP 工具扩展」「接入本地大模型（如 Qwen、Llama）实现完全离线」等条目，明确属于待办清单/未来规划。主张仅陈述这些内容是计划事项，不代表已具备相应能力，并未声称已开始学习或已实现任何能力。质疑要求提供开始学习的证据（如学习笔记、代码提交），但该主张本身不依赖此类证据，因为其核心是「仅为计划」。因此，缺失实践产物证据并不削弱该主张，主张在给定证据下成立。",
+        "missing_evidence": [
+          "无学习笔记或学习记录证明已开始学习 Dubbo/gRPC 协议",
+          "无 Dubbo/gRPC 相关 MCP 工具扩展的代码提交",
+          "无本地大模型（Qwen、Llama）接入的代码提交或运行证据"
+        ]
+      },
+      "claim_statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。",
+      "claim_confidence": 0.697,
+      "judge_model": "deepseek-flash"
+    },
+    "created_at": "2026-10-02 02:54:09"
+  },
+  {
+    "id": "atk_d90ace9a2161990175e0",
+    "task_id": "adversarial_95f0a31cafeb",
+    "kind": "adversarial",
+    "target_id": "clm_29f55c14c2e760b75d18",
+    "payload": {
+      "probe": {
+        "target_claim_id": "clm_29f55c14c2e760b75d18",
+        "angle": "证据时效性与反向证据",
+        "question": "该计划是何时提出的？是否有后续任何证据表明这些计划被推进或实现，还是长期停留在未勾选状态（反向证据表明未完成）？"
+      },
+      "verdict": {
+        "target_claim_id": "clm_29f55c14c2e760b75d18",
+        "verdict": "sustained",
+        "reasoning": "给定证据是一组未勾选的复选框，明确表示这些事项尚待完成，属于计划/待办性质。主张仅称这些是计划事项、不代表已具备相应能力，与证据一致，没有加入“已完成”或“已掌握”等原文没有的信息。质疑提出的时效性和后续推进问题，因主张本身未声称已实现，故不构成削弱；未勾选状态反而是支持“未完成”的反向证据。",
+        "missing_evidence": [
+          "原文中“未来规划”这一段落标题的直接证据",
+          "该计划提出的具体时间",
+          "是否存在后续更新或勾选完成的记录"
+        ]
+      },
+      "claim_statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。",
+      "claim_confidence": 0.697,
+      "judge_model": "deepseek-flash"
+    },
+    "created_at": "2026-10-02 02:54:08"
+  }
+]

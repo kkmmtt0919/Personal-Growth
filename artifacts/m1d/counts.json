@@ -1,0 +1,16 @@
+{
+  "sources": 3,
+  "passages": 109,
+  "entities": 60,
+  "entity_aliases": 3,
+  "events": 1,
+  "relations": 2,
+  "timeline_entries": 0,
+  "place_assertions": 0,
+  "claims": 2,
+  "evidence": 6,
+  "conflicts": 0,
+  "conflict_candidates": 2,
+  "review_feedback": 0,
+  "evolution_snapshots": 0
+}

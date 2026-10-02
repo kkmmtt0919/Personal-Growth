@@ -1,0 +1,41 @@
+{
+  "conflicts": [],
+  "conflict_candidates": [
+    {
+      "id": "cc_35ddfee05557ffdaa89a",
+      "status": "pending",
+      "dimension": "adversarial",
+      "payload": {
+        "id": "cc_35ddfee05557ffdaa89a",
+        "status": "pending",
+        "dimension": "adversarial",
+        "left_ids": [
+          "clm_f13861f536d0ffedd12c"
+        ],
+        "right_ids": [],
+        "description": "红队质疑击破主张：MYtest 项目的量化指标（Hit@5 92% 等）全部来自项目 README 自述，且未说明用户在项目中的角色——这是个人独立完成、团队协作还是照抄教程/开源项目？是否存在证明用户本人写了 RAG 检索服务的代码提交记录或可运行产物？",
+        "reason": "给定证据仅包含项目 README 的目录结构和自述量化指标，能够证明 MYtest 项目包含 RagService.java 等文件，但无法证明用户本人实现过 RAG 检索服务。主张将项目存在等同于用户个人实现，加入了原文没有的信息（用户角色与贡献）。攻击质疑成立，且无任何直接证据（如提交记录、署名、可运行产物）支持用户独立完成或参与开发。因此，该主张在现有证据下无法成立。",
+        "source_ids": [],
+        "reviewer": null
+      }
+    },
+    {
+      "id": "cc_1cc04c935076e2198398",
+      "status": "pending",
+      "dimension": "adversarial",
+      "payload": {
+        "id": "cc_1cc04c935076e2198398",
+        "status": "pending",
+        "dimension": "adversarial",
+        "left_ids": [
+          "clm_f13861f536d0ffedd12c"
+        ],
+        "right_ids": [],
+        "description": "红队质疑击破主张：该项目的 RAG 检索是否只是调用 ChromaDB 与现成大模型 API 的标准教程式组合（如 LangChain/Spring AI 模板），还是包含用户独立设计的检索优化？声称召回率从 65% 提升到 92% 的优化手段是否有对应代码与实验记录佐证，还是仅在 README 中口头给出？",
+        "reason": "给定证据仅包含 README 目录结构与一张量化指标表。目录确实显示项目存在 RagService.java、VectorRetrievalService.java、retrieval_service.py、chroma_data 等 RAG 相关文件，但这只能证明 MYtest 项目包含 RAG 检索模块，不能证明用户本人“实现过”该服务，更不能证明其独立设计的检索优化。指标表虽列出 Hit@5 从 65% 提升到 92%，但没有任何实验记录、基准说明、评测脚本、代码 diff、提交作者或设计文档佐证。质疑所指出的“标准教程式组合”风险（如仅拼接 ChromaDB 与现成大模型 API）在现有证据中无法排除。主张本身也承认未明确用户角色与贡献，仅基于项目 README 描述。因此，该主张在只允许使用给定证据的前提下无法成立，质疑成立。",
+        "source_ids": [],
+        "reviewer": null
+      }
+    }
+  ]
+}

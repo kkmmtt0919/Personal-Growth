@@ -1,0 +1,53 @@
+{
+  "module_errors": {},
+  "verifier_details": [
+    {
+      "claim_id": "clm_29f55c14c2e760b75d18",
+      "evidence_sufficient": true,
+      "polarity": "supports",
+      "concerns": [
+        "原文为未勾选待办清单，仅能证明属于未来规划/计划意向，不能证明用户已具备或正在学习相应能力。",
+        "原文措辞是计划支持更多协议与接入本地大模型，而非直接表述“计划学习”。"
+      ],
+      "revised_confidence": 0.9,
+      "status": "machine_reviewed",
+      "verifier_model": "deepseek-flash"
+    },
+    {
+      "claim_id": "clm_f13861f536d0ffedd12c",
+      "evidence_sufficient": false,
+      "polarity": "partial",
+      "concerns": [
+        "未明确用户本人在 MYtest 项目中的角色与具体贡献",
+        "README 与目录树属于项目描述，不能直接证明代码由用户编写",
+        "量化指标为项目级结果，未与用户个人实现行为绑定",
+        "缺少提交记录、代码作者信息或可核验的独立完成证据"
+      ],
+      "revised_confidence": 0.2,
+      "status": "disputed",
+      "verifier_model": "deepseek-flash"
+    }
+  ],
+  "adversarial_verdicts": [
+    {
+      "target": "clm_29f55c14c2e760b75d18",
+      "verdict": "sustained",
+      "question": "该主张仅为待办清单中的计划事项，是否存在任何开始学习的证据（如学习笔记、Dubbo/gRPC 或本地大模型接入的代码提交）？若无，这完全是缺失证据，能力主张本身是否应视为不存在而非待验证？"
+    },
+    {
+      "target": "clm_29f55c14c2e760b75d18",
+      "verdict": "sustained",
+      "question": "该计划是何时提出的？是否有后续任何证据表明这些计划被推进或实现，还是长期停留在未勾选状态（反向证据表明未完成）？"
+    },
+    {
+      "target": "clm_f13861f536d0ffedd12c",
+      "verdict": "broken",
+      "question": "MYtest 项目的量化指标（Hit@5 92% 等）全部来自项目 README 自述，且未说明用户在项目中的角色——这是个人独立完成、团队协作还是照抄教程/开源项目？是否存在证明用户本人写了 RAG 检索服务的代码提交记录或可运行产物？"
+    },
+    {
+      "target": "clm_f13861f536d0ffedd12c",
+      "verdict": "broken",
+      "question": "该项目的 RAG 检索是否只是调用 ChromaDB 与现成大模型 API 的标准教程式组合（如 LangChain/Spring AI 模板），还是包含用户独立设计的检索优化？声称召回率从 65% 提升到 92% 的优化手段是否有对应代码与实验记录佐证，还是仅在 README 中口头给出？"
+    }
+  ]
+}
