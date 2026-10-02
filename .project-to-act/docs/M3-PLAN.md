@@ -139,6 +139,11 @@ M3-e  Claim + audit + provenance（含 §1 的越权校验）
   继续复用 `adapter.ingest_document` 单入口与 **M3-a 的 attribution / channel 策略**（必须贯穿该路径）；
   仓库来源信息（repo/ref/entry 等）通过 `extra_metadata` 传递，不得绕过保留键（证据类型/通道/归属）；
   **暂不做**私有仓库授权、完整 UI、能力评估。—— 用户 2026-10-02 指定，共 7 条锁定项中的 1–6。
+- **M3-d（JD / domain_reference 通道）**（用户 2026-10-02 指定的 6 条边界）：
+  ① JD **只能**作为 `domain_reference`；② **不得进入** `user_evidence`；③ **不得支撑**用户能力声明
+  （由 M3-a 的合取规则保证：通道非 `user_evidence` 即不可支撑）；④ 技术栈/岗位要求**可以**被抽取为
+  **外部参考**；⑤ capability claim 仍留 **M3-e**；⑥ **不接 UI、不做匹配评分、不做能力差距分析**。
+  落地时必须带测试：JD 来源 `can_support_user_claim(...) is False`，且不出现在 `user_evidence` 通道。
 - **留到 M3-e**：把越权校验（`claims.check_overreach`）接进写入路径、以及处理 M1-c 那条历史上的
   用户口径主张。M3-b…M3-d 不得顺带处理这两件事（避免提前扩大变更范围）。
 
