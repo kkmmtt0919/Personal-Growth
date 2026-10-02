@@ -616,6 +616,24 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
 6. **记入待办（上游）**：本仓的 ZIP 预筛表与 evkg 的路由表是两处知识，上游扩展语言表时预筛会漏判
    （后果只是跳过并报告）。彻底解法需要上游提供"某文件是否可入库"的公共判定入口。
 
+### B-g2 新增发现与决策待办（2026-10-02）
+
+1. **PDF 目前 100% 无法经 V1 状态机入库，原因是一行缺陷**：`providers.py` 的 `PdfReader.read`
+   把 `bytes` 直接交给 `pypdf.PdfReader`（需要流/路径）→ `AttributeError: 'bytes' object has no attribute 'seek'`。
+   同文件的 `OfficeReader` 已正确使用 `io.BytesIO`；evkg 测试对 PDF **零覆盖**（`test_ingest_boundary.py`
+   只用假 PDF 测路由、不读内容）。最小修复：`Reader(io.BytesIO(content))`。
+   → **待用户决策**：提交上游修复后重跑 B-g2（建议），或维持 PDF 不支持并留档。
+2. **V1 段落的 locator 不含页码**（`{"ordinal": n}`），而 `RecognitionSpan` 已带 `page`/`bbox`。
+   后果：PDF 证据无法自动定位回页，只能人工核对（原文字节、识别 span、归一化文档都在库里）。
+   已登记为上游第 14 项（建议把页码写进 passage locator）。这是"M1-b.5a 的 locator 纪律"在
+   V1 路径上的同类问题：**locator 必须能定位回原文，否则承诺是空的** —— 当前 PDF 路径做不到。
+3. **段落对归一化文本是完整分区**（去空白后逐字一致，缺失 0/多余 0）：说明当前 PDF 路径
+   **不丢字**，问题只在"定位粒度"与"对原始 PDF 的逐字还原不保证"（PDF 抽取 + 归一化双重转换）。
+4. **V1 入库不带成长标签**（metadata 只有 `{ingestion_job_id, completeness_pending}`）：
+   若 PDF 要进产品，适配层需要新增 V1 入口并保证归属/通道策略贯穿（M3 后续步骤）。
+5. **环境陷阱**：`uv sync --extra office` 会移除 dev 工具（本项目把 `dev` 也定义为可选 extra）；
+   正确命令 `uv sync --extra dev --extra office`。已实测踩到并恢复；`uv.lock` 未变。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

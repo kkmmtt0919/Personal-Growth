@@ -104,6 +104,7 @@
 | EV-057 | 2026-10-02 | **M2 验收（AC1–AC12 逐项 + 全量回归 + 数据边界）** | 全部满足 | `artifacts/m2/acceptance-report.md`；测试 143（Growth OS）/ 101（evkg） | **AC1–AC12 全部 ✅**（逐项证据见验收报告）：G1 通过；未确认拒绝发生在调用模型前；形状违规整体拒绝；`adjusted` 保护（同 id 覆盖的强证据来自自动化测试，已如实标注）；`g_agent_runs` 记录实际 provider/model；lineage 可追；离线三保险；证据层零写入。全量回归：Growth OS **143 项**、evkg **101 项**、ruff 全过、账本无告警；QG1 `pass/0`（10/10 检查），真实库未被污染。**遗留（不阻塞）**：再生成目前为"并集"语义（不同命名会累积，M4 前需决策替换/合并/留history） | `artifacts/m2/acceptance-report.md` | 长期 |
 | EV-058 | 2026-10-02 | **M3-a 实现与验证**：归属层（三取值 + fail-closed 读回 + 消费规则）与越权校验（"存在证据 ≠ 证明能力"） | exit 0 | 新增 `growth_os/evidence/attribution.py`、`growth_os/evidence/claims.py`、`adapter.ingest_document(attribution=...)`；测试 144→**187**（新增 44：归属 24 + 越权 20） | ① 归属只进 `Source.metadata`（键 `growth_attribution`），不新增表；三取值严格限定并有词汇表测试；② **fail-closed**：未声明/非法值一律读作 `unknown`；③ **消费规则矩阵 10 例**：仅 `user_declared` + `user_evidence` 可支撑用户断言，`domain_reference` 无论如何都只作外部参考，`user_asserted` 不得单独支撑；④ **越权校验 20 例**：M1-c 历史主张判越权（只判定、不追改）、材料口径合规、材料成就与自述计划不误报、用户等级表述判越权；⑤ 复用优先：链路结构沿用 evkg，本步只加策略与校验层；⑥ 全量回归 187 + evkg 101 + ruff 全过；⑦ 数据边界：逐表内容哈希与 M1-g 基线逐项一致（6/6 evidence、2/2 claim），QG1 pass/0，无 `g_` 表写入 | 命令输出；`artifacts/m3a/evidence-anchors.json` | 90d |
 | EV-059 | 2026-10-02 | **M3-b 实现与验证**：本地材料 ingestion（MD/TXT/代码/ZIP）—— 实际支持范围核对 + ZIP 容器级封装 + 归属/通道贯穿 | exit 0 | 新增 `growth_os/evidence/archive.py`；`adapter.ingest_document` 新增 `extra_metadata`（保留键防覆盖）；测试 187→**222**（新增 35） | ① 范围以源码为准：文本仅 `.txt/.md/.markdown/.text/.csv/.json/.log`，代码取 evkg 语言表 + 无扩展名构建文件，其余（PDF/docx/xlsx/HTML）一律 `EvidenceError`；ZIP 此前未支持；② ZIP 走唯一入口（spy 断言无旁路），ok/skipped/failed 逐条目可见且不中断；③ 安全：路径穿越与绝对路径跳过、解包目标双重校验、四道上限可注入、稳定解包目录使重复入库命中同一 `source_id`；④ 来源定位：metadata 记归档路径/条目名，代码 locator 可回原文逐字核对；⑤ 归属/通道贯穿（保留键不可被 `extra_metadata` 覆盖）；⑥ 实跑 5 条目 → 2 ok / 3 skipped / 0 failed；⑦ 全量 222 + evkg 101 + ruff 全过，真实库逐表内容哈希与计数对锚点一致 | 命令输出；`artifacts/m3b/support-matrix.md` | 90d |
+| EV-060 | 2026-10-02 | **B-g2：PDF spike（独立验证）** —— 真实中文 PDF 经 V1 状态机入库 / audit / locator 可核对性 | exit 0 | `artifacts/bg2/run_pdf_spike.py`、`pdf-spike-result.json`、`README.md`；evkg @ `28afbc0` | **判定：不通过（现状）→ PDF 保留为不支持格式并记录缺口**，缺口是**一行缺陷**：① A 轮（现状）`failed`：`AttributeError: bytes has no attribute seek`（`PdfReader` 未把 bytes 包成 `BytesIO`；同文件 `OfficeReader` 却是对的；evkg 测试对 PDF 零覆盖）；② B 轮（仅脚本内打上该修复的诊断）：入库成功（40 段）、`audit_store` **pass/0**、**locator 仅 `ordinal`**（识别阶段 5 个 span 带页码但未写进 locator）→ 无页码级定位、对原 PDF 不保证逐字；段落对归一化文本是**完整分区**（去空白逐字一致）；③ 失败被 V1 如实记录在库；④ `uv sync --extra office` 会移除 dev 工具（须带 `--extra dev`；已恢复、`uv.lock` 未变）；⑤ V1 入库不带成长标签 → PDF 若进产品需适配层新增 V1 入口；⑥ 临时库已删、未触碰真实库 | 命令输出；`artifacts/bg2/` | 90d |
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
@@ -164,6 +165,7 @@
 | M2 | 2026-10-02 | **M2 验收（AC1–AC12 + ROADMAP 完成条件）** | `docs/M2-PLAN.md` v1.0 | 通过 | EV-057 | — |
 | M3-a | 2026-10-02 | 归属层与越权校验（三取值 + 消费规则 + "存在证据 ≠ 证明能力"） | `growth_os/evidence/{attribution,claims}.py` | 通过 | EV-058 | — |
 | M3-b | 2026-10-02 | 本地材料 ingestion（含 ZIP 容器级封装；复用单入口、无旁路） | `growth_os/evidence/archive.py` | 通过 | EV-059 | — |
+| B-g2 | 2026-10-02 | PDF spike（三项验证 + 缺陷定位；未修改 evkg） | `artifacts/bg2/` | 不通过（现状）/ 缺口为 1 行缺陷 | EV-060 | 用户（是否提交上游修复待定） |
 
 ## 验收记录
 
@@ -191,5 +193,6 @@
 | 2026-10-02 | **M2 验收（AC1–AC12 + 回归 + 数据边界）** | EV-057 | 通过 | 再生成"并集"语义待 M4 前决策；归档第三副本待用户另存 | **M2 正式收口** |
 | 2026-10-02 | M3-a（归属层与越权校验） | EV-058 | 通过 | M3-b 待推进；接线到写入路径留 M3-e（用户明确不提前处理历史问题） | **M3-a 阶段检查通过** |
 | 2026-10-02 | M3-b（本地材料 MD/TXT/代码/ZIP） | EV-059 | 通过 | B-g2（PDF spike）与 M3-c 待推进；越权接线与历史主张仍留 M3-e | **M3-b 阶段检查通过** |
+| 2026-10-02 | B-g2（PDF spike） | EV-060 | 不通过（现状） | 待用户决定：提交 1 行上游修复后重跑，或维持 PDF 不支持；页码级 locator 为独立上游项 | **B-g2 验证完成，结论待用户决策** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

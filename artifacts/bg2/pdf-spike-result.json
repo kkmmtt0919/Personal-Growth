@@ -1,0 +1,171 @@
+{
+  "spike": "B-g2 PDF（V1 状态机）",
+  "label": "真实中文 PDF（5 页通知，文字型）",
+  "source_file": "C:\\Users\\Lenovo\\Desktop\\26毕业论文通知\\26毕业论文通知\\关于做好2027届本科生毕业论文（设计）工作的通知.pdf",
+  "file_size": 132946,
+  "is_zip_disguised": false,
+  "reference_pypdf": {
+    "pages": 5,
+    "chars_total": 2282,
+    "cjk_chars": 1768,
+    "cjk_ratio": 0.775,
+    "empty_pages": 0
+  },
+  "run_a_as_is": {
+    "job": {
+      "id": "job_4cf0a72e70e793a5b22b",
+      "status": "failed",
+      "error": "'bytes' object has no attribute 'seek'",
+      "raised_to_caller": "AttributeError: 'bytes' object has no attribute 'seek'",
+      "recorded_processing_errors": [
+        {
+          "error_type": "AttributeError",
+          "message": "'bytes' object has no attribute 'seek'"
+        }
+      ]
+    },
+    "source": {
+      "id": null,
+      "kind": null,
+      "metadata_keys": [],
+      "content_hash": null
+    },
+    "passages": {
+      "count": 0,
+      "locator_shapes": {},
+      "all_in_normalized_text": true,
+      "coverage_of_normalized": 0.0,
+      "max_chars": 0,
+      "compact_equals_normalized": true,
+      "space_join_equals_normalized": true,
+      "char_diff_vs_normalized": {
+        "normalized_chars": 0,
+        "passages_chars": 0,
+        "missing_from_passages_by_class": {},
+        "extra_in_passages_by_class": {}
+      }
+    },
+    "normalized": {
+      "chars": 0,
+      "keys": []
+    },
+    "recognition": {
+      "spans": 0,
+      "span_keys": [],
+      "pages_with_text": 0
+    },
+    "clarification": {
+      "questions": 0,
+      "blocking": 0
+    }
+  },
+  "run_b_with_one_line_fix": {
+    "job": {
+      "id": "job_4cf0a72e70e793a5b22b",
+      "status": "awaiting_clarification",
+      "error": null,
+      "raised_to_caller": null,
+      "recorded_processing_errors": []
+    },
+    "source": {
+      "id": "src_2ba4b6faee018159",
+      "kind": "compilation",
+      "metadata_keys": [
+        "completeness_pending",
+        "ingestion_job_id"
+      ],
+      "content_hash": "ac7671c3bbb1"
+    },
+    "passages": {
+      "count": 40,
+      "locator_shapes": {
+        "ordinal": 40
+      },
+      "all_in_normalized_text": true,
+      "coverage_of_normalized": 0.986,
+      "max_chars": 173,
+      "compact_equals_normalized": true,
+      "space_join_equals_normalized": false,
+      "char_diff_vs_normalized": {
+        "normalized_chars": 2127,
+        "passages_chars": 2127,
+        "missing_from_passages_by_class": {},
+        "extra_in_passages_by_class": {}
+      }
+    },
+    "normalized": {
+      "chars": 2282,
+      "keys": [
+        "changes",
+        "id",
+        "paragraphs",
+        "processor",
+        "processor_version",
+        "recognition_id",
+        "tables",
+        "text"
+      ]
+    },
+    "recognition": {
+      "spans": 5,
+      "span_keys": [
+        "bbox",
+        "block",
+        "confidence",
+        "page",
+        "source",
+        "text"
+      ],
+      "pages_with_text": 5
+    },
+    "clarification": {
+      "questions": 3,
+      "blocking": 3
+    }
+  },
+  "audit": {
+    "status": "pass",
+    "total_violations": 0,
+    "checks_all_zero": true,
+    "counts": {
+      "sources": 1,
+      "passages": 40,
+      "entities": 0,
+      "entity_aliases": 0,
+      "events": 0,
+      "relations": 0,
+      "timeline_entries": 0,
+      "place_assertions": 0,
+      "claims": 0,
+      "evidence": 0,
+      "conflicts": 0,
+      "conflict_candidates": 0,
+      "review_feedback": 0,
+      "evolution_snapshots": 0,
+      "audit_log": 41
+    }
+  },
+  "defect_found": {
+    "where": "evkg/src/evkg/ingest/providers.py: PdfReader.read",
+    "what": "把 bytes 直接传给 pypdf.PdfReader；pypdf 需要流/路径",
+    "error": "AttributeError: 'bytes' object has no attribute 'seek'",
+    "why_never_noticed": "evkg 测试对 PDF 零覆盖；同文件 OfficeReader 反而正确地用了 io.BytesIO",
+    "minimal_fix": "Reader(content) → Reader(io.BytesIO(content))（1 行）"
+  },
+  "locator_verdict": {
+    "locator_keys": {
+      "ordinal": 40
+    },
+    "page_level_locator": false,
+    "verbatim_against_raw_pdf": false,
+    "reason": "passages 由 `split_passages` 生成，locator 只有 ordinal（归一化文本内的序号）；识别阶段虽然拿到了页码 span，但没有写进 locator，因此**无法自动定位回 PDF 页/坐标**。文本还经过 normalize_document（空白折叠、重排行），因此对原始 PDF 也不保证逐字还原。",
+    "mitigations": [
+      "库内保留 raw_asset（原始字节）与 recognition spans（含页码）与 normalized_document，可人工核对",
+      "passage 文本是归一化文本的分区（可对回归一化文本逐字核对）"
+    ]
+  },
+  "temp_db_deleted": {
+    "spike-a.db": true,
+    "spike-b.db": true
+  }
+}
