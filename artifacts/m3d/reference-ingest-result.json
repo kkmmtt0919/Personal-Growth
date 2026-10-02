@@ -1,0 +1,81 @@
+{
+  "smoke": "M3-d 外部参考通道（JD / domain_reference）",
+  "material": {
+    "path": "D:\\projects\\Personal Growth\\artifacts\\m3d\\fixtures\\jd_sample.md",
+    "note": "合成 JD 样本（本机无现成真实 JD；政策边界验证不依赖文本真实性）"
+  },
+  "source": {
+    "id": "src_bac3b7f402a0a1b3",
+    "title": "jd_sample",
+    "kind": "modern_study",
+    "passages": 13
+  },
+  "profile_summary": {
+    "tech_terms": [
+      "agent",
+      "chromadb",
+      "ci/cd",
+      "docker",
+      "faiss",
+      "fastapi",
+      "fine-tuning",
+      "graphql",
+      "grpc",
+      "kubernetes",
+      "langchain",
+      "linux",
+      "llamaindex",
+      "llm",
+      "mcp",
+      "milvus",
+      "prompt",
+      "python",
+      "rag",
+      "react",
+      "spring",
+      "spring boot",
+      "typescript",
+      "向量数据库",
+      "向量检索",
+      "微调",
+      "知识图谱"
+    ],
+    "tech_term_count": 27,
+    "requirement_line_count": 4,
+    "all_terms_have_passage_evidence": true
+  },
+  "counts": {
+    "sources": 1,
+    "passages": 13,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 0,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 0,
+    "evidence": 0,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 14
+  },
+  "audit": {
+    "status": "pass",
+    "total_violations": 0,
+    "checks_all_zero": true
+  },
+  "boundary_checks": {
+    "channel_is_domain_reference": true,
+    "not_in_user_evidence": true,
+    "listed_in_domain_reference": true,
+    "cannot_support_user_claim": true,
+    "attribution_recorded": "user_declared",
+    "extraction_is_read_only": true,
+    "no_capability_claims_created": true,
+    "reference_kind_recorded": true
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}

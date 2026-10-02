@@ -99,6 +99,16 @@ M3-c 的 GitHub 通道在 M3 范围内**只做公共仓库**（用户提供 URL�
 
 ## 5. 步骤结构（用户指定顺序；仅到步骤级，不拆实现任务）
 
+**M3-d 结果（2026-10-02）：通过**（`artifacts/m3d/`，EV-063）
+
+* 新增 `growth_os/evidence/reference.py`：入口**没有** `channel`/`evidence_type` 参数（通道被**结构锁定**为
+  `domain_reference`），因此"写进 user_evidence"在 API 层面不可达；参考抽取（技术词 + 要求条目）**只读**，
+  每条都带 passage 证据，不写 claim/evidence/entity，也不做评分与差距。
+* 冒烟（合成 JD 样本）：13 段落；识别 **27 个技术词**（全部有 passage 证据）与 4 条要求条目；
+  `audit_store` pass/0；**8 项边界检查全过**（含 `can_support_user_claim=False`、`user_evidence` 为空、
+  claims/evidence/entities 全 0、抽取前后计数不变）。
+* 素材说明：本机无现成真实 JD，故用**写实合成样本**（政策边界验证不依赖文本真实性），已在产物中标注。
+
 **M3-c 结果（2026-10-02）：通过**（`artifacts/m3c/`，EV-062）
 
 * 对**公共**仓库 `kkmmtt0919/mytset-rag`（用户自己的项目）真实浅克隆并入库：

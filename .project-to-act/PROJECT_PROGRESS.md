@@ -25,11 +25,12 @@
 | M2-b | Goal Agent + 澄清状态机（≤6 轮硬上限、显式确认、未确认拒绝能力分析） | 已完成 | ZCode | 8 项新测试；第 7 轮被拒且未发模型、确认需原话、增量累积不被擦除 | EV-052 | 2026-10-02 |
 | M2-c | 能力树生成 + 形状校验（≥3 领域/≥12 能力点/≤3 层）+ 调整保护 + 来源与校验标注 | 已完成 | ZCode | 11 项新测试 + 离线端到端演练 11/11；测试总数 116 全绿；不写半棵树 | EV-053 | 2026-10-02 |
 | M2-d | G1 证据产出（真实模型会话） | **已完成** | ZCode | 尝试 6 端到端通过（13/13 自检、6 次调用、真实库未变）；G1 判定与截图豁免记录已产出 | EV-056 EV-057 | 2026-10-02 |
-| M3 | 证据接入（Evidence Ingestion：本地材料 + GitHub 公共仓库 + JD） | 进行中（M3-a/b、B-g2、M3-c 完成） | ZCode | `docs/M3-PLAN.md` v1.0；M3-a（EV-058）、M3-b（EV-059）、B-g2（EV-060/061）、**M3-c（EV-062）** | EV-058…EV-062 | 2026-10-02 |
+| M3 | 证据接入（Evidence Ingestion：本地材料 + GitHub 公共仓库 + JD） | 进行中（M3-a/b、B-g2、M3-c/d 完成） | ZCode | `docs/M3-PLAN.md` v1.0；M3-a（EV-058）、M3-b（EV-059）、B-g2（EV-060/061）、M3-c（EV-062）、**M3-d（EV-063）** | EV-058…EV-063 | 2026-10-02 |
 | M3-a | Evidence 基础模型与归属层（三取值 + 消费规则 + 越权校验） | 已完成 | ZCode | 新增 44 项测试（归属 24 / 越权 20）；全量 187 项全绿；逐表内容哈希与 M1-g 基线一致 | EV-058 | 2026-10-02 |
 | M3-b | 本地材料 ingestion（MD/TXT/代码/ZIP；ZIP 为容器级封装，逐条目走单入口） | 已完成 | ZCode | 新增 35 项测试；全量 222 项全绿；归属/通道贯穿 + 无旁路断言；真实库逐表哈希与计数对基一致 | EV-059 | 2026-10-02 |
 | B-g2 | PDF spike（独立验证：入库 / audit / locator 可核对性） | **已完成（通过，含明确边界）** | ZCode | 上游一行修复（evkg `db2de3a`）+ 6 项真实读取测试；重跑入库 40 段、audit pass/0、两轮交叉印证一致 | EV-060 EV-061 | 2026-10-02 |
 | M3-c | GitHub 公共仓库接入（浅克隆；逐文件走单入口；技术栈清单） | 已完成 | ZCode | 真实公共仓库 20 文件入库 / 179 段 / audit pass-0 / 幂等 / 归属通道贯穿；新增 21 项离线测试 | EV-062 | 2026-10-02 |
+| M3-d | 外部参考通道（JD / domain_reference；通道锁定 + 抽取只读） | 已完成 | ZCode | 8 项边界检查全过（含不能支撑用户断言、user_evidence 为空、claims=0）；27 个技术词带 passage 证据 | EV-063 | 2026-10-02 |
 | M4 | 能力审计（产品内核） | 已规划 | — | 通过验收门 G2、G3 | 无 | 2026-10-01 |
 | M5 | 任务闭环与成长循环 | 已规划 | — | 通过验收门 G4、G5 | 无 | 2026-10-01 |
 | M6 | Memory 三层 | 已规划 | — | 见 `docs/ROADMAP.md` M6 | 无 | 2026-10-01 |
@@ -76,7 +77,9 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
    - **归档待刷新**（待办）：B-g1 的 bundle 指向 `28afbc0`，本地现领先 5 个提交；需要时按 B-g1 流程重做。
    - **M3-c 已完成**（EV-062）：公共仓库浅克隆接入（无凭据/无 OAuth）、技术栈清单、归属/通道贯穿、幂等；
      **≥3 条 capability claim 与"可检索"仍留 M3-e / M3 Gate**（按边界，不用接入本身替代证据链验收）。
-   - **下一步 M3-d（JD / domain_reference）待你发话**；不自行推进。
+   - **M3-d 已完成**（EV-063）：通道由**结构**锁定在 `domain_reference`，参考抽取只读且带 passage 证据；
+     8 项边界检查全过（不能支撑用户断言、`user_evidence` 为空、claims/evidence/entities=0）。
+   - **下一步 M3-e（Claim + audit + provenance，含越权校验接线与 M1-c 历史主张处理）待你发话**；不自行推进。
    - ZIP 预筛表与 evkg 路由表重复一事：保留为**上游待办**（已登记为 M1-g 上游清单第 12 项），不在 M3-b 范围内扩展。
 2. **B-g2（M3 开工前）**：富格式（PDF/docx/xlsx）上传路径 spike。
 3. **归档第三副本（用户执行）**：C:/D: 可能同物理盘，抗物理损坏需另存移动硬盘/云盘。
@@ -101,6 +104,7 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 | 2026-10-02 | M2-d（尝试 1–5） | 真实模型会话的五次尝试与修复：夹具人侧回答错位 → 提示词层级约定 → runner 硬编码 → 节点名含「/」 → 模拟用户宽泛匹配；每次都保存诊断并停止，未自动重试 | 五类问题全部落在夹具/提示词/硬编码上，产品侧逻辑未降级；诊断见 `artifacts/m2/failure-diagnosis-m2d-0{1,2,3,4}.json`；累计 27 次调用 / 约 25.5k tokens | EV-054 EV-055 | 模拟用户已改为有状态意图匹配 | M2-d（尝试 6） |
 | 2026-10-02 | M2-d（尝试 6）+ M2 验收 | 模拟用户改为"有状态 + 意图候选 + 未答要素优先 + 问句主干焦点"（含尝试 4/5 真实问句回归用例）→ 离线回归 143 项 → **尝试 6 真实会话端到端通过** → G1 证据、AC1–AC12 对照、全量回归、数据边界核对 | ① **首次在同一次真实运行内闭环**：澄清 4 轮（purpose→horizon→measurable→确认）→ 四要素 + 用户原话 → 能力树 6 领域/12 组/31 个三层点 → 人工上调为 5 → 再生成后保留（5/理由/adjusted）；② 预算纪律：应用层 6 次 == HTTP 6 次、零额外重试、13/13 自检全绿；③ 全量回归 Growth OS 143 / evkg 101 / ruff 全过；QG1 pass/0；真实库哈希与计数 3/109/2/6 未变；④ **M2 正式收口**（AC1–AC12 全满足，逐项证据见 `artifacts/m2/acceptance-report.md`）；⑤ 如实记录遗留：再生成"并集"语义（49 节点）待 M4 前决策；AC4 的同 id 覆盖强证据来自自动化测试而非真实会话（该次再生成未攻击同一 id）；⑥ M2-d 全部尝试累计 33 次调用 / 约 32.5k tokens（约 0.04 元） | EV-056 EV-057 | 再生成语义待 M4 前决策 | **停在 M3 门前** |
 | 2026-10-02 | M3-a | 归属层（`attribution.py`：三取值 + `attribution_of` fail-closed + `can_support_user_claim` 合取规则）与越权校验（`claims.py`：主语/谓词/等级三类越权判定，纯函数）；适配层 `ingest_document` 新增 `attribution` 参数并把标签写入 `Source.metadata` | ① **复用优先**：Source/Passage/Evidence/Claim 沿用 evkg 结构，本步只加策略与校验层，不另造模型；② 归属严格三取值并有词汇表测试；③ **fail-closed**：未声明/非法 → `unknown`（绝不默认成用户声明）；④ 消费规则矩阵 10 例 + JD 走 `domain_reference` 的端到端用例（通道过滤可分离）；⑤ 越权校验 20 例：M1-c 历史主张判越权（只判定、不追改，留 M3-e）、材料口径合规、材料成就/自述计划不误报、用户等级表述判越权；⑥ **数据边界复核发现**：主库**文件**哈希变化（audit_log 追加 + WAL 检查点），但逐表**内容**哈希与 M1-g 基线逐项一致（6/6 evidence、2/2 claim）→ 记录为"文件哈希是弱不变量，应以逐表内容哈希为准"；⑦ 全量回归 187 + evkg 101 + ruff 全过 | EV-058 | M3-b 待发话 | M3-b：本地材料 ingestion |
+| 2026-10-02 | M3-d | 外部参考通道：`evidence/reference.py`（入口无 channel/evidence_type 参数，通道结构锁定；技术词 + 要求条目抽取，只读且每条带 passage 证据）+ 8 项离线测试 + 合成 JD 冒烟 | ① 三条"不得"由结构保证（API 层不可达 user_evidence；消费侧合取规则否决；抽取不写任何 claim/evidence/entity）；② 冒烟：13 段 / 27 技术词（全带证据）/ 4 条要求条目 / audit pass-0 / 8 项边界检查全过 / 临时库已删；③ 用例覆盖 ASCII 词边界（"go" 不命中 "google"）、多份参考分别列出、非参考来源抽取被拒；④ 素材如实标注：本机无现成真实 JD，用写实合成样本（政策验证不依赖文本真实性）；⑤ 边界守恒：未接 UI/未做匹配评分与差距分析，capability claim 仍留 M3-e；⑥ 251 项 + evkg 107 + ruff + 真实库对基全过 | EV-063 | capability claim（M3-e）；M3 Gate 覆盖 | M3-e（待发话） |
 | 2026-10-02 | M3-c | GitHub 公共仓库接入：先侦察（API 配额耗尽 → 改 git 浅克隆；用户仓库为公共）→ 实现 `evidence/github.py` （材料化/选择/技术栈/单入口）→ 21 项离线测试 → 对 `kkmmtt0919/mytset-rag` 真实冒烟 | ① 真实结果：35 文件→选中 20→**20 ok/0 failed**、179 段、audit pass/0、技术栈 java/python/xml/yaml、同 ref 幂等；② 设计决策：git 浅克隆替代 REST API（无凭据配额已耗尽；git 无该配额且可拿 SHA）；克隆目录按 owner-name-ref 稳定、SHA 写 metadata；③ Windows 坑：git pack 只读 → 加"先去只读位再删"；`audit_store` 不关连接再次锁库（M1-g 上游 §7-10 又一实例，已 gc 重试、无残留）；④ 边界守恒：未接 OAuth/私有仓库/UI/能力评估；claims 与可检索留 M3-e / Gate；⑤ 243 项测试 + ruff + 真实库对基全过 | EV-062 | ≥3 capability claim（M3-e）；归档刷新；页码级 locator（上游 14） | M3-d（待发话） |
 | 2026-10-02 | B-g2（重跑，选项 A） | 按用户批准的最小范围修上游：`PdfReader` 的 `bytes → io.BytesIO`（evkg `db2de3a`）；补 6 项真实 PDF 读取测试；重跑 B-g2 三项验证；两个问题分离记录 | ① 范围锁死：只改一行 + 补测试（未动 locator 设计/V1 状态机/completeness/audit_store/适配层/M3-c）；② evkg 107 项全绿、ruff 未新增；③ 重跑：入库 40 段、audit pass/0、**as-is 与等价实现两轮完全一致**（交叉印证）；④ **页码级 locator 保持独立开放项**（仅 ordinal、无 page-level、对原 PDF 不保证逐字；但内容不丢：归一化文本完整分区、缺失 0）—— 按基线要求"如实说明"即达标，既不伪装失败也不说成完整通过；⑤ PDF 支持边界写进 M3-PLAN §5；⑥ 附带：`uv sync --extra office` 会移除 dev 工具（须带 `--extra dev`；lock 未变）；归档待刷新；未推送远程 | EV-061 | 页码级 locator（上游第 14 项）；归档刷新 | M3-c（待发话） |
 | 2026-10-02 | B-g2 | PDF spike：真实中文 PDF（5 页通知，只读）经 V1 状态机三项验证；发现并定位 evkg `PdfReader` 一行缺陷；另用脚本内等价实现做诊断轮 | ① **现状失败**：`AttributeError: bytes has no attribute seek`（`Reader(content)` 缺 `io.BytesIO`）；evkg 测试对 PDF 零覆盖，同文件 `OfficeReader` 反而正确；② **诊断轮**：入库成功（40 段）、audit pass/0、locator 仅 ordinal（span 有页码但未写入）、段落是归一化文本的完整分区（去空白逐字一致）；③ 缺陷与页码级 locator 均登记为上游项（13/14）；④ 附带发现 `uv sync --extra office` 会移除 dev 工具（须带 `--extra dev`），已恢复环境、lock 未变；⑤ 未改 evkg 源码、未触碰真实库、临时库已删 | EV-060 | 待用户决策上游修复 | M3-c（待发话） |

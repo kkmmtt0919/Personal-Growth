@@ -672,6 +672,22 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
 6. **边界守恒**（按用户锁定项）：本步**未**接 OAuth / 私有仓库 / 完整 UI / 能力评估；
    **≥3 条 capability claim 与"可检索"分别留给 M3-e 与 M3 Gate** —— 不因"接入跑通"而替代证据链验收。
 
+### M3-d 新增发现与设计决定（2026-10-02）
+
+1. **"不得进入 user_evidence" 用结构保证，而不是靠约定**：`ingest_reference_document()` 的签名
+   **没有** `channel`/`evidence_type` 参数 —— 调用方无法表达"把它当用户证据入库"这件事；
+   消费侧再由 M3-a 的合取规则（`can_support_user_claim` 要求通道为 `user_evidence`）一票否决。
+   两层都不依赖"记得传对参数"。有测试断言签名与消费行为（含"落在 domain_reference、不在 user_evidence"）。
+2. **抽取只读**：`extract_reference_profile()` 只读 passage，产出「技术词 + 要求条目」并逐条附 passage 证据，
+   **不写 claim / evidence / entity**，也不做评分或差距（有计数前后一致的测试）。边界 4 允许"抽取为外部参考"，
+   但这与"得出能力结论"是两件事 —— 后者属 M4。
+3. **归属仍如实记录为 `user_declared`**：attribution 回答的是"材料是不是用户交出来的"（此处确实是他给的），
+   而**通道**才是禁止支撑用户断言的那一票。两者各司其职，测试同时锁住了这两点。
+4. **ASCII 词用边界匹配**：`go` 不得被 `google` 命中 —— 技术词表若用朴素子串匹配会产生假阳性，
+   而这类"技术栈清单"会被用作外部参考，假阳性会污染参考画像。
+5. **素材如实标注**：本机没有现成真实 JD，冒烟使用写实合成样本；政策边界验证不依赖文本真实性，
+   这一点写进了产物（`artifacts/m3d/reference-ingest-result.json` 的 `material.note`）。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
