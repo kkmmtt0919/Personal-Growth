@@ -1,0 +1,222 @@
+{
+  "real_db": "D:\\projects\\Personal Growth\\data\\growth.db",
+  "counts": {
+    "sources": 3,
+    "passages": 109,
+    "entities": 60,
+    "entity_aliases": 3,
+    "events": 1,
+    "relations": 2,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 2,
+    "evidence": 6,
+    "conflicts": 0,
+    "conflict_candidates": 2,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 1449
+  },
+  "audit_status": "pass",
+  "audit_total_violations": 0,
+  "audit_checks_all_zero": true,
+  "evidence_tables_unchanged_by_audit": true,
+  "audit_log_rows_added_by_audit": 1,
+  "traceability": {
+    "claims": [
+      {
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。",
+        "status": "machine_reviewed",
+        "score": 0.697,
+        "assessment_status": "assessed",
+        "metadata_keys": [
+          "assessment_status",
+          "model_claim_id",
+          "review_state",
+          "verifier_independent",
+          "verifier_model"
+        ],
+        "passage_ids_all_exist": true,
+        "evidence_rows": 2,
+        "chain": [
+          {
+            "evidence_id": "ev_9d6b94f3869ef6a9",
+            "polarity": "supports",
+            "confidence": 0.6,
+            "passage_id": "p_6abe776aad543c6b",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          },
+          {
+            "evidence_id": "evv_9d6b94f3869ef6a9",
+            "polarity": "supports",
+            "confidence": 0.697,
+            "passage_id": "p_6abe776aad543c6b",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          }
+        ]
+      },
+      {
+        "claim_id": "clm_f13861f536d0ffedd12c",
+        "statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。",
+        "status": "disputed",
+        "score": 0.17,
+        "assessment_status": "assessed",
+        "metadata_keys": [
+          "adversarial_attack",
+          "assessment_status",
+          "model_claim_id",
+          "review_state",
+          "verifier_independent",
+          "verifier_model"
+        ],
+        "passage_ids_all_exist": true,
+        "evidence_rows": 4,
+        "chain": [
+          {
+            "evidence_id": "ev_e47500a9f2d872cc",
+            "polarity": "supports",
+            "confidence": 0.35,
+            "passage_id": "p_1b8447226daad0ff",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          },
+          {
+            "evidence_id": "ev_fa4caa42716a9833",
+            "polarity": "supports",
+            "confidence": 0.35,
+            "passage_id": "p_e9ca93d22aa5a18e",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          },
+          {
+            "evidence_id": "evv_e47500a9f2d872cc",
+            "polarity": "partial",
+            "confidence": 0.17,
+            "passage_id": "p_1b8447226daad0ff",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          },
+          {
+            "evidence_id": "evv_fa4caa42716a9833",
+            "polarity": "partial",
+            "confidence": 0.17,
+            "passage_id": "p_e9ca93d22aa5a18e",
+            "passage_exists": true,
+            "quote_verbatim_in_passage": true,
+            "source_id": "src_d81f3f5932e5a9e7",
+            "source_kind": "primary",
+            "source_title": "README",
+            "growth_evidence_type": "repo_artifact",
+            "growth_channel": "user_evidence",
+            "has_locator": true
+          }
+        ]
+      }
+    ],
+    "checks": {
+      "all_quotes_verbatim": true,
+      "all_evidence_have_source": true,
+      "all_evidence_labeled": true,
+      "all_claims_have_evidence": true,
+      "extraction_ledger_complete_passages": 109,
+      "passages_total": 109,
+      "ledger_covers_all_passages": true
+    }
+  },
+  "defect_partial_rendering": {
+    "per_claim": [
+      {
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "partial_rows": 0,
+        "skipped": "该主张没有 partial 证据行，无法在本主张上复现"
+      },
+      {
+        "claim_id": "clm_f13861f536d0ffedd12c",
+        "partial_rows": 2,
+        "partial_row_still_in_structured_dossier": true,
+        "bucketed_supports": 2,
+        "bucketed_refutes": 0,
+        "partial_sentinel_in_markdown": false,
+        "support_control_sentinel_in_markdown": true
+      }
+    ],
+    "defect_reproduced": true,
+    "verdict": "阳性对照被渲染而 partial 哨兵未被渲染 → 上游 render_claim_markdown 静默丢弃 partial 证据行"
+  },
+  "defect_model_name": {
+    "extraction_batch_payload_keys": [
+      "aliases",
+      "claims",
+      "events",
+      "mentions"
+    ],
+    "claim_metadata_keys": [
+      "adversarial_attack",
+      "assessment_status",
+      "model_claim_id",
+      "review_state",
+      "verifier_independent",
+      "verifier_model"
+    ],
+    "extraction_model_recorded": false,
+    "verifier_model_recorded": true,
+    "v2_reading_steps_rows": 0,
+    "code_sites": [
+      "evkg/extract.py:86-92 —— gateway.structured() 返回 ModelResult(provider,model,...)，_call 只返回 result.value，模型身份在此丢弃",
+      "evkg/extract.py:182 —— claim.metadata 只写 {model_claim_id, review_state}",
+      "evkg/extract.py:257-260 —— 批账本 payload 只写计数，无模型名",
+      "evkg/attack/verifier.py:130 —— 对照：复核步骤把 result.model 写入 metadata.verifier_model（同一种做法抽取步骤没做）",
+      "evkg/store.py:586 —— 唯一带 model 列的 v2_reading_steps 未被 extract_corpus 使用"
+    ],
+    "defect_reproduced": true
+  },
+  "defect_caught_truncation": {
+    "dirty_store": {
+      "pre_existing_violations": 12,
+      "selftest_status": "missed",
+      "quote_violations_after_injection": 13,
+      "audit_status_during_injection": "fail",
+      "injected_evidence_in_sample": false,
+      "sample_size_cap": 10
+    },
+    "clean_store": {
+      "selftest_status": "caught",
+      "quote_violations_after_injection": 1
+    },
+    "defect_reproduced": true,
+    "mechanism": "auditor 只保留前 10 行 sample；run_damage_selftest 用 evidence_id in sample 判定 caught"
+  }
+}

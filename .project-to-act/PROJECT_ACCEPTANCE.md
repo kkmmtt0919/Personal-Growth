@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0 至 M1-f 全部通过**；M1 的三层基础已闭环；已产出可逐字回溯的能力断言并经独立复核攻击验证；已产出可读的证据档案；**Evidence Graph 已验证能发现、拒绝并恢复伪造数据污染**。仅剩 M1-g（spike 结论）
-- 验收范围：M0 收口项 + M1-a（领域包生效、依赖解析）+ M1-b（双轨记录、真实材料入库、QG1）+ M1-b.5a（evkg 改造、locator 真值、旧数据不变性）+ M1-b.5b（缺失值语义、下游消费者）+ M1-b.5c（逻辑身份、content_hash、三态写入、级联替换、真实材料 A→B 性质）+ M1-b.5d（适配层边界、公共 API 补齐）+ M1-c（模型连通性、全量抽取、「严禁升级」与证据链回溯）+ M1-d（独立复核核对、攻击运行、样例留档、越权主张被推翻）+ M1-e（档案渲染、35 项一致性核对、partial 回归、真实库对照）+ M1-f（故障注入发现与恢复、内置自测核对、真实库未被触碰）
-- 最后检查：2026-10-01
-- 遗留问题：symbol 级代码精度需解析器（已明确排除）；G1–G6 与 QG2–QG5 未开始；**evkg 本地领先远程 4 个提交且不得推送**；归属层缺失使项目产物暂不能作为能力证据（M1-d 已能识别并推翻这类越权主张，M1-e 的档案也明示了该局限，但“如何正当地建立归属”仍待 M2/M4 决策；M1-f 未处理该问题，因它属产品语义而非数据一致性）
+- 结论：**M0 至 M1-g 全部通过；M1 技术 spike 已结束**。evkg 依赖策略判定为**有条件依赖（C1–C5）**：当前单进程/单领域包/单用户路径可用且证据链可核验（audit pass、引文逐字可回溯），但不支持"组件整体可直接依赖"——D1 实测证实 profile 为进程级全局且双实例互相污染，抽取模型名未持久化，上游渲染器会丢 `partial` 证据。完整判定见 `docs/M1-SPIKE-CONCLUSION.md`
+- 验收范围：M0 收口项 + M1-a…M1-f（见下方历史行）+ **M1-g（R1–R4 收口、D1 双实例实测、上游缺陷复现、覆盖盲区界定、M1 完成条件补跑 reindex/FTS5、依赖策略判定）**
+- 最后检查：2026-10-02
+- 遗留问题：**B-g1** evkg 本地领先远程 4 个提交且不得推送，换机/CI 前必须解决依赖可获取性并 pin commit；**B-g2** 富格式（PDF/docx/xlsx）上传路径 0 端到端验证，M3 开工前须先 spike；**延后项带触发条件**（M4 前必须解决抽取模型持久化；多领域包前必须改 profile 作用域）；G1–G6 与 QG2–QG5 未开始；归属层缺失使项目产物暂不能作为能力证据（待 M2/M4 决策）
 
 ## 验收标准
 
@@ -85,6 +85,12 @@
 | EV-039 | 2026-10-01 | 交叉印证：内置自测的自报 vs 受控注入的独立测量 | 一致 | 同上 | 内置自测自报 `quote_violations_after_injection=1`，与受控伪造引文注入独立测得的 0→1 **数值一致**。说明其 `caught` 结论可被外部测量印证，而非仅凭自述。同时记录脆弱点：`caught` 依赖被截断到 10 行的 sample（保守方向：可能漏报、不会虚报），建议上游改为按违规条数或 id 直接查询 | 命令输出 | 90d |
 | EV-040 | 2026-10-01 | 真实库未被触碰 + 全量回归 | pass | `data/growth.db`；Growth OS 73 项 / evkg 101 项 | 三场景全程在真实库**副本**上执行，执行后真实库逐表计数与基线**零差异**。全量回归：Growth OS **73 passed**、evkg **101 passed**、lint 全过、`audit_store` = pass/0 | 命令输出 | 90d |
 | EV-041 | 2026-10-01 | **内容级**恢复核对 `artifacts/m1f/verify_no_content_change.py`（计数级加固） | exit 0 | script `b782aa143533`；`recovery_content_check.json` `94fe6e6d71a4` | **通过**。按用户给定最小攻击重跑：基线 sources=3 / passages=109 / claims=2 / evidence=6 / audit=PASS → 注入（已存在 claim+source、`passage_id=p_nonexistent`、引文「代码证明用户完成实现」）→ `evidence_missing_passage` 0→1、audit=FAIL → 清理后四张表**逐行 payload sha256 完全一致**（新增 0 / 删除 0 / 内容变更 0）、audit 回到 PASS/0；真实库同样**内容级一致**。补这一步的原因：计数级核对验不出「条数不变但既有行被改写」 | 命令输出；`artifacts/m1f/recovery_content_check.json` | 90d |
+| EV-042 | 2026-10-02 | 独立复跑全量测试：evkg `pytest -q`（正序 + 逆序文件顺序两轮）、Growth OS `pytest -q` | exit 0（两套、三轮） | evkg @ `28afbc0`；Growth OS `backend/growth_os/` | **evkg 101/101（正序与逆序均全绿）、Growth OS 73/73**，与用户提供的 M1-f 数字一致。收集计数独立核对：14 边界 + 10 故障自测 + 22 档案 + 27 适配层 = 73。M1-g 的全部结论建立在此回归基线上 | 命令输出 | 90d |
+| EV-043 | 2026-10-02 | **D1 双实例隔离实测** `artifacts/m1g/run_d1_profile_isolation.py`（两个探针领域包 × 两个独立 DB） | exit 0 | script `135dd3a5c31f`；`d1_profile_isolation.json` `dee378cf7a22` | **全局 profile 被实测证实为进程级、且双实例互相污染**：① 静态：`_ACTIVE` 是模块属性，`KnowledgeStore.__init__` 只有 `path`，`ingest_path` 无 profile 参数；② storeA 在 A 激活时入库 4 段 → B 激活后**不重新激活 A** 再入库同一文件 → 变 2 段（B 规则，同 source_id）；重新激活 A 后恢复 4 段；③ asyncio 事件强制交错：任务 A 期望 4 段、实得 2 段（跨任务污染）；④ 给实例挂 `profile` 属性被忽略，per-call `activate` + try/finally 可顺序隔离，并发无解 → 必须改上游；⑤ 适配层 footgun：未 `configure()` 时静默按 evkg 默认领域包入库（5 段 + 默认理由 vs 2 段 + 成长理由）。全程真实库哈希前后一致 | 命令输出；`artifacts/m1g/` | 长期（D1 判定依据） |
+| EV-044 | 2026-10-02 | **R4 实库审计 + 追溯链核验** `artifacts/m1g/run_r4_evidence.py` | exit 0 | script `c02e211877d1`；`r4_evidence.json` `27139373f82e` | **audit = pass / 0 violations（10/10 检查）**；逐表 payload sha256 前后一致（审计只追加 `audit_log` 1 行，证据数据零变化）；`claim→evidence→passage→source` 全链核验：6/6 引文逐字在原文、证据全部有来源与 `growth_evidence_type`/`growth_channel` 标签、2/2 主张有证据、抽取账本 109/109 `complete` | 命令输出；`artifacts/m1g/r4_evidence.json` | 90d |
+| EV-045 | 2026-10-02 | **三项上游缺陷在真实数据/副本上复现**（同 `run_r4_evidence.py` 的三段实验） | 复现成立 | 同上 | ① **partial 渲染**：副本上给 `partial` 证据行打哨兵，上游 `render_claim_markdown` 输出中**无**该哨兵，而 supports 阳性对照哨兵**有** → 静默丢弃（结构化 dossier 里该行仍在，supports=2/refutes=0）；② **抽取模型名**：claim metadata 有 `verifier_model`、**无**任何 extraction 模型键；批账本 payload 仅计数；唯一带 `model` 列的 `v2_reading_steps` 为 0 行；③ **caught 截断**：副本预置 12 条伪造引文后跑内置自测 → `quote_violations_after_injection=13`、审计 `fail`，但 `status=missed`（注入 id 不在前 10 行 sample）；干净副本同代码 `caught`/1 | 命令输出；`artifacts/m1g/r4_evidence.json` | 长期（上游清单依据） |
+| EV-046 | 2026-10-02 | **R3 行级覆盖实测** `artifacts/m1g/line_coverage_plugin.py`（`sys.settrace`，零新依赖） | exit 0 | plugin `971a1fad02b0`；`r3_coverage.json` `22b7f1ce87ff` | Growth OS 自身：`adapter.py` **83.3%**（未覆盖仅 4 处逻辑：两个错误分支、`logical_id_for`、`damage_selftest` 转发）、`dossier.py` **96.1%**（未覆盖为截断与 `score=None` 等展示分支）。**LLM 路径无自动化测试**：`extract.py` 0%、`verifier.py` 18.2%、`model_gateway.py` 18.8% —— 抽取/攻击结论系一次性真实运行，非持续验证。V1 富格式路径（PDF/docx）亦未端到端验证 | 命令输出；`artifacts/m1g/r3_coverage.json` | 90d |
+| EV-047 | 2026-10-02 | **M1 完成条件补跑：`init`（CLI）与 `reindex`（FTS5）** `artifacts/m1g/run_reindex_search_check.py`（真实材料副本 + 临时空库） | exit 0 | script `8532375183a8`；`reindex_search_evidence.json` `316a1fb1af07` | ROADMAP M1 第 1 条含 `init → … → reindex`，此前两步均无实际输出（R3 覆盖显示 cli/index 0%），本次补齐：① `evkg --db <tmp> init` = exit 0，**建立 35 张 schema 表**、全部计数为 0、profile=default；② `rebuild_index` = `mode=fts`，**109 段落 + 2 主张**入索引，重复重建**幂等**；③ 索引后 `audit_store` 两轮均 **pass/0**；④ 检索 5 个真实词条 4 命中（RAG/ChromaDB/Dubbo/检索服务 均有 passage 与 claim 命中），`计划学习` 为 2 字词按设计回落 LIKE 且 predicate 不在索引字段 → 0 命中（记为检索边界）。真实库哈希前后一致。**顺带发现**：`KnowledgeStore` 无 `close()`/上下文管理器，Windows 上连接泄漏会锁库文件（首次运行 `WinError 32`） | 命令输出；`artifacts/m1g/reindex_search_evidence.json` | 90d |
 
 ## Gate 记录
 
@@ -129,6 +135,13 @@
 | M1-f | 2026-10-01 | 检测行为被测试固化（10 项，含内容级） | `tests/test_damage_selftest.py` | 通过 | EV-038 | — |
 | M1-f | 2026-10-01 | 自报与独立测量交叉印证 | 副本库 | 通过 | EV-039 | — |
 | M1-f | 2026-10-01 | 真实库未被触碰 + 全量回归 | `data/growth.db` | 通过 | EV-040 | — |
+| M1-g | 2026-10-02 | 全量回归独立复跑（evkg 101 正/逆序、Growth OS 73） | 两个仓库 | 通过 | EV-042 | — |
+| M1-g | 2026-10-02 | **D1 进程级全局 profile 实测**（双实例污染、并发交错、公开 API 隔离、适配层 footgun） | `evkg.config` | 通过（实测，结论见结论文档 §5.3） | EV-043 | — |
+| M1-g | 2026-10-02 | R4 实库审计 + 证据链逐字核验 | `data/growth.db` | 通过 | EV-044 | — |
+| M1-g | 2026-10-02 | R2 上游缺陷复现（partial 渲染 / 抽取模型名 / caught 截断） | evkg @ `28afbc0` | 复现成立（已列入上游清单） | EV-045 | — |
+| M1-g | 2026-10-02 | R3 覆盖实测与盲区界定（含 LLM 路径无自动化测试） | `backend/growth_os/` | 通过（结论含限制） | EV-046 | — |
+| M1-g | 2026-10-02 | **R1–R4/D1 收口 + 依赖策略判定** | `docs/M1-SPIKE-CONCLUSION.md` | 通过（判定：有条件依赖 C1–C5） | EV-042…EV-046 | 用户（待确认收口） |
+| M1-g | 2026-10-02 | M1 完成条件补跑：`reindex`（FTS5 索引 + 检索）在真实材料上产出实际输出 | `data/growth.db` 副本 | 通过 | EV-047 | — |
 
 ## 验收记录
 
@@ -145,5 +158,6 @@
 | 2026-10-01 | M1-d（attack：独立复核 + 对抗攻击） | EV-029 EV-030 EV-031 EV-032 | 通过 | 归属层待 M2/M4 决策 | **M1-d 验收通过（独立复核，结果可用）** |
 | 2026-10-01 | M1-e（dossier：能力证据档案） | EV-033 EV-034 EV-035 EV-036 | 通过 | 归属层待 M2/M4 决策；抽取模型未入库 | **M1-e 验收通过** |
 | 2026-10-01 | M1-f（damage selftest：伪造数据发现与恢复） | EV-037 EV-038 EV-039 EV-040 | 通过 | 上游两项建议（partial 渲染、caught 样本截断） | **M1-f 验收通过** |
+| 2026-10-02 | M1-g（技术 spike 收口：R1–R4 + D1 依赖边界） | EV-042 EV-043 EV-044 EV-045 EV-046 EV-047 | 通过 | 阻塞：B-g1（evkg 依赖 pin/可获取）、B-g2（M3 富格式路径未验证）；延后：实例级 profile、抽取模型持久化（M4 前）、渲染器 partial、caught 判定等（见结论文档 §9） | **M1-g 验收通过；M1 技术 spike 结束，依赖策略 = 有条件依赖（C1–C5）** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

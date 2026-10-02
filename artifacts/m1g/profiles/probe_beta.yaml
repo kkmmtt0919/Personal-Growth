@@ -1,0 +1,10 @@
+# D1 实测用探针领域包 B：按空行（段落）切分；.b1 视为源码。
+name: probe_beta
+description: D1 隔离实验探针 B
+language: zh
+splitting:
+  boundary: |-
+    \n{2,}
+code:
+  languages:
+    .b1: betalang

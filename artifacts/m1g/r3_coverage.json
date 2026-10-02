@@ -1,0 +1,287 @@
+{
+  "note": "AST 语句行近似口径；pyproject 的 addopts 会影响收集范围",
+  "files": [
+    {
+      "file": "evkg/src\\evkg\\__main__.py",
+      "statements": 2,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\cli.py",
+      "statements": 191,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\export.py",
+      "statements": 16,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\extract.py",
+      "statements": 158,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\index\\__init__.py",
+      "statements": 4,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\index\\fts.py",
+      "statements": 48,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\index\\search.py",
+      "statements": 40,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\queries.py",
+      "statements": 41,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\web.py",
+      "statements": 190,
+      "covered": 0,
+      "percent": 0.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\wikitext.py",
+      "statements": 88,
+      "covered": 9,
+      "percent": 10.2,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\entity_resolution.py",
+      "statements": 169,
+      "covered": 20,
+      "percent": 11.8,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\pipeline.py",
+      "statements": 192,
+      "covered": 28,
+      "percent": 14.6,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\deterministic.py",
+      "statements": 113,
+      "covered": 17,
+      "percent": 15.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\verifier.py",
+      "statements": 77,
+      "covered": 14,
+      "percent": 18.2,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\model_gateway.py",
+      "statements": 170,
+      "covered": 32,
+      "percent": 18.8,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\cleaning.py",
+      "statements": 37,
+      "covered": 7,
+      "percent": 18.9,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\adversarial.py",
+      "statements": 63,
+      "covered": 14,
+      "percent": 22.2,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\evidence\\dossier.py",
+      "statements": 165,
+      "covered": 43,
+      "percent": 26.1,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\text_normalization.py",
+      "statements": 26,
+      "covered": 7,
+      "percent": 26.9,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\contradiction.py",
+      "statements": 50,
+      "covered": 14,
+      "percent": 28.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\__init__.py",
+      "statements": 52,
+      "covered": 15,
+      "percent": 28.8,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\connectors.py",
+      "statements": 200,
+      "covered": 69,
+      "percent": 34.5,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\providers.py",
+      "statements": 188,
+      "covered": 66,
+      "percent": 35.1,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\store.py",
+      "statements": 365,
+      "covered": 144,
+      "percent": 39.5,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\policies.py",
+      "statements": 41,
+      "covered": 18,
+      "percent": 43.9,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\completeness.py",
+      "statements": 21,
+      "covered": 10,
+      "percent": 47.6,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\splitting.py",
+      "statements": 122,
+      "covered": 97,
+      "percent": 79.5,
+      "uncovered_lines": null
+    },
+    {
+      "file": "backend\\growth_os\\evidence\\adapter.py",
+      "statements": 84,
+      "covered": 70,
+      "percent": 83.3,
+      "uncovered_lines": [
+        103,
+        110,
+        113,
+        118,
+        153,
+        201,
+        209,
+        228,
+        244,
+        249,
+        253,
+        265,
+        269,
+        271
+      ]
+    },
+    {
+      "file": "evkg/src\\evkg\\config.py",
+      "statements": 124,
+      "covered": 108,
+      "percent": 87.1,
+      "uncovered_lines": null
+    },
+    {
+      "file": "backend\\growth_os\\evidence\\dossier.py",
+      "statements": 181,
+      "covered": 174,
+      "percent": 96.1,
+      "uncovered_lines": [
+        53,
+        118,
+        175,
+        190,
+        304,
+        311,
+        315
+      ]
+    },
+    {
+      "file": "evkg/src\\evkg\\__init__.py",
+      "statements": 2,
+      "covered": 2,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\auditor.py",
+      "statements": 27,
+      "covered": 27,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\attack\\damage.py",
+      "statements": 30,
+      "covered": 30,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\domain.py",
+      "statements": 238,
+      "covered": 238,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\evidence\\__init__.py",
+      "statements": 3,
+      "covered": 3,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\ingest\\__init__.py",
+      "statements": 6,
+      "covered": 6,
+      "percent": 100.0,
+      "uncovered_lines": null
+    },
+    {
+      "file": "evkg/src\\evkg\\schemas.py",
+      "statements": 49,
+      "covered": 49,
+      "percent": 100.0,
+      "uncovered_lines": null
+    }
+  ]
+}

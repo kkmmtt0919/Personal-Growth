@@ -1,0 +1,163 @@
+{
+  "probe": "D1 evkg process-global profile isolation",
+  "env": {
+    "evkg_module": "D:\\projects\\evkg\\src\\evkg\\config.py",
+    "profile_a": "D:\\projects\\Personal Growth\\artifacts\\m1g\\profiles\\probe_alpha.yaml",
+    "profile_b": "D:\\projects\\Personal Growth\\artifacts\\m1g\\profiles\\probe_beta.yaml",
+    "text_fixture": "alpha one\nbeta two\n\ngamma three\ndelta four\n"
+  },
+  "part0_static_scope": {
+    "active_before_any_activate_is_default": "default",
+    "_ACTIVE_is_module_attribute": true,
+    "KnowledgeStore_init_params": [
+      "self",
+      "path"
+    ],
+    "store_has_profile_attribute": false,
+    "ingest_path_params": [
+      "path",
+      "title",
+      "author",
+      "kind",
+      "metadata",
+      "store",
+      "task_id"
+    ],
+    "profile_obj_identity_switches_with_activate": {
+      "activations_return_own_objects": [
+        "probe_alpha",
+        "probe_beta"
+      ],
+      "active_is_latest_object": true
+    },
+    "profile_call_sites": [
+      "config.code_language_for",
+      "ingest.splitting._boundary_pattern",
+      "ingest.splitting.split_code_passages",
+      "ingest.pipeline._annotate",
+      "store._enrich_event_time",
+      "policies._policy_table",
+      "extract._prompt / extract_corpus",
+      "entity_resolution / text_normalization / attack.* / web"
+    ]
+  },
+  "part1_sequential_interleaving": {
+    "a_under_A_first": {
+      "count": 4,
+      "texts": [
+        "alpha one",
+        "beta two",
+        "gamma three",
+        "delta four"
+      ],
+      "locators": [
+        {
+          "ordinal": 0
+        },
+        {
+          "ordinal": 1
+        },
+        {
+          "ordinal": 2
+        },
+        {
+          "ordinal": 3
+        }
+      ]
+    },
+    "b_under_B": {
+      "count": 2,
+      "texts": [
+        "alpha one beta two",
+        "gamma three delta four"
+      ],
+      "locators": [
+        {
+          "ordinal": 0
+        },
+        {
+          "ordinal": 1
+        }
+      ]
+    },
+    "a_under_B_without_reactivate": {
+      "count": 2,
+      "texts": [
+        "alpha one beta two",
+        "gamma three delta four"
+      ],
+      "locators": [
+        {
+          "ordinal": 0
+        },
+        {
+          "ordinal": 1
+        }
+      ]
+    },
+    "a_after_reactivate_A": {
+      "count": 4,
+      "texts": [
+        "alpha one",
+        "beta two",
+        "gamma three",
+        "delta four"
+      ],
+      "locators": [
+        {
+          "ordinal": 0
+        },
+        {
+          "ordinal": 1
+        },
+        {
+          "ordinal": 2
+        },
+        {
+          "ordinal": 3
+        }
+      ]
+    },
+    "source_ids_identical": true,
+    "contaminated": true,
+    "restored_by_reactivation": true
+  },
+  "part2_init_order_and_reads": {
+    "written_under_A_read_under_B_unchanged": true,
+    "read_is_profile_independent": true,
+    "store_created_after_B_uses_B": true
+  },
+  "part3_concurrent_interleaving": {
+    "task_a_expected_A_rules": 4,
+    "task_a_actual_count": 2,
+    "task_b_actual_count": 2,
+    "cross_task_contamination": true
+  },
+  "part4_isolation_via_public_api": {
+    "instance_attribute_ignored": true,
+    "per_call_reactivation_works_sequentially": true,
+    "ingest_path_accepts_profile": false,
+    "ingest_file_accepts_profile": false,
+    "store_constructor_accepts_profile": false,
+    "verdict": "顺序执行：公开 API（每次调用前 activate + try/finally）可强制隔离；并发执行：无任何公开 API 可把 profile 绑定到 store 或调用，必须改上游"
+  },
+  "part5_adapter_footgun": {
+    "without_configure": {
+      "passage_count": 5,
+      "baseline": 0.68,
+      "rationale": "汇编或编纂材料，受编纂取舍影响",
+      "assessment_origin": "kind_policy"
+    },
+    "with_configure": {
+      "passage_count": 2,
+      "baseline": 0.68,
+      "rationale": "用户整理或上传的笔记与文档。反映知识性理解，不足以证明实践能力。",
+      "assessment_origin": "kind_policy"
+    },
+    "silently_misconfigured": true,
+    "verdict": "不 configure 时按 evkg 内置 default 领域包入库（切分与理由均不同），全程无报错 —— 保护依赖调用约定而非结构"
+  },
+  "real_db_sha256_before": "01f69f0cd8b337c3151b4304cff93ae6e793f6fac74dbfb1779b73756ea6d00d",
+  "real_db_sha256_after": "01f69f0cd8b337c3151b4304cff93ae6e793f6fac74dbfb1779b73756ea6d00d",
+  "real_db_untouched": true
+}

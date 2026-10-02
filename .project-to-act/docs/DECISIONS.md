@@ -128,6 +128,7 @@ evkg = { path = "../evkg", editable = true }
 | 2026-10-01 | D1–D8 | 初次拟定 | 架构规划 | 待用户确认 |
 | 2026-10-01 | Q1–Q4 | 提出 | 阻塞 M1 开工 | — |
 | 2026-10-01 | Q1–Q4 | **全部确认，采纳推荐方案** | 用户决策 | M1 解锁；D1/D2/D3/D4/D6 随之确定 |
+| 2026-10-02 | D1（依赖策略） | **由"需要改上游，但改法成立"细化为"有条件依赖（C1–C5）"** | M1-g 实测：当前调用面可用但整体不可直接依赖（双实例污染、抽取模型名缺失、渲染器丢 partial） | 不 fork 的决策不变；新增 5 个使用条件与 2 项阻塞（B-g1/B-g2）；M1 spike 结束 |
 
 ---
 
@@ -135,11 +136,11 @@ evkg = { path = "../evkg", editable = true }
 
 进度随 M1 各小步更新（证据见 `PROJECT_ACCEPTANCE.md` 的 EV-004）：
 
-- [~] R1：evkg 的模块级函数能否稳定地被外部调用？ —— **ingest 段与代码路径已验证**（EV-006/007/009/010/012：`ingest_file`、`ingest_code_file`、`split_code_passages`、`stable_id`、`assess_source`、`KnowledgeStore` 均可用，`audit_store` 在适配层写入后仍 pass）。`extract_corpus` / `run_attack` / `write_dossier` 待 M1-c…M1-e
-- [x] R2：`Source.metadata` 能无损携带成长标签，**且能按 metadata 做 SQL 过滤** —— **已闭环**（EV-006/007）。用 `json_extract(payload,'$.metadata.growth_channel')` 过滤可精确区分 `user_evidence`(2) 与 `domain_reference`(1)。sources 表尚无该路径的表达式索引，走全表扫描；证据量小时可接受，量级上来需补索引
+- [x] R1：evkg 的模块级函数能否稳定地被外部调用？ —— **已闭环（M1-g）**。ingest 段与代码路径此前已验证；M1-c…M1-e 又验证了 `extract_corpus` / `run_attack` / `write_dossier` 的真实运行，M1-g 复跑全量测试（evkg 101 正/逆序 + 本仓 73）并界定未验证面：V1 富格式（PDF/docx/xlsx）路径 0 端到端验证、index/web/cli 未使用。结论：**当前调用面稳定可用；未使用面不纳入结论**
+- [x] R2：`Source.metadata` 能无损携带成长标签，**且能按 metadata 做 SQL 过滤** —— **已闭环**（EV-006/007）。用 `json_extract(payload,'$.metadata.growth_channel')` 过滤可精确区分 `user_evidence`(2) 与 `domain_reference`(1)；b.5d 起改走公共 API `find_sources(metadata=...)`，适配层不再写裸 SQL。sources 表尚无该路径的表达式索引，走全表扫描；证据量小时可接受，量级上来需补索引
 - [x] R3：6 个 source kind 的语义重映射机制成立 —— **已验证**（EV-004），且 b.5a 起代码有了专属 kind（`SourceKind.CODE`），不再需要把源码硬塞进文本路径。**陷阱仍在**：profile 里写自定义 kind 不报错，会被静默忽略（`policies.py:22` 的 `except ValueError: continue`），因此细粒度证据类型仍必须走 `Source.metadata.growth_evidence_type`
-- [ ] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **风险已具象化**：`_policy_table()` 与 `code_language_for()` 都读 `active()` 进程全局状态，同一进程内两个领域包/两个用户库无法并存。MVP 单用户单库可接受；多用户阶段必须每库独立进程或改造上游（M1-g 收口）
-- [x] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **结论已修正为"需要改上游，但改法成立"**。D1 当初预测"MVP 大概率不需要改 evkg 源码"，**该预测被 M1-b 证伪**：pipeline 丢 kind、`_put` 用 `INSERT OR IGNORE`、`normalize_document` 破坏行结构，三处都必须动上游。但 D1 的**决策**（不 fork、改动作为上游 commit）成立且已被执行 —— b.5a 即为上游 commit `a4b15af`。这正说明"先把 M1 排在一切之前"的排序是对的：用最小成本证伪了假设
+- [x] R4：evkg 的进程级全局 profile（`config._ACTIVE`）在单进程服务中是否会造成串扰？ —— **已闭环（M1-g 实测，不是推定）**：EV-043 用两个探针领域包 × 两个独立 DB 实测确认 —— profile 是模块级→进程级全局；storeA 在 B 激活后（不重新激活 A）再入库同一文件，段落由 4 变 2（同 `source_id`，被 B 的规则替换）；asyncio 强制交错下任务 A 也按 B 入库；实例挂 `profile` 属性被忽略；**per-call `activate` + try/finally 只能顺序隔离，并发隔离无公开 API，必须改上游**。另实测适配层 footgun：未 `configure()` 时静默按 evkg 默认领域包入库。当前单 profile 用法不受影响
+- [x] D1 结论：evkg 是"直接依赖可用"还是"必须改上游"？ —— **最终结论（M1-g）：两者都不是，判定为"有条件依赖"**。D1 当初预测"MVP 大概率不需要改 evkg 源码"，该预测被 M1-b 证伪并已用 4 个上游提交修正（见 §2.2 的提交链）。M1-g 进一步确认：当前调用面端到端可用，但**整体不可直接依赖**（双实例污染、抽取模型名未持久化、上游渲染器丢 `partial`、无参 `KnowledgeStore()` TypeError、`.env.example` 变量名错误），也不到"必须改上游才能用"的程度 —— 以 C1–C5 五个条件约束使用（详见 `M1-SPIKE-CONCLUSION.md` §6.3）。D1 的决策（不 fork、改动作为上游 commit）继续成立
 
 ### M1-a 新增发现
 
@@ -456,6 +457,40 @@ evkg = { path = "../evkg", editable = true }
 
 5. **注入在真实库的副本上执行**，并逐表核对真实库零差异。万一清理失败也不会污染
    真实证据；同时这也验证了"副本与真实库等价"这一前提（真实库本身未被写入）。
+
+### M1-g 新增发现（技术 spike 收口，2026-10-02）
+
+完整结论与证据见 `docs/M1-SPIKE-CONCLUSION.md`（EV-042…EV-046）。此处只记决策级要点：
+
+1. **D1 特别检查（进程级全局 profile）已实测，不再是不确定性**：profile 是模块级 →
+   进程级全局；两个不同配置的实例在同一进程内**不能**独立运行（同 `source_id` 的段落
+   会被"最后一次 activate"的规则替换）；初始化顺序不起作用，"最后 activate"才起作用；
+   实例挂属性无效；per-call `activate` + try/finally 可顺序隔离，**并发隔离必须改上游**。
+   当前单 profile 用法不受影响，因此不阻塞，但写入条件 C1。
+2. **适配层 footgun（本地可修）**：`ingest_document` 不校验 profile，绕过 `open_store`
+   时会静默用 evkg 默认领域包（实测：5 段/默认理由 vs 2 段/成长理由，基线数值恰好同 0.68）。
+   建议加 3 行断言。
+3. **依赖策略 = 有条件依赖（C1–C5）**，写入 `PROJECT_ACCEPTANCE.md` 与结论文档：
+   C1 单进程单领域包；C2 不用 evkg 的 `render_claim_markdown`；C3 发布前 pin commit；
+   C4 QG2 用双向测量而非内置 `status` 单值；C5 M4 前解决抽取模型持久化。
+4. **三项上游缺陷已复现并列入清单**：`partial` 渲染丢失（哨兵+阳性对照复现）、
+   抽取模型名未持久化（对照：verifier 有记录、extractor 无）、`caught` 判定依赖前 10 行
+   sample（预置 12 条违规 → `violations=13` 但 `status=missed`；干净库同代码 `caught`）。
+5. **覆盖盲区的定性**：adapter 83.3% / dossier 96.1%，但 **LLM 路径无自动化测试**
+   （extract 0%、verifier 18.2%）—— 抽取/攻击结论是"一次性真实运行已验证"，不是
+   "持续验证"；V1 富格式路径（M3 的 PDF 上传）0 端到端验证，列为阻塞 B-g2。
+6. **在案阻塞**：B-g1（evkg 本地领先远程 4 提交且不得推送 → 换机/CI 前必须决定可获取
+   形式并 pin commit）；B-g2（M3 开工前富格式 spike）。
+7. **M1 完成条件复核（自查发现缺口并补齐）**：ROADMAP M1 第 1 条含 `init → … → reindex`，
+   而 R3 覆盖实测显示 cli（0%）与 index/search（0%）从未被跑过 —— 收口前补跑（EV-047）：
+   `evkg init` 建 35 张 schema 表；`rebuild_index` = FTS5 模式、109 段落 + 2 主张入索引、
+   重复重建幂等、索引后 audit 两轮均 pass、5 个真实词条 4 命中（`计划学习` 为 2 字词按设计
+   回落 LIKE 且 predicate 不在索引字段 → 0 命中，记为检索边界）。**不把"没跑过的步骤"算作
+   通过**；顺带发现 `KnowledgeStore` 无 `close()`/上下文管理器（Windows 锁文件）。
+8. **M1 可正式归档**：完成条件 6/6 均有实际输出（EV-008/013/037/044/047 覆盖 audit、
+   damage、metadata、dossier、reindex、结论文档）；交付物清单中 `scripts/smoke_evidence.py`
+   实际落地为 `scripts/smoke_ingest.py` + 各步 artifacts 运行器（M1-b 起的既有偏差，
+   功能等价，此处如实登记）。
 
 ### 未决 / 留给后续
 

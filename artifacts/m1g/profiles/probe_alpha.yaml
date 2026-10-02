@@ -1,0 +1,10 @@
+# D1 实测用探针领域包 A：按单换行切分；.a1 视为源码。
+name: probe_alpha
+description: D1 隔离实验探针 A
+language: zh
+splitting:
+  boundary: |-
+    \n+
+code:
+  languages:
+    .a1: alphalang

@@ -14,6 +14,7 @@
 | [`ACCEPTANCE_GATES.md`](ACCEPTANCE_GATES.md) | 验收门 G1–G6 与质量门 QG1–QG5、证据记录格式、用 evkg 自举验收证据链的机制 | 声明"做完了"之前必读；设计测试前读 |
 | [`DECISIONS.md`](DECISIONS.md) | 架构决策记录：已拟定的 D1–D8、待用户决策的 Q1–Q4、M1 spike 待验证清单、各小步新增发现 | 想知道"为什么这么设计"时；要推翻某个决定时先读它 |
 | [`UPSTREAM-evkg-commits.md`](UPSTREAM-evkg-commits.md) | evkg 上游改动提案（4 个提交 `a4b15af`→`e432c42`→`068389d`→`28afbc0`，一条链）：问题、证据、变更、兼容性、已知限制、待决问题 | 评审是否把这批提交推送到 `redmaplewww/evkg`、或据此建 issue/PR 时读 |
+| [`M1-SPIKE-CONCLUSION.md`](M1-SPIKE-CONCLUSION.md) | M1 技术 spike 收口：R1–R4 与 D1 逐项结论及证据、依赖策略判定（有条件依赖 C1–C5）、已知缺陷与绕行代价、上游改进清单（9 条）、阻塞/延后决策 | 决定 evkg 依赖怎么用、哪些问题必须先修时读；M2 开工前读；后续遇到 evkg 相关判断时回查 |
 
 ## 其他位置
 

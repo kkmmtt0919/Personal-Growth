@@ -1,0 +1,152 @@
+{
+  "real_db": "D:\\projects\\Personal Growth\\data\\growth.db",
+  "init_cli": {
+    "exit_code": 0,
+    "stdout": {
+      "db": "D:\\projects\\Personal Growth\\artifacts\\m1g\\tmp\\init_probe.db",
+      "profile": "default",
+      "language": "zh",
+      "counts": {
+        "sources": 0,
+        "passages": 0,
+        "entities": 0,
+        "entity_aliases": 0,
+        "events": 0,
+        "relations": 0,
+        "timeline_entries": 0,
+        "place_assertions": 0,
+        "claims": 0,
+        "evidence": 0,
+        "conflicts": 0,
+        "conflict_candidates": 0,
+        "review_feedback": 0,
+        "evolution_snapshots": 0,
+        "audit_log": 0
+      },
+      "env_prefix": "EVKG_"
+    },
+    "schema_tables_created": 35,
+    "stderr": ""
+  },
+  "rebuild_index_first": {
+    "mode": "fts",
+    "passages": 109,
+    "claims": 2
+  },
+  "rebuild_index_second": {
+    "mode": "fts",
+    "passages": 109,
+    "claims": 2
+  },
+  "idempotent": true,
+  "fts_passage_rows": 109,
+  "fts_claim_rows": 2,
+  "audit_after_index": {
+    "status": "pass",
+    "violations": 0
+  },
+  "audit_after_index_pass2": {
+    "status": "pass",
+    "violations": 0
+  },
+  "queries": [
+    {
+      "query": "RAG",
+      "mode": "fts",
+      "expanded_surfaces": [
+        "mytset-rag",
+        "rag",
+        "rag-service",
+        "ragservice.java",
+        "基于rag与mcp的智能接口测试用例生成与执行平台"
+      ],
+      "passage_hits": 5,
+      "passage_ids": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "claim_hits": 1,
+      "claim_ids": [
+        "clm_f13861f536d0ffedd12c"
+      ],
+      "entity_hits": 5
+    },
+    {
+      "query": "ChromaDB",
+      "mode": "fts",
+      "expanded_surfaces": [
+        "chromadb"
+      ],
+      "passage_hits": 5,
+      "passage_ids": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "claim_hits": 1,
+      "claim_ids": [
+        "clm_f13861f536d0ffedd12c"
+      ],
+      "entity_hits": 3
+    },
+    {
+      "query": "Dubbo",
+      "mode": "fts",
+      "expanded_surfaces": [
+        "dubbo"
+      ],
+      "passage_hits": 1,
+      "passage_ids": [
+        null
+      ],
+      "claim_hits": 1,
+      "claim_ids": [
+        "clm_29f55c14c2e760b75d18"
+      ],
+      "entity_hits": 1
+    },
+    {
+      "query": "检索服务",
+      "mode": "fts",
+      "expanded_surfaces": [
+        "检索服务"
+      ],
+      "passage_hits": 5,
+      "passage_ids": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "claim_hits": 1,
+      "claim_ids": [
+        "clm_f13861f536d0ffedd12c"
+      ],
+      "entity_hits": 0
+    },
+    {
+      "query": "计划学习",
+      "mode": "like",
+      "expanded_surfaces": [
+        "计划学习"
+      ],
+      "passage_hits": 0,
+      "passage_ids": [],
+      "claim_hits": 0,
+      "claim_ids": [],
+      "entity_hits": 0
+    }
+  ],
+  "queries_with_hits": 4,
+  "query_mode_all_fts": false,
+  "copy_deleted_after_run": true,
+  "real_db_sha256_before": "01f69f0cd8b337c3151b4304cff93ae6e793f6fac74dbfb1779b73756ea6d00d",
+  "real_db_sha256_after": "01f69f0cd8b337c3151b4304cff93ae6e793f6fac74dbfb1779b73756ea6d00d",
+  "real_db_untouched": true
+}
