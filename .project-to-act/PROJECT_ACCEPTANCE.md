@@ -4,7 +4,7 @@
 
 ## 当前验收结论
 
-- 结论：**M0 至 M1-g 全部通过，M1 已正式归档**；**M2 进行中**（计划基线 v1.0 已冻结，M2-a 完成并通过阶段检查）。evkg 依赖策略 = **有条件依赖（C1–C5）**，交付形式 = 本地 Git bundle 归档（方案 A）。详见 `docs/M1-SPIKE-CONCLUSION.md` 与 `docs/M2-PLAN.md`
+- 结论：**M0 至 M1-g 全部通过，M1 已正式归档**；**M2 进行中**（基线 v1.0 已冻结；M2-a/b/c 完成，M2-d 待授权）。evkg 依赖策略 = **有条件依赖（C1–C5）**，交付形式 = 本地 Git bundle 归档（方案 A）。详见 `docs/M1-SPIKE-CONCLUSION.md` 与 `docs/M2-PLAN.md`
 - 验收范围：M0 收口项 + M1-a…M1-f（见下方历史行）+ **M1-g（R1–R4 收口、D1 双实例实测、上游缺陷复现、覆盖盲区界定、M1 完成条件补跑 init/reindex、依赖策略判定）+ B-g1（bundle 归档与恢复验证）**
 - 最后检查：2026-10-02
 - 遗留问题：**B-g2** 富格式（PDF/docx/xlsx）上传路径 0 端到端验证，M3 开工前须先 spike；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**M4 前**必须解决抽取模型持久化；**多领域包或并发 profile 前**必须改上游 profile 作用域；归属层缺失使项目产物暂不能作为能力证据（待 M2/M4 决策）；G1–G6 与 QG2–QG5 未开始
@@ -95,6 +95,8 @@
 | EV-049 | 2026-10-02 | **B-g1 方案 A 落地：bundle 归档 + 双副本 + 恢复验证**（用户确认后执行） | exit 0 | bundle SHA-256 `10dafff4…3801`（238,807 字节）；manifest SHA-256 `969d20764db6…`（3,480 字节） | **归档完成并逐项验证**：① 主副本 `D:\projects\_evkg-archive\evkg-28afbc0.bundle`，第二副本 `C:\Users\Lenovo\evkg-archive\`（两副本 SHA-256 一致）；② `git bundle verify` = 4 refs（main/HEAD=`28afbc0`，origin/main=`a448f44`）、"complete history"、ok；③ 临时目录从归档克隆：HEAD=`28afbc0db7061d9717e307bf2bd0833f59fd8f51`、5 提交、`git fsck` 零输出；④ 同目录 `evkg-bundle-manifest.txt` 登记归档位置、哈希、commit、验证日期、恢复命令与约束。**未完成项（如实登记）**：第二副本仍在 C: 盘，若与 D: 同物理盘则不具备抗物理损坏能力——需用户另存移动硬盘/云盘 | `D:\projects\_evkg-archive\`、`C:\Users\Lenovo\evkg-archive\`（含 manifest） | 长期（依赖交付） |
 | EV-050 | 2026-10-02 | **M2 基线冻结**：5 项决策确认 + C1–C3 补充约束 + 开工前 4 项检查 | 通过 | `docs/M2-PLAN.md` v1.0（执行基线） | 5 项决策按用户确认写入（R5 纯 LLM + `unverified` 标注；G1 截图豁免仅替代形式；最小运行时且不建通用编排平台；三层树 + `adjusted` 保护；首版 `current_level` 固定"尚未评估"）；C1–C3 附验收方式；4 项检查（设计级）通过，其中发现并解决一处设计冲突：**M1 的"全包禁 sqlite3"与自建 `g_` 表冲突** → 收窄为"证据层全禁 + `store/` 白名单"，并新增 3 项补偿检查；12 条验收项逐项映射到测试或归档证据 | `docs/M2-PLAN.md`；账本 validate/audit 无告警 | 长期 |
 | EV-051 | 2026-10-02 | **M2-a 实现与验证**：`g_` 四表存储 + 最小运行时 + 网关接缝 + 边界守卫收窄与补偿 | exit 0 | 新增 `growth_os/store/growth_store.py`、`growth_os/agent/{gateway,runtime}.py`、`adapter.py` 增补；测试 73→**97** | **97 项全绿**（新增 24：store 14 + runtime 8 + 边界 2）、evkg 101 项全绿、ruff 全过。关键验证：① 成功运行记录 provider/model **取自返回值**（`model_source=result`），失败记录标注 `config_on_error` 且保留错误（C2/AC8）；② **离线三保险**（fake 注入 + 无密钥 + httpx 实例化即失败）通过（C3/AC7）；③ 静态守卫：`store/` 只碰 `g_` 表；功能断言：M2 流程跑完后库中只有 5 张 `g_` 表、**无任何 evkg 表**（AC12）；④ 冻结语义被测试锁定：confirmed 四要素 + `source_quote`、确认过的目标不可清空、`adjusted` 再生成不被覆盖（C1）、`current_level` 非空即报错、自有存储有 `close()` 可删文件（M1-g 锁库教训不重演）；⑤ QG1 真实库 = pass/0，真实库 `g_` 表仍为空、证据表计数不变（3/109/2/6） | 命令输出；`tests/test_growth_store.py`、`tests/test_agent_runtime.py`、`tests/test_adapter_boundary.py` | 90d |
+| EV-052 | 2026-10-02 | **M2-b 实现与验证**：Goal Agent + 澄清状态机（8 项新测试，`FakeGateway` 离线） | exit 0 | `growth_os/goal/agent.py`；`agent/{gateway,runtime}.py` 扩展（响应序列、`call_model_with_run`）；测试 105 项 | **三条硬约束被测试锁定**：① 第 7 轮抛 `ClarificationLimitReached`，且**第 7 个问题从未发给模型**（`gateway.calls == 6`）、库中只有 6 轮；② `proposed` 不会自动变 `confirmed` —— 必须显式 `confirm` + 用户原话，原话补记到确认问句上使轨迹成为完整往返；③ `require_confirmed_goal()` 是能力分析唯一前置门（另有"手工改库造出 confirmed 缺要素"的纵深用例）。**发现并修掉一个真实缺陷**：后续轮次未重述的四要素会被 `None` 擦掉 → 改为增量累积并加回归用例。验证：105 项全绿、ruff 全过、全程无网络无密钥。提交 `93e9159` | 命令输出；`tests/test_goal_clarification.py` | 90d |
+| EV-053 | 2026-10-02 | **M2-c 实现与验证**：能力树生成 + 形状校验 + 调整保护 + 来源/校验标注（10 项新测试 + 离线端到端演练 11/11） | exit 0 | `growth_os/goal/capability_model.py`；`artifacts/m2/run_goal_flow_offline.py`；`artifacts/m2/session-fake.json`；测试 116 项 | **AC3/AC4/AC9/AC11 全部落地**：① 形状违规**整体拒绝、不写半棵树**（领域不足 / 能力点不足 / 超 3 层 / 缺父节点 / 等级越界 五种用例；拒绝时能力表 0、运行记录保留）；② 合法树（测试 3 领域 12 能力点、演练 4 领域 16 点）父链完整，逐行 `unverified` + 来源含"未校验"、`generated_by_run_id` 可追到同一 goal 的运行；③ **再生成保护**：人工上调为 5 后重新生成，目标值与理由保留、`origin=adjusted`，报告 `protected_adjusted` 给出 stored/proposed 对照，未调整节点跟随新值；④ "模型自称已核实"仍写 `unverified`（保留模型原话但不让它伪装已验证）；⑤ `current_level` 全为 NULL + `unassessed`（决定 5）；⑥ 离线端到端演练 11/11 通过并产出快照，runner 内置真实模型授权开关（未设 `M2_ALLOW_REAL_MODEL=1` 直接退出） | 命令输出；`tests/test_capability_model.py`、`artifacts/m2/` | 90d |
 
 ## Gate 记录
 
@@ -149,6 +151,8 @@
 | B-g1 | 2026-10-02 | **evkg 依赖交付**：bundle 归档 + 双副本 + 恢复验证（用户确认方案 A） | evkg @ `28afbc0` | 通过 | EV-048 EV-049 | 用户（已确认方案 A） |
 | M2 | 2026-10-02 | 计划基线冻结（5 项决策 + C1–C3 + 开工前 4 项检查） | `docs/M2-PLAN.md` | 通过 | EV-050 | 用户 |
 | M2-a | 2026-10-02 | `g_` 表族 + 最小运行时 + 网关接缝 + 边界守卫收窄（含 3 项补偿检查） | `growth_os/{store,agent}` | 通过 | EV-051 | — |
+| M2-b | 2026-10-02 | Goal Agent 与澄清状态机（≤6 轮硬上限、显式确认、未确认拒绝能力分析） | `growth_os/goal/agent.py` | 通过 | EV-052 | — |
+| M2-c | 2026-10-02 | 能力树生成（≥3 领域/≥12 能力点/≤3 层）+ 调整保护 + 未校验标注 | `growth_os/goal/capability_model.py` | 通过 | EV-053 | — |
 
 ## 验收记录
 
@@ -169,5 +173,7 @@
 | 2026-10-02 | B-g1（evkg 交付：方案 A 本地 bundle 归档） | EV-048 EV-049 | 通过 | 第二副本与主副本可能同物理盘，抗物理损坏的异地/离线副本待用户另存（未计入验收）；发布/CI 前切换 `git + rev` pin | **B-g1 已解除（交付形式落定并验证）；M1 正式归档** |
 | 2026-10-02 | M2 计划基线冻结（决策 / 约束 / 开工前检查） | EV-050 | 通过 | 4 项检查为设计级，须在 M2-a…d 转为可执行断言 | **M2 开工条件成立，`M2-PLAN.md` v1.0 生效** |
 | 2026-10-02 | M2-a（g_ 表族、最小运行时、网关接缝、边界守卫收窄） | EV-051 | 通过 | M2-b…d 待推进 | **M2-a 阶段检查通过** |
+| 2026-10-02 | M2-b（澄清状态机与三条硬约束） | EV-052 | 通过 | M2-c 待推进 | **M2-b 阶段检查通过** |
+| 2026-10-02 | M2-c（能力树生成、调整保护、来源与校验标注） | EV-053 | 通过 | **M2-d（G1 真实会话）未开始，真实模型调用需用户明确授权**（预估 5 次结构化调用） | **M2-c 阶段检查通过** |
 
 验收方式说明、证据格式与证据链自举机制见 `docs/ACCEPTANCE_GATES.md`（§1 原则、§2 自举机制、§5 记录格式）。约束：验收证据库 `data/acceptance.db` 与用户证据库物理隔离，项目验收证据不得进入用户能力断言通道，否则会污染 G3 的判定。

@@ -290,6 +290,13 @@ class GrowthStore:
         _require(verification in VERIFICATION_STATUSES, f"未知校验状态: {verification!r}")
         depth = int(payload.get("depth") or 0)
         _require(depth in (1, 2, 3), f"depth 必须是 1..3（三层树）: {depth}")
+        level = payload.get("target_level")
+        if level is not None:
+            _require(
+                TARGET_LEVEL_RANGE[0] <= int(level) <= TARGET_LEVEL_RANGE[1],
+                f"target_level 必须在 {TARGET_LEVEL_RANGE[0]}..{TARGET_LEVEL_RANGE[1]}"
+                f"（目标要求等级）: {level}",
+            )
 
         _require(
             payload.get("current_level") is None,

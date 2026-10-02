@@ -163,6 +163,24 @@ def test_adjust_requires_note_and_valid_range(store):
         store.adjust_capability("cap_missing", 4, "不存在")
 
 
+def test_target_level_range_is_enforced_on_upsert(store):
+    """写入路径也要拒绝越界的目标等级（不只是 adjust 路径）。"""
+    store.save_goal({"id": "goal_8", "title": "目标", "status": "clarifying"})
+    for bad_level in (0, 6, -1):
+        with pytest.raises(GrowthStoreError, match="target_level"):
+            store.upsert_capability(
+                {
+                    "id": capability_id("goal_8", "工程", "Python"),
+                    "goal_id": "goal_8",
+                    "name": "Python",
+                    "path": "工程/Python",
+                    "depth": 3,
+                    "target_level": bad_level,
+                }
+            )
+    assert store.counts()["g_capabilities"] == 0
+
+
 def test_current_level_cannot_be_filled_in_m2(store):
     """决定 5：M2 的现状一律「尚未评估」，不得写入任何数字。"""
     store.save_goal({"id": "goal_6", "title": "目标", "status": "clarifying"})

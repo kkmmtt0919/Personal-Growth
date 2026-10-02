@@ -22,6 +22,8 @@
 | M1 | 证据底座打通（技术 spike） | **已完成（spike 结束）** | ZCode | R1–R4/D1 已收口；依赖策略 = 有条件依赖（C1–C5） | EV-004…EV-046 | 2026-10-02 |
 | M2 | 目标澄清与能力模型 | 进行中（基线已冻结，2026-10-02） | ZCode | 通过验收门 G1；完成条件见 `docs/M2-PLAN.md` §5（12 条验收项，含 C1–C3 补充约束） | 无 | 2026-10-02 |
 | M2-a | `g_` 四表 + `growth_store` + 最小运行时（含网关接缝/fake）+ 边界守卫收窄与补偿检查 | 已完成 | ZCode | 测试 97 项全绿（新增 24）；AC7/AC8/AC12 通过；真实库零改动（QG1 pass/0） | EV-051 | 2026-10-02 |
+| M2-b | Goal Agent + 澄清状态机（≤6 轮硬上限、显式确认、未确认拒绝能力分析） | 已完成 | ZCode | 8 项新测试；第 7 轮被拒且未发模型、确认需原话、增量累积不被擦除 | EV-052 | 2026-10-02 |
+| M2-c | 能力树生成 + 形状校验（≥3 领域/≥12 能力点/≤3 层）+ 调整保护 + 来源与校验标注 | 已完成 | ZCode | 11 项新测试 + 离线端到端演练 11/11；测试总数 116 全绿；不写半棵树 | EV-053 | 2026-10-02 |
 | M3 | 证据接入（Upload + GitHub） | 已规划 | — | 见 `docs/ROADMAP.md` M3 | 无 | 2026-10-01 |
 | M4 | 能力审计（产品内核） | 已规划 | — | 通过验收门 G2、G3 | 无 | 2026-10-01 |
 | M5 | 任务闭环与成长循环 | 已规划 | — | 通过验收门 G4、G5 | 无 | 2026-10-01 |
@@ -46,10 +48,12 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 **本地 Git bundle 归档（方案 A，维持不推送）**，归档、双副本与恢复验证完成（EV-049）。
 依赖策略保持**有条件依赖（C1–C5）**，条件见 `docs/M1-SPIKE-CONCLUSION.md` §6.3。
 
-1. **M2 进行中**：基线冻结（EV-050），M2-a 已完成（EV-051）。下一步 M2-b（Goal Agent +
-   澄清状态机：轮次上限、确认语义、拒绝未确认的能力分析 → AC1/AC2/AC10），随后 M2-c
-   （能力树生成 + adjusted 保护 + 来源/校验标注 → AC3/AC4/AC9/AC11）、M2-d（G1 证据
-   产出与收口 → AC5/AC6）。
+1. **M2 进行中**：基线冻结（EV-050），M2-a/b/c 已完成（EV-051/052/053）。下一步 **M2-d**
+   （G1 证据产出与收口 → AC5/AC6）。
+   **M2-d 的真实模型调用尚未授权**：需先向用户汇报调用次数（预估 5 次结构化调用）、
+   配置项与成本，得到明确确认后才可发起；`artifacts/m2/run_goal_flow_offline.py
+   --gateway real` 内置授权开关（`M2_ALLOW_REAL_MODEL=1`），未授权时直接退出。
+   fake gateway 的离线测试与演练不受此限制（已全部完成）。
    继承边界：M2 不产生用户星级、不触碰 evkg 证据层（有零写入断言）；归属层须在 M3/M4
    前定稿；`g_agent_runs` 记录实际 provider/model（C2）；LLM 路径离线回归（C3）。
 2. **B-g2（M3 开工前）**：富格式（PDF/docx/xlsx）上传路径 spike。
@@ -78,6 +82,8 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 | 2026-10-02 | M1-g | 技术 spike 收口：复跑两套测试 / D1 双实例隔离实测 / 实库 audit 与追溯链核验 / 三项上游缺陷复现 / 行级覆盖实测 / 补跑 init 与 reindex，结论文档落盘 | ① **D1 实测**：profile 为进程级全局 —— 未重激活 A 时 storeA 再入库同一文件段落 4→2；asyncio 交错同样污染；实例挂 `profile` 无效；per-call `activate` 仅顺序可用，**并发隔离必须改上游**；② 适配层 footgun：未 `configure()` 静默用默认领域包；③ partial 渲染哨兵复现（上游 Markdown 无 partial、有 supports 对照）；④ caught 截断复现（violations=13 但 missed）；⑤ 抽取模型名未持久化；⑥ 覆盖：adapter 83.3% / dossier 96.1%，**LLM 路径无自动化测试**；⑦ 判定 **有条件依赖 C1–C5**；⑧ 补跑 init（35 表）与 reindex（FTS5 109+2、幂等、audit pass）；⑨ 真实库哈希前后一致；⑩ B-g1 方案实测：bundle 字节可复现、uv `file://`+`rev` pin 成立、`editable` 与 `git` 互斥 | EV-042…EV-048 | 用户确认收口；B-g1 交付形式待定；B-g2 M3 前富格式 spike | M2 待确认开工 |
 | 2026-10-02 | M2 基线冻结 | 将 5 项确认决策 + C1–C3 补充约束写入 `docs/M2-PLAN.md`，完成开工前 4 项检查（设计级）：验收→测试/证据映射、数据结构区分建议值/人工值/未评估、fake gateway 离线独立、变更不越界 | ① 发现并解决一处设计冲突：M1 的**全包禁 sqlite3** 与 M2 自建 `g_` 表冲突 → 收窄为"证据层全禁 + `store/` 白名单"，并新增 3 项补偿检查（`g_` 前缀静态守卫、证据层零写入功能断言、D1 导入边界继续全包生效）；② 增补字段锁定三条语义：稳定能力点 id（防再生成累积，M1-b.5c 教训）、人工值保护（C1）、`current_level` 恒 NULL + `unassessed`（决定 5）；③ 用户补充约束全部落地：R5 不得伪装已验证、failed run 也要可诊断、provider/model 必须取自实际 gateway | EV-050 | — | M2-a 开工 |
 | 2026-10-02 | M2-a | `g_` 四表存储（`growth_os/store`）+ 最小运行时（`growth_os/agent`）+ 网关接缝（Protocol/Fake）+ 适配层网关工厂 + 边界守卫收窄与补偿检查 + 24 项新测试 | ① **不重蹈上游缺陷**：自有 `GrowthStore` 提供 `close()`/上下文管理器，并有"关掉后能删文件"的测试（对应 M1-g 记录的 evkg 无 close() 锁库问题）；② **运行记录按 C2 落地**：成功取自 `GatewayResult`（`model_source=result`），失败取自 `describe()` 并标 `config_on_error`，失败也落库；③ **离线按 C3 落地**：fake gateway + 无密钥 + `httpx.AsyncClient` 实例化即断言失败；④ **边界收窄有补偿**：静态守卫"`store/` 只碰 g_ 表"+ 功能断言"M2 流程后库中无任何 evkg 表"（AC12）；⑤ 冻结语义被测试锁定：confirmed 四要素+原话、确认过的目标不可清空、`adjusted` 不被再生成覆盖、`current_level` 非空即报错；⑥ 真实库零改动（g_ 表仍为空、证据表计数不变 3/109/2/6、QG1 pass/0） | EV-051 | M2-b 待推进 | M2-b：Goal Agent + 澄清状态机 |
+| 2026-10-02 | M2-b | Goal Agent + 澄清状态机 + 8 项新测试；`FakeGateway` 支持响应序列/可调用响应，`AgentRuntime` 新增 `call_model_with_run`（运行号回传） | ① **状态迁移由代码决定，不交给模型**：提示词只负责"问什么"，`draft→clarifying→proposed→confirmed` 的迁移与校验在 `GoalAgent` 与存储层双层执行；② 三条硬约束测试锁定：第 7 轮抛 `ClarificationLimitReached` 且**第 7 个问题从未发给模型**（`gateway.calls==6`）、`proposed` 不自动确认（需显式 `confirm` + 用户原话，原话补记到确认问句使轨迹完整）、`require_confirmed_goal()` 为唯一前置门（含"手工改库造出 confirmed 缺要素"纵深用例）；③ 发现并修掉一个真实缺陷：后续轮次未重述的要素会被 `None` 擦掉 → 改为**增量累积**并加回归用例；④ 确认不调用模型（状态迁移不该花 API 调用，也不该让模型"代用户同意"） | EV-052 | — | M2-c |
+| 2026-10-02 | M2-c | 能力树生成器（形状校验先于写入）+ `g_capabilities.target_level` 写入范围校验 + 11 项新测试 + 离线端到端演练 runner（`artifacts/m2/`） | ① 形状违规**整体拒绝、不写半棵树**（五种违规用例：领域不足/能力点不足/超 3 层/缺父节点/等级越界；拒绝时能力表为 0 而运行记录仍在）；② 合法树 4 领域 16 能力点（测试用 3/12），父链完整、逐行 `unverified` + 来源含"未校验"、`generated_by_run_id` 可追到 run；③ 再生成保护：人工上调为 5 后重新生成，目标值与理由保留、`origin=adjusted`，报告 `protected_adjusted` 给出 stored/proposed 对照，未调整节点跟随新值；④ "模型自称已核实"仍写 `unverified`（保留模型原话但不让它伪装已验证）；⑤ 离线演练 11/11 自检通过并产出 `session-fake.json`；⑥ runner 内置真实模型授权开关，未授权直接退出（为 M2-d 留出暂停点） | EV-053 | M2-d 需用户授权后才能跑真实模型 | M2-d（G1 证据） |
 | 2026-10-01 | M1-e | 新增 `growth_os/evidence/dossier.py`（Growth OS 档案渲染器）+ 生成两份档案与索引；扩展边界检查到整个包 | ① **发现上游缺陷并绕开**：evkg 的 `render_claim_markdown` 只输出 polarity 为 supports/refutes 的证据行，**`partial` 会落空** —— 而被推翻的主张恰恰是 `partial`，漏掉它等于把"复核认为只有部分支持"从档案抹掉 → 自建渲染器显式纳入，并加了回归测试；② 按用户四类要求组织档案：证据链六环节、缺失证据单列且声明"不等于造假"、两个"独立"分别给值、证据局限（不能由项目存在推出个人实现、不能外推为系统整体可靠）；③ 档案里如实写明"抽取所用模型未记录在案"，不用当前配置冒充历史事实；④ **分数精度从 2 位改 3 位**：2 位会把库中 0.697 显示成 0.70，读者无法与库对照，对证据文档是失真（这条是核对脚本先报 FAIL 才发现的）；⑤ 修掉标题用整段 statement 当 H1 的排版缺陷；⑥ 边界检查扩到整个包（只有 adapter.py 可 import evkg），并当场抓到我自己新增的 `evkg.evidence.dossier` 未在允许清单里 | EV-033…EV-036 | 归属层待 M2/M4 决策 | M1-f 待确认 |
 | 2026-10-01 | M1-d | 配置独立复核模型（DeepSeek）；核对其**真正生效**；运行 5 个攻击模块；留档攻击样例与复核结果 | ① 用户要求先配独立复核并**核对实际生效的 provider/模型名**，理由是 `independent=True` 只检查变量是否设置 —— 实测确认：主 glm-5.3@bigmodel / 复核 deepseek-flash@deepseek，模型与端点均不同，`genuinely_independent=True`；② **实测发现模型自称不可靠**：问 deepseek-flash"你是谁"它回答 "ChatGPT"，故模型身份只能以解析后的配置与接口返回为准；③ 两个易混淆的"独立"概念须分开记：`independent_verifier`（复核模型不同→True）与 `evidence.independent_source`（证据跨多来源→False，本次两条主张都只引一个来源）；④ `deterministic` 的 `pending_model_review` 是**正常状态**（表示候选已生成待模型复核），非错误；⑤ 本次 0 冲突、2 条冲突候选均来自对抗模块对 broken 主张的记录 | EV-029…EV-032 | 归属层待 M2/M4 决策 | M1-e 待确认 |
 | 2026-10-01 | M1-c | 配好 `.env`（用户提供 API Key）+ 探针 + 全量抽取：109/109 passage，2 claims / 60 entities / 3 aliases / 1 event | ① **evkg 自带 `.env.example` 对 glm-5.3 无效**：它同时写 `REASONING_EFFORT=none` 与 `EXTRA_BODY={"thinking":{"type":"disabled"}}`，而该模型实测返回 400「该模型始终思考，不支持关闭思考」→ 改为 `REASONING_EFFORT=low` 后可用；② 另一处：`.env.example` 里 `EVKG_EXTRA_BODY={...}` 裸写，标准 dotenv 解析器会剥掉内部双引号使其不是合法 JSON，必须整体加单引号；③ **抽取器正确地拒绝把项目成果归因为个人能力** —— 一条主张的陈述自己写明"未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身"，这是成长领域包「不作能力推断」规则在起作用，但也说明项目产物需要**显式的归属层**才能变成能力证据（属 L2 职责，不该让 LLM 推断）；④ 「严禁升级」规则验证通过：README 的「未来规划」TODO 被抽成 predicate=`计划学习` 且陈述明写"仅为计划事项，不代表已具备相应能力" | EV-025…EV-028 | 归属层待 M2/M4 决策；独立 verifier 未配置 | M1-d 待确认 |
