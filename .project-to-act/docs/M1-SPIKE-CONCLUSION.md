@@ -360,11 +360,11 @@ autouse fixture 显式 `activate("default")` 并在结束时重置。个别测�
     而 evkg 只把路由表藏在 `TEXT_SUFFIXES` / `Profile.code` 里。M3-b 因此在本仓复制了一份后缀表用于预筛，
     形成"两处知识"——上游扩展语言表时下游会漏判（当前后果只是跳过并报告，不是静默入库）。
     建议上游暴露一个 `ingestible_kind(path) -> "code" | "text" | None` 之类的判定函数，供下游预筛复用。
-13. **`PdfReader` 与声明依赖 pypdf 不兼容（1 行缺陷，B-g2 发现）**：`providers.py` 把 `bytes`
+13. **【已在本地修复 @ `db2de3a`】** `PdfReader` 与声明依赖 pypdf 不兼容（1 行缺陷，B-g2 发现）：`providers.py` 把 `bytes`
     直接传给 `pypdf.PdfReader`，实测 `AttributeError: 'bytes' object has no attribute 'seek'`，
     **PDF 经 V1 状态机入库 100% 失败**；同文件的 `OfficeReader` 已正确使用 `io.BytesIO`。
-    修复：`Reader(content)` → `Reader(io.BytesIO(content))`。evkg 测试对 PDF 零覆盖，建议同时补一个
-    最小 PDF 的 reader 回归测试（现有 `test_ingest_boundary.py` 只用假 PDF 测路由，不读内容）。
+    修复：`Reader(content)` → `Reader(io.BytesIO(content))`（本地提交 `db2de3a`，并补 `tests/test_pdf_reader.py`
+    6 项真实读取测试 —— 覆盖空洞已填）。该提交**未推送**，与其余 4 个提交一样待用户决定去向。
 14. **V1 段落的页码级 locator**：`split_passages` 只产出 `{"ordinal": n}`，而识别阶段的
     `RecognitionSpan` 已带 `page`/`bbox`；结果是 PDF 证据无法自动定位回页，只能人工核对。
     建议在 `_save_source_passages` 里把 span 的页码（或页内偏移）写进 passage locator。

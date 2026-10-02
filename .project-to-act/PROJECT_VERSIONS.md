@@ -20,7 +20,7 @@
 
 ## 兼容性与迁移政策
 
-- **evkg 版本**：当前以 `path` 依赖指向 `D:\projects\evkg`（未发布版本，无语义化版本号）。开发期允许跟随 `main`；首次发布 `0.1.0` 前必须 pin 到具体 commit SHA 并记录于本表。**交付形式（B-g1，2026-10-02 用户确认）**：本地 Git bundle 归档 + 裸仓寻址（方案 A），维持不推送约束；发布/CI 时切换为 `git + rev` 固定到已验证的 commit SHA（uv 层已实测可行；`editable` 与 `git` 源互斥，故开发期保留 path 依赖）。
+- **evkg 版本**：当前以 `path` 依赖指向 `D:\projects\evkg`（本地已领先远程 **5** 个提交，最新 `db2de3a` 为 B-g2 的 PDF 修复）。**归档待刷新**：B-g1 的 bundle 指向 `28afbc0`，不含 `db2de3a`；需要时按 B-g1 流程重新生成 bundle、更新哈希与 manifest。（未发布版本，无语义化版本号）。开发期允许跟随 `main`；首次发布 `0.1.0` 前必须 pin 到具体 commit SHA 并记录于本表。**交付形式（B-g1，2026-10-02 用户确认）**：本地 Git bundle 归档 + 裸仓寻址（方案 A），维持不推送约束；发布/CI 时切换为 `git + rev` 固定到已验证的 commit SHA（uv 层已实测可行；`editable` 与 `git` 源互斥，故开发期保留 path 依赖）。
 - **数据库 schema**：`g_` 表族由本项目自管，MVP 期间允许破坏性变更，但每次变更须在 `PROJECT_FEATURES.md` 或进度历史中留痕。
 - **evkg 表族**：只读叠加，不改其 schema；若确需扩展 `SourceKind` 等上游结构，作为上游 commit 提交而非就地修改（决定 D1）。
 - **配置**：`EVKG_*` 沿用 evkg 命名空间；Growth OS 自有配置用 `GROWTH_*`。**注意** evkg 仓库 `.env.example` 中的 `EVKG_VERIFIER_PROVIDER` 为错误名称，实际变量是 `EVKG_VERIFIER_LLM_PROVIDER`（已核实 `attack/verifier.py:39-40`）。

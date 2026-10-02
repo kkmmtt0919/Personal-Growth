@@ -634,6 +634,23 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
 5. **环境陷阱**：`uv sync --extra office` 会移除 dev 工具（本项目把 `dev` 也定义为可选 extra）；
    正确命令 `uv sync --extra dev --extra office`。已实测踩到并恢复；`uv.lock` 未变。
 
+### B-g2 收口（2026-10-02，用户选 A）：PDF 基础 ingestion 可用（含边界）
+
+1. **上游最小修复已落地**（evkg `db2de3a`，未推送）：`PdfReader.read` 的 `bytes → io.BytesIO(bytes)`，
+   并补 `tests/test_pdf_reader.py` 6 项**真实内容读取**测试（覆盖空洞已填：原测试只用假 PDF 测路由）。
+   范围纪律：只改这一行 + 补测试，未动 locator 设计 / V1 状态机 / completeness / `audit_store` / 适配层 / M3-c。
+2. **三项验证在修复后的真实代码上重跑，全部达标**：入库（40 段）、`audit_store` pass/0、
+   locator 按要求**如实说明**。**交叉印证**：as-is 与脚本内等价实现两轮结果完全一致。
+3. **两个问题分离记录**（用户指定，不互相包装）：
+   * 问题 #1 `bytes` 缺陷 → **fixed @ db2de3a**；
+   * 问题 #2 **页码级 locator 缺失** → **独立开放项**（上游清单第 14 项）。passage 仅 `ordinal`，
+     无 page-level 定位、对原始 PDF 不保证逐字；但 passage 是归一化文本的**完整分区**（去空白逐字一致、缺失 0）
+     → **内容可验证、定位粒度不足**。按 M3-PLAN §5 第三项（"如实说明"）该项达标，**既不伪装失败，也不说成完整通过**。
+4. **PDF 支持边界已写进 M3-PLAN §5**：能入库并产出段落、内容可对归一化文本核验、审计通过、失败/无文本会留档或转 review；
+   不具备 page-level locator 与对原 PDF 的逐字保证；入库后产生 blocking 澄清；
+   **产品接入前仍需适配层新增 V1 入口并保证归属/通道策略贯穿**（M3 后续步骤）。
+5. **待办**：归档刷新（B-g1 的 bundle 指向 `28afbc0`，本地现领先 5 个提交）；PDF 段落的"可检索"（FTS）留 M3 Gate 判定。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

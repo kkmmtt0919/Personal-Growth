@@ -13,9 +13,9 @@
 * 纯本地（pypdf + 规则），不调用任何模型 API；
 * 不新增产品入口：本脚本直接驱动 evkg 的 `IngestionService`（V1 状态机）；
   是否把 V1 接入适配层是后续步骤的事，本次只做验证。
-* **两轮**：A = 现状（发现缺陷：evkg `PdfReader` 把 bytes 直接传给 pypdf，缺 `BytesIO`）；
-  B = 诊断（仅在**本脚本内**用等价实现打上这一行修复，用于回答"若修好，三项验证会得到什么"）。
-  是否真正修改 evkg 由用户决定；本脚本不碰 evkg 源码。
+* **两轮**：`as-is` = 当前 evkg 代码（缺陷已在上游 `db2de3a` 修复：`Reader(io.BytesIO(content))`）；
+  `diagnostic_equivalent` = 脚本内保留的等价实现（用于交叉印证"上游那一行修复就是关键"，
+  并防止将来回归）。两轮应当一致 —— 不一致即是回归信号。
 
 用法：`python artifacts/bg2/run_pdf_spike.py "<pdf 路径>" [--label 说明]`
 """
@@ -244,8 +244,14 @@ def main() -> int:
         "is_zip_disguised": zipfile.is_zipfile(local_copy),
         "reference_pypdf": _pdf_reference(local_copy),
     }
-    report["run_a_as_is"] = asyncio.run(_drive_v1(local_copy, db_a))
-    report["run_b_with_one_line_fix"] = asyncio.run(_drive_v1(local_copy, db_b, fixed=True))
+    report["run_as_is"] = asyncio.run(_drive_v1(local_copy, db_a))
+    report["run_diagnostic_equivalent"] = asyncio.run(_drive_v1(local_copy, db_b, fixed=True))
+    a, b = report["run_as_is"], report["run_diagnostic_equivalent"]
+    report["rounds_agree"] = (
+        a["job"]["status"] == b["job"]["status"]
+        and a["passages"]["count"] == b["passages"]["count"]
+        and a["source"]["id"] == b["source"]["id"]
+    )
 
     audit = audit_store(str(db_b))
     report["audit"] = {
@@ -256,14 +262,21 @@ def main() -> int:
     }
 
     # 第三项：locator 可核对性判定（如实记录，不美化）
-    locators = report["run_b_with_one_line_fix"]["passages"]["locator_shapes"]
+    locators = report["run_as_is"]["passages"]["locator_shapes"]
     page_level = any("page" in shape for shape in locators)
-    report["defect_found"] = {
+    report["defect_history"] = {
         "where": "evkg/src/evkg/ingest/providers.py: PdfReader.read",
         "what": "把 bytes 直接传给 pypdf.PdfReader；pypdf 需要流/路径",
         "error": "AttributeError: 'bytes' object has no attribute 'seek'",
         "why_never_noticed": "evkg 测试对 PDF 零覆盖；同文件 OfficeReader 反而正确地用了 io.BytesIO",
-        "minimal_fix": "Reader(content) → Reader(io.BytesIO(content))（1 行）",
+        "fix": "Reader(content) → Reader(io.BytesIO(content))（1 行）",
+        "status": "fixed_upstream @ db2de3a（并补 tests/test_pdf_reader.py 6 项真实读取测试）",
+        "scope_discipline": "只改这一行 + 补测试；未动 locator 设计 / V1 状态机 / completeness / audit_store",
+    }
+    report["open_issue_separate"] = {
+        "id": "page-level locator",
+        "summary": "passage locator 仍只有 ordinal；识别 span 带 page/bbox 但未写入 locator。"
+                   "这是独立上游项（清单第 14 项），不因 bytes 缺陷修复而被视为通过。",
     }
     report["locator_verdict"] = {
         "locator_keys": locators,

@@ -11,55 +11,7 @@
     "cjk_ratio": 0.775,
     "empty_pages": 0
   },
-  "run_a_as_is": {
-    "job": {
-      "id": "job_4cf0a72e70e793a5b22b",
-      "status": "failed",
-      "error": "'bytes' object has no attribute 'seek'",
-      "raised_to_caller": "AttributeError: 'bytes' object has no attribute 'seek'",
-      "recorded_processing_errors": [
-        {
-          "error_type": "AttributeError",
-          "message": "'bytes' object has no attribute 'seek'"
-        }
-      ]
-    },
-    "source": {
-      "id": null,
-      "kind": null,
-      "metadata_keys": [],
-      "content_hash": null
-    },
-    "passages": {
-      "count": 0,
-      "locator_shapes": {},
-      "all_in_normalized_text": true,
-      "coverage_of_normalized": 0.0,
-      "max_chars": 0,
-      "compact_equals_normalized": true,
-      "space_join_equals_normalized": true,
-      "char_diff_vs_normalized": {
-        "normalized_chars": 0,
-        "passages_chars": 0,
-        "missing_from_passages_by_class": {},
-        "extra_in_passages_by_class": {}
-      }
-    },
-    "normalized": {
-      "chars": 0,
-      "keys": []
-    },
-    "recognition": {
-      "spans": 0,
-      "span_keys": [],
-      "pages_with_text": 0
-    },
-    "clarification": {
-      "questions": 0,
-      "blocking": 0
-    }
-  },
-  "run_b_with_one_line_fix": {
+  "run_as_is": {
     "job": {
       "id": "job_4cf0a72e70e793a5b22b",
       "status": "awaiting_clarification",
@@ -123,6 +75,71 @@
       "blocking": 3
     }
   },
+  "run_diagnostic_equivalent": {
+    "job": {
+      "id": "job_4cf0a72e70e793a5b22b",
+      "status": "awaiting_clarification",
+      "error": null,
+      "raised_to_caller": null,
+      "recorded_processing_errors": []
+    },
+    "source": {
+      "id": "src_2ba4b6faee018159",
+      "kind": "compilation",
+      "metadata_keys": [
+        "completeness_pending",
+        "ingestion_job_id"
+      ],
+      "content_hash": "ac7671c3bbb1"
+    },
+    "passages": {
+      "count": 40,
+      "locator_shapes": {
+        "ordinal": 40
+      },
+      "all_in_normalized_text": true,
+      "coverage_of_normalized": 0.986,
+      "max_chars": 173,
+      "compact_equals_normalized": true,
+      "space_join_equals_normalized": false,
+      "char_diff_vs_normalized": {
+        "normalized_chars": 2127,
+        "passages_chars": 2127,
+        "missing_from_passages_by_class": {},
+        "extra_in_passages_by_class": {}
+      }
+    },
+    "normalized": {
+      "chars": 2282,
+      "keys": [
+        "changes",
+        "id",
+        "paragraphs",
+        "processor",
+        "processor_version",
+        "recognition_id",
+        "tables",
+        "text"
+      ]
+    },
+    "recognition": {
+      "spans": 5,
+      "span_keys": [
+        "bbox",
+        "block",
+        "confidence",
+        "page",
+        "source",
+        "text"
+      ],
+      "pages_with_text": 5
+    },
+    "clarification": {
+      "questions": 3,
+      "blocking": 3
+    }
+  },
+  "rounds_agree": true,
   "audit": {
     "status": "pass",
     "total_violations": 0,
@@ -145,12 +162,18 @@
       "audit_log": 41
     }
   },
-  "defect_found": {
+  "defect_history": {
     "where": "evkg/src/evkg/ingest/providers.py: PdfReader.read",
     "what": "把 bytes 直接传给 pypdf.PdfReader；pypdf 需要流/路径",
     "error": "AttributeError: 'bytes' object has no attribute 'seek'",
     "why_never_noticed": "evkg 测试对 PDF 零覆盖；同文件 OfficeReader 反而正确地用了 io.BytesIO",
-    "minimal_fix": "Reader(content) → Reader(io.BytesIO(content))（1 行）"
+    "fix": "Reader(content) → Reader(io.BytesIO(content))（1 行）",
+    "status": "fixed_upstream @ db2de3a（并补 tests/test_pdf_reader.py 6 项真实读取测试）",
+    "scope_discipline": "只改这一行 + 补测试；未动 locator 设计 / V1 状态机 / completeness / audit_store"
+  },
+  "open_issue_separate": {
+    "id": "page-level locator",
+    "summary": "passage locator 仍只有 ordinal；识别 span 带 page/bbox 但未写入 locator。这是独立上游项（清单第 14 项），不因 bytes 缺陷修复而被视为通过。"
   },
   "locator_verdict": {
     "locator_keys": {
