@@ -4,7 +4,7 @@
 
 ## 当前验收结论
 
-- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-PLAN v1.0 已冻结**（2026-10-02，七项确认，EV-066）；**M4-a 已完成待验收**（EV-067）：Assessment 基础模型契约（`level` 恒 NULL）、确定性准入闸门（四类矩阵）、history + current view 生命周期、C5 抽取 provenance 上游修（evkg `9a21552`）、`claim/evidence → draft → 独立 audit artifact` 最小闭环（11/11）；真实库零污染。M3 已于 2026-10-02 正式收口（Gate 13/13，EV-065）。详见 `artifacts/m4a/README.md`、`artifacts/gates/M3/README.md`
+- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-a 已完成并通过验收**（用户 2026-10-02 确认，EV-067）：Assessment 基础模型契约（`level` 恒 NULL）、确定性准入闸门（四类矩阵）、history + current view 生命周期、C5 抽取 provenance 上游修（evkg `9a21552`）、`claim/evidence → draft → 独立 audit artifact` 最小闭环（11/11）；真实库零污染。**M4-PLAN v1.0 已冻结**（2026-10-02，七项确认，EV-066）。详见 `artifacts/m4a/README.md`
 - 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a）**
 - 最后检查：2026-10-02
 - 遗留问题：**M4 剩余步骤** —— M4-b（证据绑定与分桶）→ M4-c（评级与反向证据）→ M4-d（可解释输出）→ M4-e（缺口 + G2/G3）→ M4 Gate；**M3 开放项** —— PDF 适配层 V1 入口（产品上传链路未完成）、页码级 locator（上游第 14 项）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G2–G6 与 QG3 未开始（G1、QG1/QG2/QG4/QG5 已有通过证据）
@@ -73,7 +73,7 @@
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
-| M4-a | 2026-10-02 | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact） | `growth_os/assessment/`；evkg @ `9a21552` | 通过（待用户验收） | EV-067 | — |
+| M4-a | 2026-10-02 | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact） | `growth_os/assessment/`；evkg @ `9a21552` | 通过（用户已确认） | EV-067 | 用户 |
 | M4 | 2026-10-02 | 计划基线冻结（七项确认，v1.0 执行基线） | `docs/M4-PLAN.md` | 通过 | EV-066 | 用户 |
 | M3-e | 2026-10-02 | 材料口径 claim + audit + provenance（越权校验接线；历史主张只读标记） | `adapter.create_material_claim` | 通过 | EV-064 | — |
 | M3 Gate | 2026-10-02 | **证据接入完成条件 1–5 + 质量门**（PDF/Markdown 可检索、ZIP、公共仓库、无授权与密钥、JD 隔离） | `artifacts/gates/M3/` | 通过 | EV-065 | 用户 |
@@ -142,7 +142,7 @@
 ## 验收记录
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
-| 2026-10-02 | M4-a（Assessment 基础模型与 provenance 前置） | EV-067 | 通过（待用户验收） | 星级算法 / LLM / UI / G3 未开始（按边界）；M4-b（证据绑定与分桶）待推进 | **M4-a 阶段检查通过** |
+| 2026-10-02 | M4-a（Assessment 基础模型与 provenance 前置） | EV-067 | 通过（用户已确认） | 星级算法 / LLM / UI / G3 未开始（按边界）；M4-b（证据绑定与分桶）待推进 | **M4-a 验收通过** |
 | 2026-10-02 | M4 计划基线冻结（七项确认） | EV-066 | 通过 | 三项冻结点 + C5 / 映射闸门 / G3 实验 / 交付物 2 全部定案；实施随 M4-a…e | **M4 开工条件成立，`M4-PLAN.md` v1.0 生效** |
 | 2026-10-02 | M3-e（Claim + audit + provenance） | EV-064 | 通过 | 仅剩 **M3 Gate**（含 PDF/Markdown 可检索性、证据链逐项核对）；历史主张是否就地标注待用户决定 | **M3-e 阶段检查通过** |
 | 2026-10-02 | **M3 Gate（证据接入）** | EV-065 | 通过 | 边界保留：PDF 适配层 V1 入口未建、页码级 locator 仍缺；M4 待确认 | **M3 正式收口** |

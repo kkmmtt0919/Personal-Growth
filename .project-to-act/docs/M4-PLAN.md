@@ -285,7 +285,7 @@ Capability mapping                   （写入 g_capability_claims；记录提�
 ## 9. 步骤结构
 
 ```text
-M4-a  Assessment 基础模型与 provenance 前置   ← 已完成（2026-10-02，EV-067）
+M4-a  Assessment 基础模型与 provenance 前置   ← 已完成并验收（2026-10-02，EV-067）
       ↓
 M4-b  证据绑定与分桶（LLM 提议 + 确定性闸门 + 映射落库）
       ↓

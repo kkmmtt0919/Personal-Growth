@@ -32,8 +32,8 @@
 | M3-c | GitHub 公共仓库接入（浅克隆；逐文件走单入口；技术栈清单） | 已完成 | ZCode | 真实公共仓库 20 文件入库 / 179 段 / audit pass-0 / 幂等 / 归属通道贯穿；新增 21 项离线测试 | EV-062 | 2026-10-02 |
 | M3-d | 外部参考通道（JD / domain_reference；通道锁定 + 抽取只读） | 已完成 | ZCode | 8 项边界检查全过（含不能支撑用户断言、user_evidence 为空、claims=0）；27 个技术词带 passage 证据 | EV-063 | 2026-10-02 |
 | M3-e | 材料口径 claim + audit + provenance（越权校验接线；历史主张只读 dry-run） | 已完成 | ZCode | 5 条材料口径 claim、audit pass-0、provenance 可走通、越权闸门零写入；顺带修掉校验器否定语境假阳性 | EV-064 | 2026-10-02 |
-| M4 | 能力审计（产品内核：assessment / 证据充分性 / 星级） | **进行中（M4-a 已完成，待验收）** | — | 通过验收门 G2、G3；当前：M4-PLAN v1.0 已冻结，M4-a 契约与最小闭环 11/11 通过 | EV-066 EV-067 | 2026-10-02 |
-| M4-a | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact；不做星级/LLM/UI/G3） | **已完成（待验收）** | ZCode | 11/11 检查：草案契约（level=NULL）、四类矩阵准入、history+current view、C5 上游修（`9a21552`）、零写回证据库、audit_store pass/0；真实库对基一致 | EV-067 | 2026-10-02 |
+| M4 | 能力审计（产品内核：assessment / 证据充分性 / 星级） | **进行中（M4-a 已验收）** | — | 通过验收门 G2、G3；当前：M4-PLAN v1.0 已冻结，M4-a 已验收；M4-b 待确认边界 | EV-066 EV-067 | 2026-10-02 |
+| M4-a | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact；不做星级/LLM/UI/G3） | **已完成（已验收，用户 2026-10-02 确认）** | ZCode | 11/11 检查：草案契约（level=NULL）、四类矩阵准入、history+current view、C5 上游修（`9a21552`）、零写回证据库、audit_store pass/0；真实库对基一致 | EV-067 | 2026-10-02 |
 | M5 | 任务闭环与成长循环 | 已规划 | — | 通过验收门 G4、G5 | 无 | 2026-10-01 |
 | M6 | Memory 三层 | 已规划 | — | 见 `docs/ROADMAP.md` M6 | 无 | 2026-10-01 |
 | M7 | 主动 Agent | 已规划 | — | 见 `docs/ROADMAP.md` M7 | 无 | 2026-10-01 |
@@ -59,12 +59,12 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 1. **M2 已完成并收口**（2026-10-02，EV-050…EV-057）；**M3 已完成并正式收口**
    （2026-10-02，Gate 13/13 通过，EV-058…EV-065；`artifacts/gates/M3/`）。
    M3 六步全部通过：归属层、本地材料（含 ZIP）、B-g2 PDF、公共仓库、JD 外部参考、材料口径 claim + audit。
-2. **当前步骤：M4 能力审计（进行中）** —— `docs/M4-PLAN.md` v1.0 已冻结（EV-066）；**M4-a 已完成待验收**（EV-067，`artifacts/m4a/`）：
+2. **当前步骤：M4 能力审计（进行中）** —— `docs/M4-PLAN.md` v1.0 已冻结（EV-066）；**M4-a 已完成并验收通过**（用户 2026-10-02 确认，EV-067）：
    - 已落地：`g_capability_claims` / `g_assessments` 契约（`level` 恒 NULL）、能力点生命周期（`generation_id`/`status`，history + current view）、
      确定性准入闸门（四类矩阵 + 越权 + 链完整性/逐字）、C5 抽取 provenance 上游修（evkg `9a21552`）、
      `claim/evidence → assessment draft → 独立 audit artifact` 最小闭环（只读、零写回证据库）；
    - 边界（用户指定）：不做星级算法、不做 LLM、不做 UI、不接 G3 实验；
-   - 验收通过后进入 **M4-b**（证据绑定与分桶：LLM 提议 + 确定性闸门）。
+   - **下一步 M4-b（证据绑定与分桶：LLM 提议 + 确定性闸门 + 映射落库）：边界提议已提交，待确认后开工**。
 3. **C5 已解决**（evkg `9a21552`，本地未推送）：抽取 provenance（provider/model/prompt 哈希/领域包）写入 claim metadata 与批账本，
    档案渲染器优先显示；发布/CI 前 pin `git + rev` 时须包含该提交。
 4. **M3 两个开放项保持开放、不阻塞 M4**：① PDF 适配层 V1 入口（产品上传链路未完成）；
@@ -96,3 +96,4 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 | 2026-10-02 | M3-e | 越权校验接进写入路径（`adapter.create_material_claim`：拒绝越权、未评估置信度、逐字引用、幂等）；由公共仓库证据确定性构造 5 条材料口径 claim；对真实库做只读 dry-run 标记历史主张 | ① 越权即拒且**零写入**（数据表计数不变有断言）；② 5 条 claim 全部 `scope=material`、`score=None`，audit pass/0，provenance（claim→evidence→passage→source）逐跳可走通；③ dry-run（`mode=ro` 零写入）：M1-c 那条"用户/实现过"判越权、那条"用户/计划学习"判干净；④ **发现并修掉校验器假阳性**："不代表已具备"中的「具备」曾被当作命中（否定语境），已加 8 字符窗口否定识别 + 正反测试；⑤ 266 项 + evkg 107 + ruff + 真实库对基全过 | EV-064 | M3 Gate；历史主张标注（待用户决定） | M3 Gate（待发话） |
 | 2026-10-02 | M4-PLAN v0.1（范围冻结草案） | 依据 M3 收口后的输入撰写 `docs/M4-PLAN.md` v0.1：G2/G3 拆问（"证据充分性/可追溯" + "声明 vs 证据"四类矩阵）；assessment 归属模型（source attribution / claim scope / capability ownership 三分离 + 证据准入合取链）；M2 再生成语义三方向对照（推荐 history + current view）；范围、步骤 M4-a…e + Gate、12 项验收映射 | ① 按用户指定**只冻结设计：不写代码、不跑实验**；② C5 抽取模型持久化列为 M4 验收前置；③ 历史越权按独立 artifact 处理、不改真实库；④ 两个 M3 开放项（PDF 入口、页码 locator）保持开放、不阻塞 M4；⑤ 同步修正账本：M3 收口结论、B-06 解除、evkg 领先 5 提交、功能清单状态、验收门状态（G1/QG1/QG2/QG4/QG5） | 无（计划文档待确认；确认后转 v1.0 并赋 EV 号） | 待用户确认三处冻结点与 C5 解法 | M4-a（确认后） |
 | 2026-10-02 | M4-PLAN v1.0 + M4-a | 用户逐项确认七项冻结 → `docs/M4-PLAN.md` 升 v1.0 执行基线（EV-066）；实施 M4-a：`g_` 表族契约（g_capability_claims / g_assessments / 生命周期字段）、确定性准入闸门（四类矩阵 + 越权 + 链完整性/逐字）、AssessmentDrafter 最小闭环、独立 audit artifact（只读）、C5 上游最小修（evkg `9a21552`） | ① 用户指定边界：不做星级算法/LLM/UI/G3；② C5 provenance 取自实际返回值，档案渲染器三态显示（已记录 / 材料口径"不适用" / 修复前"未记录在案"）；③ 历史主张只读扫描分类 overreach/plan，与 M3-e 判定一致、零写入；④ 数据边界：真实库逐表内容哈希 + 计数对 M3-a 锚点一致、真实库无任何 `g_` 表；⑤ 全量 287 项 + evkg 111 + ruff 全绿；冒烟 11/11 通过 | EV-066 EV-067 | M4-a 待用户验收；下一步 M4-b（验收后） | M4-b |
+| 2026-10-02 | M4-a 验收 | 用户确认 M4-a 通过（无附加条件） | 账本同步：M4-a 转"已验收"、Gate/验收记录更新；M4-b 边界提议已提交、待确认后开工 | EV-067 | M4-b（待确认后开工） | M4-b |
