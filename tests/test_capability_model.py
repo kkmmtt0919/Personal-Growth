@@ -223,3 +223,7 @@ def test_prompt_states_the_three_level_convention_explicitly():
     assert "3×2×2" in CAPABILITY_SYSTEM.replace(" ", "")
     assert CAPABILITY_SYSTEM.count("反例") >= 1
     assert "输出前自检" in CAPABILITY_SYSTEM
+    # 真实会话尝试 4 的教训（诊断 m2d-03）：节点名内的「/」会被当成层级分隔符
+    assert "节点名内部不得出现" in CAPABILITY_SYSTEM
+    assert "、" in CAPABILITY_SYSTEM and "LangChain、LlamaIndex" in CAPABILITY_SYSTEM
+    assert "恰好等于 2" in CAPABILITY_SYSTEM
