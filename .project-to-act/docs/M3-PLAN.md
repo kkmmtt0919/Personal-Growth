@@ -123,9 +123,10 @@ M3-e  Claim + audit + provenance（含 §1 的越权校验）
   （`Source / Passage / Evidence / Claim`）；**新增文件格式不得绕过 M3-a 的归属（`attribution`）
   与通道（`growth_channel`）策略**，也不得为支持新格式而自造旁路入口。
   —— 用户 2026-10-02 指定。
-- **M3-c（GitHub 公共仓库）**：继续复用 `adapter.ingest_document` 单入口与 **M3-a 的归属策略**；
-  **不以 OAuth 为前置**；**不提前扩展**私有仓库授权、完整 UI、能力评估。仓库来源信息（repo/ref/entry 等）
-  走 `extra_metadata`，不得绕过保留键（证据类型/通道/归属）。—— 用户 2026-10-02 指定。
+- **M3-c（GitHub 公共仓库）**：**仅接入 GitHub 公共仓库**；**不以 OAuth 为前置**；
+  继续复用 `adapter.ingest_document` 单入口与 **M3-a 的 attribution / channel 策略**（必须贯穿该路径）；
+  仓库来源信息（repo/ref/entry 等）通过 `extra_metadata` 传递，不得绕过保留键（证据类型/通道/归属）；
+  **暂不做**私有仓库授权、完整 UI、能力评估。—— 用户 2026-10-02 指定，共 7 条锁定项中的 1–6。
 - **留到 M3-e**：把越权校验（`claims.check_overreach`）接进写入路径、以及处理 M1-c 那条历史上的
   用户口径主张。M3-b…M3-d 不得顺带处理这两件事（避免提前扩大变更范围）。
 
@@ -193,6 +194,10 @@ G2（可追溯）与 G3（A/B 对照）的**门判定**仍属 M4；M3 只产出�
 **M3 Gate 必须额外覆盖**（对应上面第 3 条边界）：① 完成条件第 1 条的"**且可检索**"要按 PDF 与 Markdown
 两种材料分别验证（重建索引 + 查询命中）；② PDF 路径的产品接入（适配层 V1 入口 + 归属/通道贯穿）若未完成，
 Gate 需如实标注该项未达成，而不是用 B-g2 的通过代替。
+
+**同理（M3-c 锁定项第 7 条，用户 2026-10-02 指定）**：**GitHub 接入本身不能替代证据链验收** ——
+M3-c 的"技术栈清单 / ≥3 条 capability claim"必须回到完成条件与 Gate 逐项核对
+（可追溯性、归属/通道标签、`audit_store` = pass/0），不得以"链路跑通"作为 M3 Gate 的替代。
 
 ---
 
