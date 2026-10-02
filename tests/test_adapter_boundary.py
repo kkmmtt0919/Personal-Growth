@@ -289,5 +289,6 @@ def test_m2_flow_does_not_write_evkg_tables(tmp_path):
     connection.close()
     foreign = [name for name in tables if not name.startswith(("g_", "sqlite_"))]
     assert foreign == [], f"M2 流程写入了非 g_ 表（证据层被触碰）：{foreign}"
-    assert len([name for name in tables if name.startswith("g_")]) == 5
+    # M2 的 5 张表 + M4-a 的 assessment 契约 2 张表（g_capability_claims / g_assessments）
+    assert len([name for name in tables if name.startswith("g_")]) == 7
 

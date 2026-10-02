@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0、M1、M2、M3 全部通过并收口**。**M3 证据接入已正式收口**（2026-10-02，Gate 13/13 通过，EV-065）：完成条件 1–5 + 质量门全部通过（PDF/Markdown 可检索、ZIP 技术栈、公共仓库 5 条材料口径 claim、JD 隔离、audit pass/0）。G1 验收门通过（真实模型会话 `glm-5.3-flash`，含两条反例；截图豁免待 M8 补证）。evkg 依赖策略 = 有条件依赖（C1–C5），交付 = 本地 bundle 归档。**当前停在 M4 门前**：`docs/M4-PLAN.md` v0.1 范围冻结草案待用户确认（不写代码、不跑实验）。详见 `artifacts/gates/M3/README.md`、`artifacts/m2/acceptance-report.md`
-- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2（基线冻结、a/b/c、两层预算、G1 真实会话、AC1–AC12 验收）** + **M3（a/b、B-g2、c/d/e、M3 Gate）**
+- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-PLAN v1.0 已冻结**（2026-10-02，七项确认，EV-066）；**M4-a 已完成待验收**（EV-067）：Assessment 基础模型契约（`level` 恒 NULL）、确定性准入闸门（四类矩阵）、history + current view 生命周期、C5 抽取 provenance 上游修（evkg `9a21552`）、`claim/evidence → draft → 独立 audit artifact` 最小闭环（11/11）；真实库零污染。M3 已于 2026-10-02 正式收口（Gate 13/13，EV-065）。详见 `artifacts/m4a/README.md`、`artifacts/gates/M3/README.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a）**
 - 最后检查：2026-10-02
-- 遗留问题：**M4 前置** —— C5 抽取模型持久化必须在 M4 验收前解决；M4-PLAN v0.1 三处冻结点待确认（G2/G3 判定方式、assessment 归属模型、再生成语义）；**M3 开放项** —— PDF 适配层 V1 入口（产品上传链路未完成）、页码级 locator（上游第 14 项）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 5 个提交）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试；**多领域包或并发 profile 前**必须改上游 profile 作用域；G2–G6 与 QG3 未开始（G1、QG1/QG2/QG4/QG5 已有通过证据）
+- 遗留问题：**M4 剩余步骤** —— M4-b（证据绑定与分桶）→ M4-c（评级与反向证据）→ M4-d（可解释输出）→ M4-e（缺口 + G2/G3）→ M4 Gate；**M3 开放项** —— PDF 适配层 V1 入口（产品上传链路未完成）、页码级 locator（上游第 14 项）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G2–G6 与 QG3 未开始（G1、QG1/QG2/QG4/QG5 已有通过证据）
 
 ## 验收标准
 
@@ -67,10 +67,14 @@
 | EV-063 | 2026-10-02 | **M3-d：外部参考通道（JD / domain_reference）** —— 通道结构锁定 + 参考抽取只读 | exit 0 | 新增 `growth_os/evidence/reference.py`；`tests/test_reference_ingest.py`（8 项）；`artifacts/m3d/`；测试 243→**251** | ① 三条"不得"由**结构**保证：入口签名无 `channel`/`evidence_type`（API 层不可达 user_evidence）、消费侧 `can_support_user_claim` 一票否决、抽取只读（不写 claim/evidence/entity，不评分不差距）；② 冒烟（合成 JD）：13 段、**27 技术词**（全带 passage 证据）、4 条要求条目、`audit_store` pass/0；③ **8 项边界检查全过**（通道锁定、不在 user_evidence、不能支撑用户断言、抽取前后计数不变、claims/evidence/entities=0、reference_kind 记录）；④ 用例：ASCII 词边界（"go" 不命中 "google"）、多份参考分别列出、非参考来源抽取被拒；⑤ 素材如实标注：无现成真实 JD，用写实合成样本；⑥ 边界守恒：未接 UI、未做匹配评分/差距，claim 留 M3-e；⑦ 251 + evkg 107 + ruff 全过、真实库对基一致、临时库无残留 | 命令输出；`artifacts/m3d/` | 90d |
 | EV-064 | 2026-10-02 | **M3-e：材料口径 claim + audit + provenance**（越权校验接线 + 历史主张只读 dry-run） | exit 0 | `adapter.create_material_claim`；`tests/test_material_claims.py`（9 项）、`test_claim_overreach.py` 扩充；`artifacts/m3e/`；测试 251→**266** | ① **越权校验接进写入路径**：写入前判定，越权即拒且**零写入**；置信度 `score=None`+`unassessed`；证据 quote 为逐字原文；claim id 由内容派生（幂等）；② **5 条材料口径 claim**（完成条件 3 的 claim 部分），`audit_store` pass/0，provenance 逐跳可走通；③ **历史主张只读 dry-run**（真实库零写入，`mode=ro`）：1 条判越权（用户/实现过，即 M1-d 被推翻那条）、1 条判干净（用户/计划学习）；④ **修掉校验器假阳性**：dry-run 首轮把"计划学习"误判（陈述含"不代表已具备"）→ 加否定语境识别 + 正反测试；⑤ 边界：材料口径为唯一形态，星级仍留 M4；⑥ 回归 266 + evkg 107 + ruff 全过、真实库逐表哈希与计数与 M3-a 锚点一致 | 命令输出；`artifacts/m3e/` | 90d |
 | EV-065 | 2026-10-02 | **M3 Gate：证据接入（完成条件 1–5 + 质量门）端到端** | exit 0 | `artifacts/m3gate/`、`artifacts/gates/M3/README.md`；测试 266→**267** | **13/13 全过**：① PDF（真实中文 5 页 → 40 段）与 Markdown 均可检索（FTS：237 段 + 5 claim，查询各命中）；② ZIP → 3 文件全入库、code-kind 带 language（java/python）；③ 公共仓库 → 20 文件 + 技术栈 4 类 + **5 条材料口径 claim**；④ 克隆禁交互、不存在仓库 `rc=128` 快速失败、**119 跟踪文件 0 密钥**；⑤ JD 落 domain_reference 且不能支撑用户断言；质量门：audit pass/0、真实库逐表哈希与计数对基一致、临时库已删。**修掉两处**：git 非 UTF-8 输出致崩溃、密钥扫描误报。**边界保留**：PDF 适配层 V1 入口未建、页码级 locator 仍缺 | 命令输出；`artifacts/gates/M3/` | 长期 |
+| EV-066 | 2026-10-02 | **M4 基线冻结（v1.0）**：用户逐项确认七项 —— G2/G3 判定方式、归属三层不合并、再生成语义 = history + current view、C5 = 上游最小修、claim↔capability = LLM 提议 + 确定性闸门、G3 实验 = 真实材料 + 受控构造 + 独立库、ROADMAP 交付物 2 由"摄入"改为"基于已准入证据生成可审计能力评估" | 通过 | `docs/M4-PLAN.md` v1.0（执行基线）；`docs/README.md` 索引同步 | 七项决定全部写入基线；M4-a 边界写死（模型契约 + provenance 前置；不做星级/LLM/UI/G3）；验收标准 12 项映射保留（AC1–AC12） | `docs/M4-PLAN.md`；账本 validate/audit 无告警 | 长期 |
+| EV-067 | 2026-10-02 | **M4-a 实现与验证**：Assessment 基础模型 + provenance 前置（C5）+ `claim/evidence → draft → 独立 audit artifact` 最小闭环 | 冒烟 11/11；回归全绿 | 新增 `growth_os/assessment/{contract,draft,audit}.py`、`adapter.claims_overview`、`g_` 两表与生命周期字段、`tests/test_assessment_contract.py`（19 项）+ dossier 读取测试；evkg `9a21552`（4 项新测试）；Growth OS 267→**287**、evkg 107→**111** | ① 草案契约 `level` 恒 NULL（无星级算法）；② 准入闸门四类矩阵 + 越权 + 链完整性/逐字（fail-closed）；③ history + current view（superseded 不删除历史、`adjusted` 不自动降级、旧库自动补列）；④ 起草/审计**零写回证据库**、`audit_store` pass/0；⑤ 历史主张只读扫描（mode=ro）：overreach 1 / plan 1，与 M3-e 判定一致、零写入；⑥ C5 provenance 取自实际返回值，档案渲染器三态显示；⑦ 真实库逐表内容哈希 + 计数对 M3-a 锚点一致、真实库无任何 `g_` 表；⑧ 287 + evkg 111 + ruff 全绿。细节见 `artifacts/m4a/README.md` | 命令输出；`artifacts/m4a/` | 90d |
 
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
+| M4-a | 2026-10-02 | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact） | `growth_os/assessment/`；evkg @ `9a21552` | 通过（待用户验收） | EV-067 | — |
+| M4 | 2026-10-02 | 计划基线冻结（七项确认，v1.0 执行基线） | `docs/M4-PLAN.md` | 通过 | EV-066 | 用户 |
 | M3-e | 2026-10-02 | 材料口径 claim + audit + provenance（越权校验接线；历史主张只读标记） | `adapter.create_material_claim` | 通过 | EV-064 | — |
 | M3 Gate | 2026-10-02 | **证据接入完成条件 1–5 + 质量门**（PDF/Markdown 可检索、ZIP、公共仓库、无授权与密钥、JD 隔离） | `artifacts/gates/M3/` | 通过 | EV-065 | 用户 |
 | M3-d | 2026-10-02 | 外部参考通道（JD / domain_reference；通道结构锁定 + 抽取只读） | `growth_os/evidence/reference.py` | 通过 | EV-063 | — |
@@ -138,6 +142,8 @@
 ## 验收记录
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
+| 2026-10-02 | M4-a（Assessment 基础模型与 provenance 前置） | EV-067 | 通过（待用户验收） | 星级算法 / LLM / UI / G3 未开始（按边界）；M4-b（证据绑定与分桶）待推进 | **M4-a 阶段检查通过** |
+| 2026-10-02 | M4 计划基线冻结（七项确认） | EV-066 | 通过 | 三项冻结点 + C5 / 映射闸门 / G3 实验 / 交付物 2 全部定案；实施随 M4-a…e | **M4 开工条件成立，`M4-PLAN.md` v1.0 生效** |
 | 2026-10-02 | M3-e（Claim + audit + provenance） | EV-064 | 通过 | 仅剩 **M3 Gate**（含 PDF/Markdown 可检索性、证据链逐项核对）；历史主张是否就地标注待用户决定 | **M3-e 阶段检查通过** |
 | 2026-10-02 | **M3 Gate（证据接入）** | EV-065 | 通过 | 边界保留：PDF 适配层 V1 入口未建、页码级 locator 仍缺；M4 待确认 | **M3 正式收口** |
 | 2026-10-02 | M3-d（JD / domain_reference） | EV-063 | 通过 | capability claim 留 M3-e；M3-e（Claim + audit + provenance）待推进 | **M3-d 阶段检查通过** |

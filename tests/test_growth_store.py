@@ -40,6 +40,8 @@ def test_tables_are_created_and_counts_start_at_zero(store):
         "g_goals": 0,
         "g_goal_clarifications": 0,
         "g_capabilities": 0,
+        "g_capability_claims": 0,
+        "g_assessments": 0,
         "g_agent_runs": 0,
     }
 

@@ -277,6 +277,28 @@ def claim_dossier(store: KnowledgeStore, claim_id: str) -> dict | None:
     return _claim_dossier(store, claim_id)
 
 
+def claims_overview(store: KnowledgeStore) -> list[dict]:
+    """只读导出：全库主张的审计视图（claim → evidence → passage → source）。
+
+    M4 评估契约的输入口。在 `claim_dossier` 的基础上补一件事：把 **source 的
+    metadata**（`growth_channel` / `growth_attribution` / `growth_evidence_type`）
+    贴回证据行的 `source` 里 —— 准入判定需要它们，而 evkg 的 dossier 只给
+    `{id,title,kind,url,author}`。**不改写内容、不落任何库。**
+    """
+    sources_metadata = {source.id: dict(source.metadata or {}) for source in store.get_sources()}
+    overview: list[dict] = []
+    for claim in store.get_claims():
+        dossier = claim_dossier(store, claim.id)
+        if dossier is None:
+            continue
+        for link in dossier["evidence"]:
+            source_id = (link.get("source") or {}).get("id")
+            if source_id:
+                link["source"]["metadata"] = sources_metadata.get(source_id, {})
+        overview.append(dossier)
+    return overview
+
+
 def create_material_claim(
     store: KnowledgeStore,
     *,

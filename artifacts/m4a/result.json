@@ -1,0 +1,154 @@
+{
+  "smoke": "M4-a 最小闭环 + 历史主张只读审计",
+  "db": "D:\\projects\\Personal Growth\\artifacts\\m4a\\tmp\\assessment-loop.db",
+  "goal_id": "goal_m4a_smoke",
+  "capabilities": {
+    "trade": "cap_1b3f9e6937038e3b3512",
+    "no_evidence": "cap_d2d9006c3b609367b982"
+  },
+  "drafts": {
+    "with_material_evidence": {
+      "assessment_id": "asm_37e7a6f52d6b1779d7f8",
+      "capability_id": "cap_1b3f9e6937038e3b3512",
+      "goal_id": "goal_m4a_smoke",
+      "status": "draft",
+      "level": null,
+      "supports": [
+        "clm_bf9915ca073c0871e13e"
+      ],
+      "excluded": [],
+      "rationale": "证据准入通过 1 条；等级待评定（M4-a 只产出草案，不产出星级）",
+      "rubric": {
+        "contract": "m4a-1",
+        "supports": [
+          "clm_bf9915ca073c0871e13e"
+        ],
+        "excluded": [],
+        "level_status": "not_rated_in_m4a"
+      }
+    },
+    "without_admissible_evidence": {
+      "assessment_id": "asm_fa4b56d5a90335b82f38",
+      "capability_id": "cap_d2d9006c3b609367b982",
+      "goal_id": "goal_m4a_smoke",
+      "status": "insufficient_evidence",
+      "level": null,
+      "supports": [],
+      "excluded": [
+        {
+          "claim_id": "clm_79e0ff206ef8a7c523a4",
+          "kind": "pending_declaration",
+          "reasons": [
+            "归属不是 user_declared（实际：['user_asserted']）"
+          ]
+        }
+      ],
+      "rationale": "证据不足（evidence insufficient）：clm_79e0ff206ef8a7c523a4：归属不是 user_declared（实际：['user_asserted']）",
+      "rubric": {
+        "contract": "m4a-1",
+        "supports": [],
+        "excluded": [
+          {
+            "claim_id": "clm_79e0ff206ef8a7c523a4",
+            "kind": "pending_declaration",
+            "reasons": [
+              "归属不是 user_declared（实际：['user_asserted']）"
+            ]
+          }
+        ],
+        "level_status": "not_rated_in_m4a"
+      }
+    }
+  },
+  "bridge_links": [
+    {
+      "capability_id": "cap_1b3f9e6937038e3b3512",
+      "claim_id": "clm_bf9915ca073c0871e13e",
+      "role": "supports",
+      "rationale": "M4-a 确定性准入通过（contract m4a-1）",
+      "created_at": "2026-10-02 11:47:20"
+    }
+  ],
+  "evidence_counts_before": {
+    "sources": 2,
+    "passages": 4,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 2,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 2,
+    "evidence": 2,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 10
+  },
+  "evidence_counts_after": {
+    "sources": 2,
+    "passages": 4,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 2,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 2,
+    "evidence": 2,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 10
+  },
+  "audit_store": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "artifact": "D:\\projects\\Personal Growth\\artifacts\\m4a\\assessment-audit.json",
+  "artifact_checks": {
+    "draft_has_support": true,
+    "draft_level_is_null": true,
+    "insufficient_without_admissible": true,
+    "draft_idempotent": true,
+    "evidence_store_untouched": true,
+    "chain_complete_in_artifact": true,
+    "artifact_read_only": true,
+    "claims_scan_classifies": true,
+    "audit_store_pass": true,
+    "historical_scan_read_only": true,
+    "historical_overreach_and_plan": true
+  },
+  "historical_claims_audit": "D:\\projects\\Personal Growth\\artifacts\\m4a\\historical-claims-audit.json",
+  "historical_scan": {
+    "mode": "read_only (sqlite mode=ro)",
+    "claims_total": 2,
+    "items": [
+      {
+        "claim_id": "clm_29f55c14c2e760b75d18",
+        "status": "machine_reviewed",
+        "classification": "plan",
+        "admissible": false,
+        "reasons": [
+          "计划/学习目标表述（命中：计划、未来规划）不是能力证据"
+        ],
+        "statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。"
+      },
+      {
+        "claim_id": "clm_f13861f536d0ffedd12c",
+        "status": "disputed",
+        "classification": "overreach",
+        "admissible": false,
+        "reasons": [
+          "把材料内容跳成用户的能力/成就结论（命中：实现过）"
+        ],
+        "statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。"
+      }
+    ],
+    "mutated_real_db": false
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}

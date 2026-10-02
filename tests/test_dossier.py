@@ -243,6 +243,24 @@ def test_extraction_model_absence_is_disclosed_not_faked(store):
     assert "当前配置值不作为该次抽取的记录" in markdown
 
 
+def test_recorded_extractor_model_is_shown(store):
+    """C5 之后：库里记了抽取 provenance，档案必须显示它（不再说"未记录"）。"""
+    claim_id = _seed(store)
+    claim = next(item for item in store.get_claims() if item.id == claim_id)
+    claim.metadata = {
+        **claim.metadata,
+        "extractor_provider": "openai_compatible",
+        "extractor_model": "glm-5.3-flash",
+        "extractor_prompt_hash": "abc123def4567890",
+        "extractor_profile": "growth_os",
+    }
+    store.save_claim(claim)
+    markdown = _render(store, claim_id)
+    assert "`glm-5.3-flash`" in markdown
+    assert "abc123def4567890" in markdown
+    assert "未记录在案" not in markdown
+
+
 def test_limitations_section_present(store):
     markdown = _render(store, _seed(store))
     assert "## 五、本档案不成立的结论" in markdown

@@ -308,7 +308,7 @@ autouse fixture 显式 `activate("default")` 并在结束时重置。个别测�
 | C2 | 不使用 evkg 的 `render_claim_markdown`（增长域档案一律走自建渲染器，回归测试锁定） | `tests/test_dossier.py` 的 partial 回归 |
 | C3 | 发布/换机前把 evkg 依赖 pin 到 commit SHA（含本地 4 个提交的可获取副本） | `pyproject.toml` + 构建可复现性检查 |
 | C4 | QG1 以 `audit_store` 为准；QG2 不采信内置自测的 `status` 单值，采用 M1-f 的"注入前/后双向测量"流程 | `tests/test_damage_selftest.py` + M1-f 脚本 |
-| C5 | 能力档案必须如实标注"抽取模型未记录"；在 M4 验收前解决抽取模型持久化（上游修或本地记录） | 档案文本核对；M4 门检查 |
+| C5 | 能力档案必须如实标注"抽取模型未记录"；在 M4 验收前解决抽取模型持久化（上游修或本地记录） | 档案文本核对；M4 门检查。**已解决（2026-10-02，M4-a）**：evkg `9a21552` 起抽取 provenance（provider/model/prompt 哈希/领域包）写入 claim metadata 与批账本，档案渲染器优先显示；修复前的历史主张继续如实写"未记录在案" |
 
 ---
 
@@ -443,7 +443,7 @@ git clone --bare <bundle> evkg-mirror.git       # 供 uv git+rev 寻址
 | ID | 事项 | 延后理由 | 触发条件（tripwire） |
 |---|---|---|---|
 | D-g1 | 实例级 profile | Q4 已定单用户；当前单 profile 路径无污染 | 需要两个领域包并存、或并发切换 profile、或引入多用户 |
-| D-g2 | 抽取模型持久化 | 档案已如实披露缺失；不伪造 | **M4 验收前必须解决**（能力审计要求结论可复核）；建议顺手上游修，或先在本地运行脚本里把模型名写进 claim metadata |
+| D-g2 | 抽取模型持久化 | 档案已如实披露缺失；不伪造 | ~~**M4 验收前必须解决**~~ **已解决（2026-10-02，M4-a）**：evkg `9a21552`（本地提交，未推送）——provenance 取自实际返回值并写入 claim metadata 与批账本；4 项读取测试；档案渲染器三态显示 |
 | D-g3 | evkg 渲染器 partial 修复 | 自建渲染器 + 回归已覆盖 | 若复用 evkg 前端档案页，或再有人调用 `render_claim_markdown` |
 | D-g4 | `caught` 判定修复 | QG2 流程已改用双向测量 | 若想省掉自建注入流程、直接用内置自测 |
 | D-g5 | 适配层 profile 断言 | 低概率（需绕过 `open_store`） | 修成本 ~3 行，建议随下一次 adapter 改动一并做 |

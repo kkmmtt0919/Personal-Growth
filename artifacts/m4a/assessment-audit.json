@@ -1,0 +1,109 @@
+{
+  "artifact": "m4a-assessment-audit",
+  "contract": "m4a-1",
+  "generated_at": "2026-10-02T11:47:20+00:00",
+  "db_path": "D:\\projects\\Personal Growth\\artifacts\\m4a\\tmp\\assessment-loop.db",
+  "user_id": "local",
+  "read_only": true,
+  "mutated_evidence_store": false,
+  "assessment_count": 2,
+  "assessments": [
+    {
+      "assessment_id": "asm_37e7a6f52d6b1779d7f8",
+      "user_id": "local",
+      "goal_id": "goal_m4a_smoke",
+      "capability_id": "cap_1b3f9e6937038e3b3512",
+      "capability_path": "LLM 基础/检索增强/RAG 实现",
+      "capability_status": "active",
+      "status": "draft",
+      "level": null,
+      "rationale": "证据准入通过 1 条；等级待评定（M4-a 只产出草案，不产出星级）",
+      "rubric": {
+        "contract": "m4a-1",
+        "excluded": [],
+        "level_status": "not_rated_in_m4a",
+        "supports": [
+          "clm_bf9915ca073c0871e13e"
+        ]
+      },
+      "supports": [
+        {
+          "claim_id": "clm_bf9915ca073c0871e13e",
+          "role": "supports",
+          "present": true,
+          "classification": "admissible",
+          "admissible": true,
+          "reasons": [
+            "通道 / 归属 / 材料口径 / 证据链全部通过"
+          ],
+          "chain": {
+            "complete": true,
+            "evidence_rows": 1,
+            "passages": 1,
+            "sources": 1,
+            "quote_verbatim": true,
+            "missing": []
+          },
+          "provenance": {
+            "recorded": false,
+            "note": "不适用：材料口径断言由适配层确定性构造，没有抽取阶段"
+          }
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_fa4b56d5a90335b82f38",
+      "user_id": "local",
+      "goal_id": "goal_m4a_smoke",
+      "capability_id": "cap_d2d9006c3b609367b982",
+      "capability_path": "LLM 基础/工程实践/测试设计",
+      "capability_status": "active",
+      "status": "insufficient_evidence",
+      "level": null,
+      "rationale": "证据不足（evidence insufficient）：clm_79e0ff206ef8a7c523a4：归属不是 user_declared（实际：['user_asserted']）",
+      "rubric": {
+        "contract": "m4a-1",
+        "excluded": [
+          {
+            "claim_id": "clm_79e0ff206ef8a7c523a4",
+            "kind": "pending_declaration",
+            "reasons": [
+              "归属不是 user_declared（实际：['user_asserted']）"
+            ]
+          }
+        ],
+        "level_status": "not_rated_in_m4a",
+        "supports": []
+      },
+      "supports": []
+    }
+  ],
+  "claims_scan": [
+    {
+      "claim_id": "clm_79e0ff206ef8a7c523a4",
+      "classification": "pending_declaration",
+      "admissible": false,
+      "reasons": [
+        "归属不是 user_declared（实际：['user_asserted']）"
+      ],
+      "statement": "对话材料中包含用户熟悉 RAG 的自述",
+      "provenance": {
+        "recorded": false,
+        "note": "不适用：材料口径断言由适配层确定性构造，没有抽取阶段"
+      }
+    },
+    {
+      "claim_id": "clm_bf9915ca073c0871e13e",
+      "classification": "admissible",
+      "admissible": true,
+      "reasons": [
+        "通道 / 归属 / 材料口径 / 证据链全部通过"
+      ],
+      "statement": "项目材料中包含 RAG 检索实现相关内容",
+      "provenance": {
+        "recorded": false,
+        "note": "不适用：材料口径断言由适配层确定性构造，没有抽取阶段"
+      }
+    }
+  ]
+}

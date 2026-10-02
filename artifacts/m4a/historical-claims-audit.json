@@ -1,0 +1,27 @@
+{
+  "mode": "read_only (sqlite mode=ro)",
+  "claims_total": 2,
+  "items": [
+    {
+      "claim_id": "clm_29f55c14c2e760b75d18",
+      "status": "machine_reviewed",
+      "classification": "plan",
+      "admissible": false,
+      "reasons": [
+        "计划/学习目标表述（命中：计划、未来规划）不是能力证据"
+      ],
+      "statement": "原文「未来规划」列出支持 Dubbo、gRPC 的 MCP 工具扩展、接入本地大模型等，仅为计划事项，不代表已具备相应能力。"
+    },
+    {
+      "claim_id": "clm_f13861f536d0ffedd12c",
+      "status": "disputed",
+      "classification": "overreach",
+      "admissible": false,
+      "reasons": [
+        "把材料内容跳成用户的能力/成就结论（命中：实现过）"
+      ],
+      "statement": "原文（README）描述的项目 MYtest 中实现了 RAG 检索服务、AI 调用服务、测试用例生成等模块，且展示了优化前后量化指标；但未明确用户本人在项目中的具体角色与贡献，能力主张仅基于项目描述本身。"
+    }
+  ],
+  "mutated_real_db": false
+}

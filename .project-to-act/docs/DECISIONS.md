@@ -729,6 +729,44 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
    就是 M4 的输入。M4 开工前建议先确认：G2/G3 的判定方式、**归属层的正式设计**、
    以及 M2 遗留的"再生成并集语义"决策。
 
+### M4 决策记录（2026-10-02 用户定案，`docs/M4-PLAN.md` v1.0）
+
+| # | 决策 | 定案 |
+|---|---|---|
+| 1 | G2/G3 判定方式 | G2 = 证据可追溯性门（assessment→claim→evidence→passage→source，任一环缺失即"不生成等级、不补推断、输出 evidence insufficient"）；G3 = 用户声明 vs 证据支持门（`user_declared+user_evidence+完整链路` → 进入 assessment；`user_asserted` 无产物 → 待验证声明；`domain_reference` → 不能支撑；计划/学习目标 → 不是能力证据） |
+| 2 | 归属三层模型 | source attribution / claim scope / capability ownership **不合并**；核心规则保留：**GitHub 仓库属于用户账号 ≠ 用户具备仓库中所有能力**；M3 解决 `source → evidence → material claim`，M4 才解决 `material evidence → capability assessment` |
+| 3 | M2 再生成语义 | **history + current view**（不采用 replace：丢失演化过程；不采用 merge：历史污染当前）。`CapabilityRecord`：`generation_id` + `status ∈ {active, superseded, archived}`；不删除历史、当前视图单独查 active、assessment 绑逻辑 capability id、generation 记录变化来源 |
+| 4 | C5（抽取模型持久化） | **上游最小修**（仿 B-g2 先例）：不改抽取逻辑、不改 claim 结构、只增加 provenance 字段、增加读取测试 |
+| 5 | claim ↔ capability mapping | **LLM 提议 + 确定性闸门**：LLM 可提议能力类别/解释/关联，不可决定等级、不可补不存在证据、不可改 attribution；写入必须过规则检查 |
+| 6 | G3 实验设计 | **真实材料 + 受控构造 + 独立库运行**；三类输入（A 项目材料可进入 / B 纯声明不足 / C JD 不可作为用户能力）与四类矩阵一致 |
+| 7 | ROADMAP 交付物 2 | 由"摄入材料"调整为 **"基于已准入证据生成可审计能力评估"**（摄入已由 M3 完成） |
+
+冻结记录：EV-066。M4-a 边界（用户指定）：模型契约 + provenance 前置 + 最小闭环；**不做星级算法、不做 LLM、不做 UI、不接 G3 实验**。
+
+### M4-a 新增发现与设计决定（2026-10-02）
+
+1. **C5 的落点与形状**：`_call` 不再丢弃 `ModelResult` —— provenance **取自实际返回值**
+   （`extractor_provider/model/prompt_hash/profile`），写入 claim metadata 与成功批次账本。
+   与用户建议 JSON 的两处工程判断：① evkg 的 `ModelResult` 没有模型 version 概念，
+   可复现性由 `profile`（领域包）+ `prompt_hash`（system+user 全文哈希）表达；
+   ② 键名采用**扁平式**，与既有 `verifier_model` / `verifier_independent` 惯例一致（不引入第二套形状）。
+   档案渲染器三态：已记录 / 材料口径"不适用" / 修复前"未记录在案"（不拿当前配置冒充历史事实）。
+2. **准入闸门是纯函数**（`assessment/contract.py`）：四类矩阵 + 越权 + 链完整性/引文逐字，
+   全部确定性、可离线回归；`unknown` 归属与未知通道一律 fail-closed。
+   **攻击裁决（broken）不进入准入这一点明确留给 M4-c**，契约不假装已覆盖。
+3. **草案契约**：M4-a 的 assessment `level` 恒为 NULL —— 写入任何数字都报错
+   （没有规则就不许手填等级）；id 由「判定对象 + 证据集 + 状态」派生：证据集变化 = 新草案
+   （历史保留），同一证据集重复运行 = 同一行（幂等）。
+4. **生命周期落地**：`generation_id` / `status`；`supersede_missing()` 把不在新树中的 `generated`
+   节点标 `superseded`，**`adjusted` 不自动降级**；旧库打开时自动补列。
+   **生成器尚未接线**（M2 生成路径本轮未改）—— 接线随 M4-b 的映射/绑定一并做。
+5. **历史越权主张的机器化审计 = 独立 artifact**（落实 M3-e 的向前约束）：
+   `artifacts/m4a/historical-claims-audit.json`，`sqlite mode=ro` 零写入；
+   `clm_f138…` 归 `overreach`、`clm_29f5…` 归 `plan` —— 与 M3-e dry-run 判定一致，真实库不动。
+6. **审计产物的形状**：`assessment-audit.json` 把每条草案的支撑主张逐条列出
+   （准入分类 / 链路逐跳 / 引文逐字 / provenance），并附全库 `claims_scan`；
+   显式声明 `read_only=true` / `mutated_evidence_store=false`。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

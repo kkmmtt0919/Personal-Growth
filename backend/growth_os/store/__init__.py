@@ -1,7 +1,10 @@
 """Growth OS 自有表族（`g_` 前缀）的存储层。"""
 
 from .growth_store import (
+    ASSESSMENT_STATUSES,
     CAPABILITY_ORIGINS,
+    CAPABILITY_STATUSES,
+    CLAIM_ROLES,
     GOAL_ELEMENTS,
     GOAL_STATUSES,
     MODEL_SOURCES,
@@ -9,13 +12,17 @@ from .growth_store import (
     TARGET_LEVEL_RANGE,
     GrowthStore,
     GrowthStoreError,
+    assessment_id,
     capability_id,
     default_db_path,
     normalize_name,
 )
 
 __all__ = [
+    "ASSESSMENT_STATUSES",
     "CAPABILITY_ORIGINS",
+    "CAPABILITY_STATUSES",
+    "CLAIM_ROLES",
     "GOAL_ELEMENTS",
     "GOAL_STATUSES",
     "MODEL_SOURCES",
@@ -23,6 +30,7 @@ __all__ = [
     "TARGET_LEVEL_RANGE",
     "GrowthStore",
     "GrowthStoreError",
+    "assessment_id",
     "capability_id",
     "default_db_path",
     "normalize_name",

@@ -103,6 +103,36 @@ def _is_independent_source(dossier: dict) -> bool:
     return any(bool((entry["extraction"] or {}).get("independent_source")) for entry in dossier["pairs"].values())
 
 
+def _extractor_line(meta: dict) -> str:
+    """抽取 provenance（C5）：记录了什么显示什么，缺的如实说明缺。
+
+    三种情况分开，不互相冒充：
+
+    * **已记录**（C5 之后的抽取）：显示模型 + provider / prompt 哈希 / 领域包；
+    * **材料口径断言**：没有抽取阶段，写"不适用"而不是"未记录"；
+    * **修复前的历史主张**：继续写"未记录在案"，不拿当前配置冒充历史事实。
+    """
+    model = meta.get("extractor_model")
+    if model:
+        details = [
+            f"{label} `{meta.get(key)}`"
+            for label, key in (
+                ("provider", "extractor_provider"),
+                ("prompt 哈希", "extractor_prompt_hash"),
+                ("领域包", "extractor_profile"),
+            )
+            if meta.get(key)
+        ]
+        suffix = f"（{'；'.join(details)}）" if details else ""
+        return f"- **抽取所用模型**：`{model}`{suffix}"
+    if meta.get("growth_claim_scope") == "material":
+        return "- **抽取所用模型**：不适用 —— 材料口径断言由适配层确定性构造，没有抽取阶段"
+    return (
+        "- **抽取所用模型**：**未记录在案**。抽取阶段没有把模型名写入数据库，"
+        "因此此处无法给出历史事实 —— 当前配置值不作为该次抽取的记录。"
+    )
+
+
 def render(dossier: dict) -> str:
     claim = dossier["claim"]
     meta = dossier["metadata"]
@@ -131,10 +161,7 @@ def render(dossier: dict) -> str:
     )
     out.append("- **分数呈现**：保留 3 位小数，便于直接与数据库逐字段对照")
     out.append("- **复核模型**：" + (meta.get("verifier_model") or "未记录"))
-    out.append(
-        "- **抽取所用模型**：**未记录在案**。抽取阶段没有把模型名写入数据库，"
-        "因此此处无法给出历史事实 —— 当前配置值不作为该次抽取的记录。"
-    )
+    out.append(_extractor_line(meta))
     out.append("")
 
     # ---------- 一、主张与最终状态（验收标准 1）----------
