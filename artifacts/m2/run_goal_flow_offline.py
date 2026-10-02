@@ -12,8 +12,13 @@
 返回明确的"未匹配"回答并如实记录，不编造内容。驱动循环最多 6 轮，只有四要素齐全
 **且模型明确返回 `ready_to_confirm`** 才允许确认；轮次耗尽即明确失败，不自动补齐。
 
-预算口径：应用层"结构化调用"次数由代码统计；真实模式下另用 httpx 包装器统计
-**实际 HTTP 请求数**（含 evkg 网关内部的传输层重试），两者分别记录。
+预算口径（两层硬限制，用户指定）：
+
+* **应用层**：结构化调用 ≤ `APP_CALL_CAP`（8 次 = 澄清 ≤6 + 生成 2）；
+* **传输层**：HTTP 请求 ≤ `--http-cap`（默认 8）。真实模式默认把 `EVKG_HTTP_RETRIES`
+  设为 1（**零额外重试**），使两层一一对应；一旦触顶由包装器抛 `HttpBudgetExceeded`
+  立即停止，且该异常不被网关的重试循环捕获（静态核对见 fixtures 文档）。
+* 失败即停：澄清失败或能力树形状不合格**不自动重跑整段流程**，只写诊断记录后退出。
 """
 
 from __future__ import annotations
@@ -33,9 +38,11 @@ sys.path.insert(0, str(REPO / "tests"))
 
 from goal_flow_fixtures import (
     QUESTION_CATALOG,
+    HttpRequestBudget,
     SimulatedUser,
     drive_clarification,
     scripted_turns,
+    stubborn_question_turns,
 )
 from growth_os.agent import AgentRuntime, FakeGateway
 from growth_os.goal import (
@@ -47,6 +54,7 @@ from growth_os.store import GrowthStore, capability_id
 
 GOAL_ID = "goal_m2_real"
 USER_TEXT = "我想成为 AI Agent Engineer"
+APP_CALL_CAP = 8
 
 CAPABILITY_TREE = {
     "nodes": [
@@ -83,37 +91,28 @@ CAPABILITY_TREE = {
 }
 
 REAL_MODEL_CONFIG = {
-    "GROWTH_AGENT_LLM_PROVIDER / GROWTH_AGENT_MODEL": "可选；--model 或 GROWTH_AGENT_MODEL 可覆盖",
+    "GROWTH_AGENT_LLM_PROVIDER / GROWTH_AGENT_MODEL": "可选；--model 可显式覆盖",
     "EVKG_LLM_PROVIDER / EVKG_MODEL": "主模型（.env: openai_compatible / glm-5.3）",
     "EVKG_API_KEY": "必需（真实调用）",
-    "调用预算上限": "6 次澄清 + 2 次能力树生成 = 8 次结构化调用",
-    "传输层重试": "evkg 网关内部按 EVKG_HTTP_RETRIES 重试 5xx/超时；实际 HTTP 请求数单独统计",
+    "应用层调用上限": f"{APP_CALL_CAP} 次结构化调用（澄清 ≤{MAX_ROUNDS} + 生成 2）",
+    "传输层请求上限": "见 --http-cap（默认 8）；真实模式强制 EVKG_HTTP_RETRIES=1（零额外重试）",
     "授权开关": "M2_ALLOW_REAL_MODEL=1",
 }
 
-HTTP_COUNTER = {"requests": 0}
+
+def build_budget(cap: int) -> HttpRequestBudget:
+    return HttpRequestBudget(cap).install()
 
 
-def install_http_counter() -> None:
-    """统计实际 HTTP 请求数（含传输层重试）——不改 evkg，只在进程内包装 httpx。"""
-    import httpx
-
-    original = httpx.AsyncClient.post
-
-    async def counted_post(self, *args, **kwargs):
-        HTTP_COUNTER["requests"] += 1
-        return await original(self, *args, **kwargs)
-
-    httpx.AsyncClient.post = counted_post
-
-
-def build_gateway(mode: str, user: SimulatedUser):
+def build_gateway(mode: str, user: SimulatedUser, scenario: str):
     if mode == "fake":
+        turns = (
+            stubborn_question_turns(QUESTION_CATALOG["horizon"][0])
+            if scenario == "stubborn"
+            else scripted_turns(user)
+        )
         return FakeGateway(
-            responses={
-                "goal_clarification": scripted_turns(user),
-                "capability_model": {"nodes": CAPABILITY_TREE["nodes"]},
-            },
+            responses={"goal_clarification": turns, "capability_model": {"nodes": CAPABILITY_TREE["nodes"]}},
             provider="fake-provider",
             model="fake-model-x",
         )
@@ -124,9 +123,9 @@ def build_gateway(mode: str, user: SimulatedUser):
         print("如需 M2-d 的 G1 证据，请先确认成本与配置，然后设置 M2_ALLOW_REAL_MODEL=1 再运行。")
         print(json.dumps(REAL_MODEL_CONFIG, ensure_ascii=False, indent=2))
         raise SystemExit(2)
+    os.environ["EVKG_HTTP_RETRIES"] = "1"  # 零额外重试：应用层调用数与 HTTP 请求数一一对应
     from growth_os.evidence import adapter
 
-    install_http_counter()
     return adapter.agent_gateway()
 
 
@@ -160,12 +159,7 @@ async def run_session(store: GrowthStore, gateway, mode: str) -> dict:
         "adjusted_capability": store.get_capability(adjusted_id),
         "capabilities": rows,
         "runs": runs,
-        "budget": {
-            "structured_calls_app_level": len(runs),
-            "planned_upper_bound": 8,
-            "http_requests_observed": HTTP_COUNTER["requests"] if mode == "real" else 0,
-            "note": "HTTP 请求数含 evkg 网关内部的传输层重试；应用层调用数不含重试",
-        },
+        "budget": budget_snapshot(runs, mode),
         "checks": {
             "rounds_within_cap": clarification["rounds_used"] <= MAX_ROUNDS,
             "all_answers_matched": all(
@@ -189,11 +183,41 @@ async def run_session(store: GrowthStore, gateway, mode: str) -> dict:
             "runs_have_actual_model": all(
                 run["provider"] and run["model"] and run["model_source"] == "result" for run in runs
             ),
-            "budget_within_upper_bound": len(runs) <= 8,
+            "app_calls_within_cap": len(runs) <= APP_CALL_CAP,
         },
     }
     report["all_checks_passed"] = all(report["checks"].values())
     return report
+
+
+def budget_snapshot(runs: list[dict], mode: str) -> dict:
+    return {
+        "structured_calls_app_level": len(runs),
+        "structured_calls_upper_bound": APP_CALL_CAP,
+        "http_requests_observed": HTTP_BUDGET["counter"].requests if HTTP_BUDGET["counter"] else 0,
+        "http_request_cap": HTTP_BUDGET["cap"],
+        "transport_extra_retries": 0 if mode == "real" else None,
+        "tokens_total": sum(run["tokens"] or 0 for run in runs),
+        "note": "HTTP 请求数由包装器统计（含任何重试）；真实模式已把 EVKG_HTTP_RETRIES 设为 1",
+    }
+
+
+HTTP_BUDGET: dict = {"counter": None, "cap": None}
+
+
+def failure_record(store: GrowthStore, mode: str, error: BaseException) -> dict:
+    runs = store.list_runs()
+    clarifications = store.list_clarifications(GOAL_ID)
+    return {
+        "mode": mode,
+        "outcome": "stopped_on_failure",
+        "reason": f"{type(error).__name__}: {error}",
+        "auto_rerun": False,
+        "budget": budget_snapshot(runs, mode),
+        "goal": store.get_goal(GOAL_ID),
+        "clarifications": clarifications,
+        "runs": runs,
+    }
 
 
 def main() -> int:
@@ -204,24 +228,63 @@ def main() -> int:
         default=None,
         help="真实模式下覆盖 Agent 模型（等价于 GROWTH_AGENT_MODEL，但显式且不受 .env 优先级影响）",
     )
+    parser.add_argument("--http-cap", type=int, default=8, help="传输层 HTTP 请求硬上限（默认 8）")
+    parser.add_argument("--out-dir", default=str(HERE), help="产物目录（测试会指向临时目录）")
+    parser.add_argument(
+        "--fake-scenario",
+        choices=["happy", "stubborn"],
+        default="happy",
+        help="离线假模型场景；stubborn 用于离线验证'失败即停 + 诊断记录'路径",
+    )
     args = parser.parse_args()
 
     if args.model:
         os.environ["GROWTH_AGENT_MODEL"] = args.model
 
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
     tmp = HERE / "tmp"
     tmp.mkdir(parents=True, exist_ok=True)
     db = tmp / f"m2-{args.gateway}.db"
     db.unlink(missing_ok=True)
 
     user = SimulatedUser()
+    gateway = build_gateway(args.gateway, user, args.fake_scenario)
+    if args.gateway == "real":
+        HTTP_BUDGET["cap"] = args.http_cap
+        HTTP_BUDGET["counter"] = build_budget(args.http_cap)
+
     with GrowthStore(str(db)) as store:
         store.upsert_user("local", "本地用户")
-        report = asyncio.run(run_session(store, build_gateway(args.gateway, user), args.gateway))
+        try:
+            report = asyncio.run(run_session(store, gateway, args.gateway))
+        except BaseException as error:  # noqa: BLE001 - 失败必须留档后退出，不自动重跑
+            failure = failure_record(store, args.gateway, error)
+            report = None
+    # 先退出 with（关闭连接）再删库 —— 否则 Windows 上文件被占用（M1-g 记录过的坑）。
+    db.unlink(missing_ok=True)
+
+    if report is None:
+        failed_path = out_dir / f"session-{args.gateway}-failed.json"
+        failed_path.write_text(json.dumps(failure, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(
+            json.dumps(
+                {
+                    "stopped": True,
+                    "reason": failure["reason"],
+                    "record": str(failed_path),
+                    "budget": failure["budget"],
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return 3
+
     report["requested_model_override"] = args.model
     report["user_question_catalog"] = QUESTION_CATALOG
-
-    out = HERE / f"session-{args.gateway}.json"
+    report["fake_scenario"] = args.fake_scenario if args.gateway == "fake" else None
+    out = out_dir / f"session-{args.gateway}.json"
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(
         json.dumps(

@@ -124,8 +124,7 @@ def proposal_without_consent_turns(user: SimulatedUser) -> list[dict]:
     return turns
 
 
-async def drive_clarification(
-    agent: GoalAgent,
+async def drive_clarification(    agent: GoalAgent,
     user: SimulatedUser,
     *,
     goal_id: str,
@@ -172,3 +171,54 @@ async def drive_clarification(
     rounds[-1]["answer_field"] = "confirmation"
     goal = agent.confirm(goal_id, quote=CONFIRM_QUOTE)
     return {"rounds": rounds, "goal": goal, "rounds_used": len(rounds)}
+
+class HttpBudgetExceeded(RuntimeError):
+    """达到传输层 HTTP 请求硬上限：立即停止，不再重试。
+
+    刻意**不**继承 httpx 的异常类型 —— evkg 的重试循环只捕获
+    `ConnectError / ReadTimeout / WriteTimeout / RemoteProtocolError`，
+    因此这个异常会直接穿透 `_post_with_retry`，不会被当作瞬时故障继续重试。
+    """
+
+
+class HttpRequestBudget:
+    """传输层请求计数器 + 硬上限（包装 `httpx.AsyncClient.post`）。
+
+    静态核对（2026-10-02，evkg @ 28afbc0）：`model_gateway.py` 里**唯一**的 HTTP
+    调用点是 `client.post(...)`（第 59 行，三个 provider 分支共用 `_post_with_retry`），
+    没有 `.get/.request/.stream` 等其它动词 —— 所以包装 `.post` 能拦到每一次尝试，
+    包括网关内部的重试。
+    """
+
+    def __init__(self, cap: int | None) -> None:
+        self.cap = cap
+        self.requests = 0
+        self.installed = False
+        self.original = None
+
+    def install(self) -> HttpRequestBudget:
+        import httpx
+
+        if self.installed:
+            return self
+        self.original = httpx.AsyncClient.post
+
+        async def counted_post(client, *args, **kwargs):
+            if self.cap is not None and self.requests >= self.cap:
+                raise HttpBudgetExceeded(
+                    f"HTTP 请求数已达硬上限 {self.cap}，立即停止（不再重试）"
+                )
+            self.requests += 1
+            return await self.original(client, *args, **kwargs)
+
+        httpx.AsyncClient.post = counted_post
+        self.installed = True
+        return self
+
+    def uninstall(self) -> None:
+        if not self.installed:
+            return
+        import httpx
+
+        httpx.AsyncClient.post = self.original
+        self.installed = False

@@ -1,0 +1,42 @@
+{
+  "report": "M2-d 真实会话的两层预算（用户要求：应用层与传输层分别设硬上限）",
+  "app_layer": {
+    "limit": 8,
+    "composition": "澄清最多 6 次结构化调用 + 能力树生成 2 次",
+    "enforcement": "runner 的 checks.app_calls_within_cap（超过 8 次即判定失败）"
+  },
+  "transport_layer": {
+    "retries_setting_for_real_run": "EVKG_HTTP_RETRIES=1（零额外重试；真实模式由 runner 强制设置）",
+    "http_request_cap_default": 8,
+    "enforcement": "HttpRequestBudget 包装 httpx.AsyncClient.post：触顶抛 HttpBudgetExceeded，且该异常不被 evkg 的传输层重试循环捕获（立即停止，不再请求）",
+    "interception_coverage": "静态核对（evkg @ 28afbc0 model_gateway.py）：唯一 HTTP 调用点是 client.post（第 59 行），三个 provider 分支均走 _post_with_retry；无 .get/.request/.stream。动态验证：tests/test_http_budget.py 用 MockTransport 断言计数=实际尝试数（重试也计入）",
+    "with_retries_off": "零额外重试时应用层调用数与 HTTP 请求数一一对应，两层上限同为 8"
+  },
+  "on_failure": {
+    "policy": "澄清失败或能力树形状不合格 → 立即停止、不自动重跑整段流程",
+    "exit_code": 3,
+    "record": "session-<mode>-failed.json：应用层调用数、HTTP 请求数、tokens 合计、失败原因、逐轮问答、目标状态",
+    "verified_offline_by": "tests/test_http_budget.py::test_failure_path_stops_and_writes_diagnostics（--fake-scenario stubborn）"
+  },
+  "cost_estimate": {
+    "model": "glm-5.3-flash（0.8 元/百万输入、2.8 元/百万输出）",
+    "token_estimate": "输入约 8-14k、输出约 4-6k（离线演练 tokens_total=8082 可作量级参照）",
+    "estimated_cost": "按上述量级约 0.01-0.03 元",
+    "hard_bound": "即使耗尽 8 次调用且每次触到 4096 输出上限，也不过数分钱量级（EVKG_MAX_TOKENS=4096 封顶）",
+    "quota_check": "账户额度仍需用户在控制台核对（不做鉴权调用）"
+  },
+  "verification_after_change": {
+    "tests_total": 133,
+    "new_tests": 5,
+    "ruff": "passed",
+    "real_db_sha256": "6ca3205f8132f7d99b6a1f38b896d445985176ccc068780507aec2ad5c4a7f9d（未变）",
+    "g_tables": "无",
+    "evidence_counts": {
+      "sources": 3,
+      "passages": 109,
+      "claims": 2,
+      "evidence": 6
+    },
+    "real_calls_made": 0
+  }
+}
