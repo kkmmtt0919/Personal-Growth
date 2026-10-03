@@ -238,7 +238,7 @@ D:\projects\
 
 ### M5 · 任务闭环与成长循环
 
-> 状态：**方案已冻结，M5-a 开工中**（2026-10-03，EV-072；执行基线 `docs/M5-PLAN.md` v1.0）。
+> 状态：**方案已冻结，M5-a 已验收，M5-b 方案边界待确认**（2026-10-03，EV-072/EV-073；执行基线 `docs/M5-PLAN.md` v1.0）。
 > 四条关键设计约束：task ≠ 能力判断；完成 ≠ 自动提升（须经 evidence → claim → binding → assessment）；
 > provenance 可反查（`task_id → submission → source_id → claim_id → assessment_id → level change`）；
 > **M4 rating contract 不修改**。
