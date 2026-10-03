@@ -1,0 +1,190 @@
+{
+  "gate": "M4 · 能力审计（完成条件 1–6 + 质量门 QG1–QG5）",
+  "date": "2026-10-03",
+  "plan": "docs/M4-PLAN.md v1.0（用户确认）",
+  "execution": "artifacts/gates/M4/run_m4_gate.py（离线；不调用模型）",
+  "conditions": {
+    "1_three_capabilities_traceable": {
+      "rated_capabilities": [
+        "rag",
+        "tool",
+        "vector"
+      ],
+      "traceable_total": 7,
+      "assessments_total": 7,
+      "sample_count": 5
+    },
+    "2_prd10_weak_evidence": {
+      "understanding": 2,
+      "practice": null,
+      "practice_status": "insufficient_evidence"
+    },
+    "3_strong_evidence": {
+      "round_b": {
+        "understanding": 2,
+        "practice": 3,
+        "practice_status": "rated"
+      },
+      "observation_b_practice_ge_3": true
+    },
+    "4_explainability": {
+      "reports_with_all_sections": true,
+      "sections": [
+        "## 生成信息",
+        "## 一、两维度评定",
+        "## 二、支持证据（逐字引用）",
+        "## 三、不足",
+        "## 四、反向证据",
+        "## 五、已排除的证据",
+        "## 六、规则版本与复算",
+        "## 七、本报告不能成立的结论"
+      ]
+    },
+    "5_audit": {
+      "archived": "pass",
+      "fresh_on_copy": {
+        "status": "pass",
+        "violations": 0,
+        "cleanup_clean": true,
+        "claims_after_selftest": 2
+      }
+    },
+    "6_gates": {
+      "G2": 7,
+      "G3": true
+    }
+  },
+  "quality_gates": {
+    "QG1": {
+      "archived": "pass",
+      "fresh_copy": {
+        "status": "pass",
+        "violations": 0,
+        "cleanup_clean": true,
+        "claims_after_selftest": 2
+      }
+    },
+    "QG2": {
+      "status": "caught",
+      "injected_claim": "clm_damage_998f3e75",
+      "injected_evidence": "ev_damage_998f3e75",
+      "quote_violations_after_injection": 1,
+      "audit_status_during_injection": "fail",
+      "double_measure": {
+        "before": "pass",
+        "after": "pass"
+      }
+    },
+    "QG3": {
+      "rules_tests": "tests/test_assessment_rules.py"
+    },
+    "QG4": {
+      "scanned_files": 200,
+      "hit_count": 0
+    },
+    "QG5": {
+      "pytest": {
+        "command": "uv run pytest",
+        "returncode": 0,
+        "summary": "359 passed in 67.83s (0:01:07)"
+      },
+      "ruff": {
+        "command": "uv run ruff check backend tests artifacts",
+        "returncode": 0,
+        "summary": "All checks passed!"
+      }
+    }
+  },
+  "boundary": {
+    "anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "counts": {
+        "sources": 3,
+        "passages": 109,
+        "entities": 60,
+        "entity_aliases": 3,
+        "events": 1,
+        "claims": 2,
+        "evidence": 6,
+        "relations": 2
+      },
+      "g_tables_in_real_db": []
+    },
+    "constructed": {
+      "note_constructed": true,
+      "repo_real": true,
+      "jd_constructed": true
+    }
+  },
+  "budget": {
+    "stages": {
+      "binding_a": 1,
+      "verifier_a": 1,
+      "adversarial_a": 4,
+      "binding_b": 1,
+      "verifier_b": 5,
+      "adversarial_b": 5
+    },
+    "total": 17,
+    "cap": 17,
+    "policy": "单次真实运行 ≤17 HTTP（允许因修复重跑，每次独立记录）",
+    "archived_attack_total_http": 17,
+    "archived_attack_stages": {
+      "binding_a": {
+        "requests": 1
+      },
+      "verifier_a": {
+        "requests": 1,
+        "verified": 1
+      },
+      "adversarial_a": {
+        "requests": 4,
+        "probes": 3,
+        "completed": true
+      },
+      "binding_b": {
+        "requests": 1
+      },
+      "verifier_b": {
+        "requests": 5,
+        "verified": 5
+      },
+      "adversarial_b": {
+        "requests": 5,
+        "probes": 4,
+        "completed": true
+      }
+    }
+  },
+  "real_run_attempts": {
+    "process_runs": 6,
+    "note": "2 次代码缺陷早停、2 次预算硬停、1 次完成但 G2 追溯器语义不足、1 次通过；合计 ≈53 HTTP（单次 ≤17）"
+  },
+  "checks": {
+    "cond1_at_least_3_capabilities_rated": true,
+    "cond1_traceable_assessments_ge_5": true,
+    "cond2_prd10_decoupled_conclusion": true,
+    "cond3_strong_evidence_higher": true,
+    "cond3_plus2_operational": true,
+    "cond4_explainable_reports": true,
+    "cond5_audit_pass_every_assessment": true,
+    "cond6_g2_passed": true,
+    "cond6_g3_passed": true,
+    "qg1_fresh_audit_pass_on_copy": true,
+    "qg2_damage_selftest_caught": true,
+    "qg3_rules_tests_and_ab": true,
+    "qg4_no_plaintext_secrets": true,
+    "qg5_tests_and_ruff": true,
+    "boundary_real_db_untouched": true,
+    "boundary_g_tables_empty": true,
+    "boundary_constructed_labeled": true,
+    "budget_real_run_within_17": true,
+    "budget_per_stage_caps": true,
+    "offline_and_real_all_passed": true,
+    "temp_dbs_deleted": true
+  },
+  "checks_passed": 21,
+  "checks_total": 21,
+  "all_checks_passed": true
+}

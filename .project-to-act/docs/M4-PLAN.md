@@ -1,6 +1,11 @@
 # M4 目标与范围（v1.0 · **执行基线**）
 
-> 状态：**已冻结（2026-10-02 用户逐项确认）**。确认口径：
+> 状态：**已完成并封板**（2026-10-03）。M4-a…M4-e 全部实施并验收；**M4 Gate 通过（21/21）**，
+> 判定记录 `artifacts/gates/M4/README.md`、原始结果 `artifacts/gates/M4/m4-gate-result.json`；
+> 证据 EV-066…EV-071。**保留的边界**：评估在独立实验库产出、真实库不含 `g_` 表；
+> 产品化入口（UI）留 M8；`M4-b.1`（`supersede_missing` 生成器接线）保持登记。
+>
+> 冻结口径（2026-10-02 用户逐项确认）：
 > ① G2/G3 判定方式（证据可追溯性门 / 用户声明 vs 证据支持门 + 四类矩阵）；
 > ② 归属三层模型（source attribution / claim scope / capability ownership **不合并**）；
 > ③ 再生成语义 = **history + current view**（不采用 replace / merge）；
@@ -304,7 +309,7 @@ M4-d  可解释输出（assessment dossier：支持 / 不足 / 攻击结果）  
       ↓
 M4-e  缺口识别 + G2/G3 证据产出（独立库 A/B 对照；真实运行留档）  ← 已完成（2026-10-03，EV-071）
       ↓
-M4 Gate（G2 + G3 + 质量门）
+M4 Gate（G2 + G3 + 质量门）  ← **通过（2026-10-03，21/21；`artifacts/gates/M4/`）**
 ```
 
 **M4-a 边界（用户指定，写死）**：

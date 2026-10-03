@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-e 已完成待验收**（2026-10-03，EV-071）：统一编排（`rate → report → 回填 → 重建校验 → 缺口 → 校验`）+ 缺口 `g_gaps` + **真实 attack 运行** + **G2/G3 门证据**—— 离线 25/25、真实 23/23（含 A/B 对照）。**M4-d 已验收**（用户 2026-10-03 确认，EV-070）。**M4-c / M4-b 已验收**（EV-069/EV-068）。**M4-a 已验收**（EV-067）。**M4-PLAN v1.0 已冻结**（EV-066）。详见 `artifacts/m4e/README.md`
-- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a…M4-e）**
+- 结论：**M0–M3 全部通过并收口；M4 全部完成并封板**（2026-10-03）。**M4-e 已验收**（用户 2026-10-03 确认，EV-071）：统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（离线 25/25、真实 23/23）。**M4 Gate 通过（21/21）**：完成条件 1–6 + QG1–QG5 + 数据边界，判定记录 `artifacts/gates/M4/README.md`。**M4-a…M4-d 已验收**（EV-067…EV-070）。详见 `artifacts/m4e/README.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a…M4-e、M4 Gate）**
 - 最后检查：2026-10-03
-- 遗留问题：**M4 剩余步骤** —— M4 Gate（G2/G3 已产出证据，待随 M4-e 验收后判定）；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**M4-e 待确认项** —— 真实运行预算口径调整（probe 数不受 `max_probes` 约束）与单步真实 HTTP 合计 ≈53（单次 ≤17）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G4–G6 未开始（G1–G3、QG1–QG5 已有通过证据）
+- 遗留问题：**下一步 M5（任务闭环与成长循环：`g_tasks` / 任务生成 / 状态机 / 提交→重评）待用户确认**；**M4 保留边界** —— 评估在独立实验库产出、真实库不含 `g_` 表（产品化写入是 M5 起决定）；G3 主体为 RAG 相关能力、A 臂笔记为受控构造（均已标注）；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G4–G6 未开始（G1–G3、QG1–QG5 已有通过证据）
 
 ## 验收标准
 
@@ -16,8 +16,8 @@
 | 标准 ID | 标准 | 状态 | 验证方法摘要 | 证据 ID |
 |---|---|---|---|---|
 | G1 | Goal Clarification：模糊目标 → 明确目标 | **通过** | 冷启动 ≤6 轮产出含四要素的 confirmed goal；含反例检查（真实模型会话；截图豁免待 M8 补证） | EV-056 EV-057 |
-| G2 | Evidence Traceability：能力判断可追溯 | **通过**（M4-e，待用户验收） | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass —— 7/7 评定行可追溯（5 条抽样，引文逐字） | EV-071 |
-| G3 | Capability Audit：识别"自称会但证据不足" | **通过**（M4-e，待用户验收） | **A/B 对照实验**：A 弱证据（理解 2 / 实践无 ≥2 等级）vs B 强证据（实践 3）；C（JD）不进 supports | EV-071 |
+| G2 | Evidence Traceability：能力判断可追溯 | **通过**（用户 2026-10-03 确认） | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass —— 7/7 评定行可追溯（5 条抽样，引文逐字） | EV-071 |
+| G3 | Capability Audit：识别"自称会但证据不足" | **通过**（用户 2026-10-03 确认） | **A/B 对照实验**：A 弱证据（理解 2 / 实践无 ≥2 等级）vs B 强证据（实践 3）；C（JD）不进 supports | EV-071 |
 | G4 | Task Quality：任务针对缺口且可验收 | 待检查 | 每个 task 可反向映射到 gap；"去学习 X"类任务必须被拒 | 无 |
 | G5 | Growth Loop：完成 → 新证据 → 能力变化自动发生 | 待检查 | 无人工干预的端到端运行；星级变化可归因到具体新证据 | 无 |
 | G6 | User Return Value：回来能看到变化与下一步 | 待检查 | snapshot diff + 变化摘要 + 下一步建议 + 引用长期偏好 | 无 |
@@ -77,7 +77,8 @@
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
-| M4-e | 2026-10-03 | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP） | `growth_os/assessment/pipeline.py`、`g_gaps`、`tests/test_{gaps,assessment_pipeline,traceability}.py`、`artifacts/m4e/`、`artifacts/gates/G2|G3/` | 通过（待用户验收） | EV-071 | 待确认：预算口径调整 + 单步真实 HTTP 合计 ≈53 |
+| M4 Gate | 2026-10-03 | **能力审计完成条件 1–6 + 质量门 QG1–QG5 + 数据边界**（21/21；离线，不调用模型；真实库副本新鲜复核） | `artifacts/gates/M4/` | 通过 | EV-071 | 用户（M4 封板确认） |
+| M4-e | 2026-10-03 | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP） | `growth_os/assessment/pipeline.py`、`g_gaps`、`tests/test_{gaps,assessment_pipeline,traceability}.py`、`artifacts/m4e/`、`artifacts/gates/G2|G3/` | 通过（用户已确认） | EV-071 | 用户（含预算口径与成本披露确认） |
 | G2 | 2026-10-03 | **证据可追溯性门**：抽 5 条 assessment 逐跳（assessment → claim → evidence → passage → source）+ 引文逐字 | `artifacts/gates/G2/` | 通过 | EV-071 | — |
 | G3 | 2026-10-03 | **能力审计门**：A/B 对照（弱证据 → 理解 2 / 实践无 ≥2 等级；强证据 → 实践 3）+ C 负对照（JD 不进 supports） | `artifacts/gates/G3/` | 通过 | EV-071 | — |
 | M4-d | 2026-10-03 | 可解释输出 + `current_level` 回填（报告 + 重建校验；离线，不调用模型） | `growth_os/assessment/report.py`；`artifacts/m4d/` | 通过（用户已确认） | EV-070 | 用户 |
@@ -149,10 +150,28 @@
 | A-001 | 2026-10-01 | 治理账本合法性 | `.project-to-act/` | 通过 | EV-001 | — |
 |---|---|---|---|---|---|---|
 
+### M4 总验收索引（封板）
+
+> M4 已全部完成并封板（2026-10-03）。治理闭环：Evidence → Binding → Assessment → Explanation →
+> Current View → Gap Detection → Audit / Gate Evidence。详细判定见 `artifacts/gates/M4/README.md`。
+
+| 步骤 / 门 | 内容 | 结果 | 证据 |
+|---|---|---|---|
+| M4-PLAN v1.0 | 七项冻结（G2/G3 判定、三层归属不合并、history + current view、C5 上游最小修、LLM 提议 + 确定性闸门、G3 实验设计、交付物口径） | 冻结 | EV-066 |
+| M4-a | Assessment 契约 + C5 provenance（evkg `9a21552`）+ 最小闭环（11/11） | 通过 | EV-067 |
+| M4-b | 证据绑定与分桶（LLM 提议 + 八步确定性闸门；离线 9/9 + 真实 8/8） | 通过 | EV-068 |
+| M4-c | 两维度星级规则引擎 + attack 结算 + `rated` 写入路径（离线 12/12） | 通过 | EV-069 |
+| M4-d | 能力解释报告 + `current_level` 维度化回填与重建校验（离线 15/15） | 通过 | EV-070 |
+| M4-e | 统一编排（fail-stop）+ `g_gaps` + 真实 attack（17/17 HTTP）+ G2/G3 证据（离线 25/25、真实 23/23） | 通过 | EV-071 |
+| G2 | 证据可追溯性门：7/7 逐跳（5 条抽样、引文逐字）+ dossier 6 份 + `audit_store` pass/0 | 通过 | EV-071 |
+| G3 | 能力审计门：A（理解 2 / 实践无 ≥2 等级）→ B（实践 3；增强观测 ≥3）；C 不进 supports | 通过 | EV-071 |
+| QG1–QG5 | 证据不变量 / 攻击自测（双向测量）/ 规则覆盖 / 无密钥 / 全量测试（359 + 111 + ruff） | 通过 | `m4-gate-result.json` |
+| M4 Gate | 完成条件 1–6 + 质量门 + 数据边界（21/21、真实库对锚、`g_` 全空） | 通过 | 判定记录 + EV-071 |
+
 ## 验收记录
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
-| 2026-10-03 | M4-e（统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据） | EV-071 | 通过（待用户验收） | M4 Gate 待判定；预算口径调整与单步真实 HTTP 合计 ≈53 待确认；M4-b.1 与 M3 两个开放项保持开放 | **M4-e 阶段检查通过** |
+| 2026-10-03 | M4-e 验收 + **M4 Gate 封板**（完成条件 1–6 + QG1–QG5 + 数据边界，21/21） | EV-071 | 通过 | 两项设计记录确认（单次运行预算口径、多次运行成本披露）；M4 保留边界：真实库不含 `g_` 表、G3 主体为 RAG 能力、A 臂笔记受控构造；下一步 M5 待用户确认 | **M4 正式收口；G2 / G3 通过** |
 | 2026-10-03 | M4-d（可解释输出 + `current_level` 回填与重建校验） | EV-070 | 通过（用户已确认） | 缺口表（`g_gaps`）、真实 attack 运行与 G2/G3（M4-e）未开始；统一编排（回填自动化）留 M4-e | **M4-d 阶段检查通过** |
 | 2026-10-03 | M4-c（评级与反向证据：规则引擎 + attack 结算 + rated 写入路径） | EV-069 | 通过（用户已确认） | `current_level` 回填（M4-d）、真实 attack 运行与 G3（M4-e）未开始 | **M4-c 验收通过** |
 | 2026-10-03 | M4-b（证据绑定与分桶：LLM 提议 + 确定性闸门 + 映射落库） | EV-068 | 通过（用户已确认） | 星级算法 / 攻击与反向证据（M4-c）未开始；生成器接线按用户决定推迟（`M4-b.1`） | **M4-b 验收通过** |
