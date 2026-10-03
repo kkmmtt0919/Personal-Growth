@@ -5,9 +5,11 @@
 * **M4-a**：模型契约与 provenance 前置 —— `claim/evidence → assessment draft
   → audit artifact` 的最小闭环；
 * **M4-b**：证据绑定与分桶 —— `claim → LLM 提议 → 确定性闸门 → g_capability_claims`，
-  proposal / reject / accept 全量留档。
+  proposal / reject / accept 全量留档；
+* **M4-c**：评级与反向证据 —— 两维度（理解 / 实践）星级规则引擎 + attack 结算
+  + `rated` 写入路径（历史保留）。
 
-**不做**：星级算法（M4-c）、攻击/反向证据（M4-c）、解释输出（M4-d）、G3 实验（M4-e）、UI。
+**不做**：解释输出（M4-d）、G3 实验与缺口（M4-e）、UI。
 """
 
 from .audit import build_audit, write_audit
@@ -42,31 +44,60 @@ from .contract import (
     classify_claim,
 )
 from .draft import DRAFT, INSUFFICIENT, AssessmentDrafter, AssessmentError
+from .rater import AssessmentRater
+from .rules import (
+    BUCKET_DIMENSION,
+    DIMENSIONS,
+    LEVEL_RANGE,
+    PRACTICE,
+    PRACTICE_SIGNAL_KEY,
+    PRACTICE_SIGNALS,
+    RATED,
+    REVERSE_CAPS,
+    RULES_CONTRACT_VERSION,
+    UNDERSTANDING,
+    ClaimContribution,
+    contribution_for,
+    rate_capability,
+    rate_contributions,
+)
 
 __all__ = [
     "ADMISSIBLE",
     "BINDING_SYSTEM",
     "BINDING_TASK",
     "BUCKETS",
+    "BUCKET_DIMENSION",
     "CHAIN_INCOMPLETE",
     "CONTRACT_VERSION",
+    "DIMENSIONS",
     "DOMAIN_REFERENCE",
     "DRAFT",
     "EVIDENCE_BUCKET",
     "GATE_STAGES",
     "INSUFFICIENT",
+    "LEVEL_RANGE",
     "NOT_ADMISSIBLE",
     "OVERREACH",
     "PENDING_DECLARATION",
     "PLAN",
+    "PRACTICE",
+    "PRACTICE_SIGNALS",
+    "PRACTICE_SIGNAL_KEY",
+    "RATED",
+    "REVERSE_CAPS",
+    "RULES_CONTRACT_VERSION",
+    "UNDERSTANDING",
     "AssessmentDrafter",
     "AssessmentError",
+    "AssessmentRater",
     "BindingError",
     "BindingGate",
     "BindingProposalSet",
     "ChainCheck",
     "ClaimBinder",
     "ClaimClassification",
+    "ClaimContribution",
     "GateDecision",
     "ProposalItem",
     "bucket_for",
@@ -75,7 +106,10 @@ __all__ = [
     "check_chain",
     "claim_buckets",
     "classify_claim",
+    "contribution_for",
     "proposal_id_for",
+    "rate_capability",
+    "rate_contributions",
     "render_binding_prompt",
     "write_audit",
     "write_binding_artifact",

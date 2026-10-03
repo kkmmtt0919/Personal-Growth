@@ -45,8 +45,17 @@ CAPABILITY_STATUSES = ("active", "superseded", "archived")
 `adjusted` 节点不自动降级；当前视图 = `active`。
 """
 
-ASSESSMENT_STATUSES = ("draft", "insufficient_evidence")
-"""M4-a 的 assessment 状态：只有草案，没有等级（星级算法不在本步）。"""
+ASSESSMENT_STATUSES = ("draft", "insufficient_evidence", "rated")
+"""assessment 状态：M4-a/b 只产出草案（`draft` / 证据不足）；M4-c 起允许 `rated`。"""
+
+DRAFT_STATUSES = ("draft", "insufficient_evidence")
+"""草案阶段的状态（`level` 恒 NULL）；M4-c 的评定写入走 `save_assessment`。"""
+
+ASSESSMENT_DIMENSIONS = ("understanding", "practice")
+"""两个独立维度（用户 2026-10-03 冻结）：理解与实践不合并成单一等级。"""
+
+LEVEL_RANGE = (1, 5)
+"""星级取值范围（PRD §9.1 五级）。"""
 
 CLAIM_ROLES = ("supports", "gap")
 """`g_capability_claims` 桥表角色（ARCHITECTURE §4.3）。"""
@@ -74,14 +83,32 @@ def capability_id(goal_id: str, path: str, name: str) -> str:
     return "cap_" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20]
 
 
-def assessment_id(user_id: str, goal_id: str, capability_id_: str, status: str, claim_ids: list[str]) -> str:
-    """assessment 的稳定逻辑标识：由**判定对象 + 证据集**派生（M4-a）。
+def assessment_id(
+    user_id: str,
+    goal_id: str,
+    capability_id_: str,
+    status: str,
+    claim_ids: list[str],
+    dimension: str | None = None,
+    level: int | None = None,
+) -> str:
+    """assessment 的稳定逻辑标识：由**判定对象 + 维度 + 证据集 + 等级**派生。
 
-    同一能力点、同一证据集、同一状态 → 同一 id（重复运行命中同一行，幂等）；
-    证据集或状态变化 → 新 id，旧草案作为历史保留（history + current view 的同源纪律）。
+    * 同一（能力点 / 维度 / 证据集 / 状态 / 等级）→ 同一 id（重复运行幂等）；
+    * **等级变化 = 新 id**：反向证据或新证据改变评定结果时产生新行，
+      旧行作为历史保留（history + current view 的同源纪律）；
+    * 草案与评定是**不同的行**（状态与维度不同）—— 评定写入不覆盖旧草案。
     """
     seed = "/".join(
-        [user_id, goal_id, capability_id_, status, ",".join(sorted(claim_ids))]
+        [
+            user_id,
+            goal_id,
+            capability_id_,
+            status,
+            ",".join(sorted(claim_ids)),
+            dimension or "",
+            "" if level is None else str(level),
+        ]
     )
     return "asm_" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20]
 
@@ -190,6 +217,7 @@ class GrowthStore:
                 user_id TEXT NOT NULL,
                 goal_id TEXT NOT NULL,
                 capability_id TEXT NOT NULL,
+                dimension TEXT,
                 status TEXT NOT NULL,
                 level INTEGER,
                 rubric_json TEXT,
@@ -228,6 +256,11 @@ class GrowthStore:
             self.db.execute(
                 "ALTER TABLE g_capabilities ADD COLUMN status TEXT NOT NULL DEFAULT 'active'"
             )
+        assessment_columns = {
+            row[1] for row in self.db.execute("PRAGMA table_info(g_assessments)").fetchall()
+        }
+        if "dimension" not in assessment_columns:
+            self.db.execute("ALTER TABLE g_assessments ADD COLUMN dimension TEXT")
         self.db.commit()
 
     # -- g_users ----------------------------------------------------------
@@ -560,12 +593,16 @@ class GrowthStore:
         _require(goal_id == capability["goal_id"], "assessment 的 goal_id 必须与能力点一致")
         status = payload.get("status")
         _require(
-            status in ASSESSMENT_STATUSES,
-            f"未知 assessment 状态: {status!r}（M4-a 只允许草案状态）",
+            status in DRAFT_STATUSES,
+            f"未知 assessment 状态: {status!r}（草案只允许 {DRAFT_STATUSES}；评定走 save_assessment）",
+        )
+        _require(
+            payload.get("dimension") is None,
+            "草案不带维度：草案是 M4-a/b 的形态，维度化评定走 save_assessment",
         )
         _require(
             payload.get("level") is None,
-            "M4-a 不得写入星级（level）：定级属评定步骤，本步只产出草案",
+            "草案不得写入星级（level）：定级属评定步骤（M4-c），本路径只产出草案",
         )
         rationale = (payload.get("rationale") or "").strip()
         _require(bool(rationale), "assessment 草案必须写明 rationale")
@@ -599,6 +636,79 @@ class GrowthStore:
         self.db.commit()
         return identifier
 
+    def save_assessment(self, payload: dict) -> str:
+        """写入一份**维度化评定**（M4-c：`rated` 或 `insufficient_evidence`）。
+
+        不变式（测试锁定）：
+
+        * `dimension` 必须是 `ASSESSMENT_DIMENSIONS` 之一（理解 / 实践是两个独立维度）；
+        * `status='rated'` 时才允许且必须给出 `level ∈ LEVEL_RANGE`；
+        * `status='insufficient_evidence'` 时 `level` 必须为 NULL（缺失 ≠ 低分）；
+        * `rubric` / `rationale` 必填（评定必须可解释、可审计）；
+        * **不覆盖旧草案**：id 由「对象 + 维度 + 证据集 + 状态 + 等级」派生，
+          等级变化即新行（历史保留；当前视图用 `latest_assessment` 查询解决）。
+        """
+        capability_id_ = payload.get("capability_id")
+        _require(bool(capability_id_), "assessment 需要 capability_id")
+        capability = self.get_capability(capability_id_)
+        _require(capability is not None, f"未知能力点: {capability_id_}")
+        goal_id = payload.get("goal_id") or capability["goal_id"]
+        _require(goal_id == capability["goal_id"], "assessment 的 goal_id 必须与能力点一致")
+        dimension = payload.get("dimension")
+        _require(
+            dimension in ASSESSMENT_DIMENSIONS,
+            f"未知维度: {dimension!r}（只允许 {ASSESSMENT_DIMENSIONS}）",
+        )
+        status = payload.get("status")
+        _require(status in ("rated", "insufficient_evidence"), f"未知评定状态: {status!r}")
+        level = payload.get("level")
+        if status == "rated":
+            _require(
+                isinstance(level, int)
+                and not isinstance(level, bool)
+                and LEVEL_RANGE[0] <= level <= LEVEL_RANGE[1],
+                f"rated 必须给出 {LEVEL_RANGE[0]}..{LEVEL_RANGE[1]} 的星级: {level!r}",
+            )
+        else:
+            _require(level is None, "insufficient_evidence 不得写 level（缺失 ≠ 低分）")
+        rationale = (payload.get("rationale") or "").strip()
+        _require(bool(rationale), "评定必须写明 rationale")
+        rubric = payload.get("rubric")
+        _require(
+            isinstance(rubric, dict) and bool(rubric),
+            "评定必须携带 rubric（可解释、可审计）",
+        )
+        user_id = payload.get("user_id") or "local"
+        claim_ids = [str(item) for item in (payload.get("claim_ids") or [])]
+        identifier = payload.get("id") or assessment_id(
+            user_id, goal_id, capability_id_, status, claim_ids, dimension, level
+        )
+        self.db.execute(
+            """
+            INSERT INTO g_assessments(id, user_id, goal_id, capability_id, dimension, status,
+                                      level, rubric_json, rationale)
+            VALUES(:id, :user_id, :goal_id, :capability_id, :dimension, :status,
+                   :level, :rubric_json, :rationale)
+            ON CONFLICT(id) DO UPDATE SET
+                rubric_json=excluded.rubric_json,
+                rationale=excluded.rationale,
+                updated_at=CURRENT_TIMESTAMP
+            """,
+            {
+                "id": identifier,
+                "user_id": user_id,
+                "goal_id": goal_id,
+                "capability_id": capability_id_,
+                "dimension": dimension,
+                "status": status,
+                "level": level,
+                "rubric_json": dumps(rubric),
+                "rationale": rationale,
+            },
+        )
+        self.db.commit()
+        return identifier
+
     def get_assessment(self, assessment: str) -> dict | None:
         row = self.db.execute("SELECT * FROM g_assessments WHERE id=?", (assessment,)).fetchone()
         return dict(row) if row else None
@@ -609,6 +719,7 @@ class GrowthStore:
         capability_id: str | None = None,
         goal_id: str | None = None,
         status: str | None = None,
+        dimension: str | None = None,
     ) -> list[dict]:
         sql = "SELECT * FROM g_assessments WHERE 1=1"
         params: list[Any] = []
@@ -621,8 +732,27 @@ class GrowthStore:
         if status:
             sql += " AND status=?"
             params.append(status)
+        if dimension:
+            _require(dimension in ASSESSMENT_DIMENSIONS, f"未知维度: {dimension!r}")
+            sql += " AND dimension=?"
+            params.append(dimension)
         sql += " ORDER BY capability_id, created_at, id"
         return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    def latest_assessment(self, capability_id: str, dimension: str) -> dict | None:
+        """当前视图：某（能力点 × 维度）最近一次**评定结果**。
+
+        `draft` 不算当前视图（草案不是评定结果）；历史用 `list_assessments` 查
+        —— 「draft → rated → history preserved」由查询规则解决，不靠覆盖写入。
+        """
+        _require(dimension in ASSESSMENT_DIMENSIONS, f"未知维度: {dimension!r}")
+        row = self.db.execute(
+            "SELECT * FROM g_assessments WHERE capability_id=? AND dimension=? "
+            "AND status IN ('rated','insufficient_evidence') "
+            "ORDER BY created_at DESC, rowid DESC LIMIT 1",
+            (capability_id, dimension),
+        ).fetchone()
+        return dict(row) if row else None
 
     # -- g_agent_runs -----------------------------------------------------
 

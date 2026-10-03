@@ -805,6 +805,29 @@ LLM 输出上**，而应建立在**已绑定、可审计的数据层**之上 —
 `g_capability_claims`（经闸门绑定）+ `claim → evidence → passage → source` 证据链
 + attack 裁决记录（`attack_reports`）。
 
+### M4-c 决策记录与新增发现（2026-10-03）
+
+**用户冻结口径**：两个独立维度不合并；基线表（自述 → 不足；`uploaded_doc` 2；`+probe_result` 3；
+`repo_artifact` 3；`+task_submission` 4；显式优化/诊断/设计取舍信号 5）；反向证据
+`broken` 剔除、`refutes` / `disputed` ≤2、`weakened` ≤3 且**不跨维度**；`current_level`
+回填推迟 M4-d；"实践 ≤1"执行口径 = `insufficient_evidence`（缺失 ≠ 低分）；
+真实 attack 运行推迟 M4-e（G3 实验 + A/B 证据产出）。
+
+1. **基线按"能力点级证据集合"聚合**：`uploaded_doc + probe_result → 3` 是证据集合的组合，
+   不要求落在同一张主张上 —— 引擎先聚合该维度覆盖主张的细粒度证据类型，再套基线表。
+2. **理解维度必须按细粒度类型判定**（实施中发现的分界）：桶级（knowledge）聚合会把
+   `chat_assertion` 误升为 2；改为只有 `uploaded_doc` 才起评后，"自述不单独产生等级"
+   才真正成立。
+3. **反向证据挂在被质疑的主张上**：`refutes` 是证据行极性，写在支持主张自己的证据里
+   （不另造"支持型"的反向主张 —— 那会污染支撑集）。封顶按该主张覆盖的维度作用。
+4. **level 5 的载体**：主张 metadata `growth_practice_signal ∈ {optimization, diagnosis,
+   design_tradeoff}`；无此信号封顶 4，且不允许由规模 / 代码量 / 时长 / 模型分值推导。
+5. **历史语义落地**：`g_assessments` 增 `dimension`；评定**不覆盖**旧草案；id 含等级 →
+   结论变化即新行；当前视图用 `latest_assessment(capability, dimension)` 查询。
+6. **D6 双重锁定**：功能对例（0.99 vs 0.05 同结论）+ 规则引擎源码 AST 静态检查
+   （不得出现 `confidence` 标识符）。
+7. **推迟项登记**：`current_level` 回填（M4-d，随展示形态一并定）；真实 attack 运行（M4-e）。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

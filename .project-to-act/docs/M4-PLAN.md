@@ -255,8 +255,12 @@ Capability mapping                   （写入 g_capability_claims；记录提�
 | B | 用户声明"我会 RAG"、无项目 | **不足（待验证声明）** |
 | C | JD（要求 RAG 经验） | **不可作为用户能力** |
 
-形式判定仍按 `ACCEPTANCE_GATES.md` G3：A/B 对照（弱证据组理解 ≥2 / 实践 ≤1 且显式指出缺实践证据；
-强证据组实践 ≥ +2）。
+形式判定仍按 `ACCEPTANCE_GATES.md` G3：A/B 对照（弱证据组理解 ≥2、实践组不给 ≥2 的等级
+且显式指出缺实践证据；强证据组实践 ≥ +2）。
+
+**执行口径（用户 2026-10-03 冻结）**：M4-e 对"实践 ≤1"的判定是
+"**不存在 ≥2 的实践等级证据**"（`insufficient_evidence` 也算符合），
+而不是 `practice_level <= 1` —— 保持"缺失 ≠ 低能力"。
 
 ---
 
@@ -294,7 +298,7 @@ M4-a  Assessment 基础模型与 provenance 前置   ← 已完成并验收（20
       ↓
 M4-b  证据绑定与分桶（LLM 提议 + 确定性闸门 + 映射落库）  ← 已完成（2026-10-03，EV-068）
       ↓
-M4-c  评定与反向证据（星级规则引擎 + attack 接入 + refutes/disputed 压低）
+M4-c  评定与反向证据（星级规则引擎 + attack 接入 + refutes/disputed 压低）  ← 已完成（2026-10-03，EV-069）
       ↓
 M4-d  可解释输出（assessment dossier：支持 / 不足 / 攻击结果）
       ↓
@@ -308,6 +312,11 @@ M4 Gate（G2 + G3 + 质量门）
 - **做**：模型契约；**claim/evidence → assessment draft → audit artifact 的最小闭环**；
   C5 上游最小修（provenance 前置，§5）；再生成语义的 schema 落地（§4，与 drafts 同批）；
 - **不做**：星级算法；LLM；UI；G3 实验。
+
+**M4-c 落地结果（2026-10-03，EV-069）**：`assessment/rules.py`（两维度基线与反向证据结算）+
+`assessment/rater.py`（`rated` 写入路径）+ `g_assessments` dimension 化契约已落地；
+离线 **12/12**、**不调用模型**；真实 attack 运行与 G3 素材按用户决定并入 **M4-e**；
+`current_level` 回填推迟 **M4-d**；生成器接线仍记 `M4-b.1`。
 
 ---
 

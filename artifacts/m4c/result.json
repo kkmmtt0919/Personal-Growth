@@ -1,0 +1,621 @@
+{
+  "smoke": "M4-c 星级规则引擎 + 反向证据结算（离线）",
+  "db": "D:\\projects\\Personal Growth\\artifacts\\m4c\\tmp\\rating.db",
+  "rollout": {
+    "weak": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_55d5b2adb60d5121ea11",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "rationale": "理解：基线 2（2 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [
+              {
+                "claim_id": "clm_588e2792c3a83e1c5eab",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "cap": null,
+                "signals": []
+              },
+              {
+                "claim_id": "clm_d18c196d4884da471e26",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "chat_assertion"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ]
+          },
+          "claim_ids": [
+            "clm_588e2792c3a83e1c5eab",
+            "clm_d18c196d4884da471e26"
+          ],
+          "assessment_id": "asm_f4595372163b126037e2"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "insufficient_evidence",
+          "level": null,
+          "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少可起评的实践证据"
+            ]
+          },
+          "claim_ids": [],
+          "assessment_id": "asm_04798e80275a70e08051"
+        }
+      },
+      "contributions": [
+        {
+          "claim_id": "clm_588e2792c3a83e1c5eab",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_d18c196d4884da471e26",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "chat_assertion"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        }
+      ],
+      "assessment_ids": [
+        "asm_f4595372163b126037e2",
+        "asm_04798e80275a70e08051"
+      ]
+    },
+    "strong": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_55d5b2adb60d5121ea11",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "rationale": "理解：基线 2（2 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [
+              {
+                "claim_id": "clm_588e2792c3a83e1c5eab",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "cap": null,
+                "signals": []
+              },
+              {
+                "claim_id": "clm_d18c196d4884da471e26",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "chat_assertion"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ]
+          },
+          "claim_ids": [
+            "clm_588e2792c3a83e1c5eab",
+            "clm_d18c196d4884da471e26"
+          ],
+          "assessment_id": "asm_f4595372163b126037e2"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "rated",
+          "level": 3,
+          "rationale": "实践：基线 3（1 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [
+              {
+                "claim_id": "clm_ee21b186f3d9d788aa52",
+                "buckets": [
+                  "practice"
+                ],
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少任务证据（独立完成完整任务可到 4）"
+            ]
+          },
+          "claim_ids": [
+            "clm_ee21b186f3d9d788aa52"
+          ],
+          "assessment_id": "asm_aa3e1da5fee37a81fc4a"
+        }
+      },
+      "contributions": [
+        {
+          "claim_id": "clm_588e2792c3a83e1c5eab",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_d18c196d4884da471e26",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "chat_assertion"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_ee21b186f3d9d788aa52",
+          "buckets": [
+            "practice"
+          ],
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        }
+      ],
+      "assessment_ids": [
+        "asm_f4595372163b126037e2",
+        "asm_aa3e1da5fee37a81fc4a"
+      ]
+    },
+    "reverse_base": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_036ea165c7322c880afd",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "rationale": "理解：基线 2（1 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [
+              {
+                "claim_id": "clm_6f6c1f1a73fb7d29b127",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ]
+          },
+          "claim_ids": [
+            "clm_6f6c1f1a73fb7d29b127"
+          ],
+          "assessment_id": "asm_7aff17eced20a714c0ee"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "rated",
+          "level": 3,
+          "rationale": "实践：基线 3（1 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [
+              {
+                "claim_id": "clm_fe32559fbcd6603aba97",
+                "buckets": [
+                  "practice"
+                ],
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少任务证据（独立完成完整任务可到 4）"
+            ]
+          },
+          "claim_ids": [
+            "clm_fe32559fbcd6603aba97"
+          ],
+          "assessment_id": "asm_6e0b785358b10c91e2d3"
+        }
+      },
+      "contributions": [
+        {
+          "claim_id": "clm_6f6c1f1a73fb7d29b127",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_fe32559fbcd6603aba97",
+          "buckets": [
+            "practice"
+          ],
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        }
+      ],
+      "assessment_ids": [
+        "asm_7aff17eced20a714c0ee",
+        "asm_6e0b785358b10c91e2d3"
+      ]
+    },
+    "reverse_refuted": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_036ea165c7322c880afd",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "rationale": "理解：基线 2（1 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [
+              {
+                "claim_id": "clm_6f6c1f1a73fb7d29b127",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ]
+          },
+          "claim_ids": [
+            "clm_6f6c1f1a73fb7d29b127"
+          ],
+          "assessment_id": "asm_7aff17eced20a714c0ee"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "rated",
+          "level": 2,
+          "rationale": "实践：基线 3（1 条已绑定主张）；反向证据封顶 ≤2 → 最终 2",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [
+              {
+                "claim_id": "clm_fe32559fbcd6603aba97",
+                "buckets": [
+                  "practice"
+                ],
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "cap": 2,
+                "signals": []
+              }
+            ],
+            "excluded": [],
+            "reverse_evidence": [
+              {
+                "claim_id": "clm_fe32559fbcd6603aba97",
+                "cap": 2
+              }
+            ]
+          },
+          "claim_ids": [
+            "clm_fe32559fbcd6603aba97"
+          ],
+          "assessment_id": "asm_121da5e8188feeec2d6a"
+        }
+      },
+      "contributions": [
+        {
+          "claim_id": "clm_6f6c1f1a73fb7d29b127",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_fe32559fbcd6603aba97",
+          "buckets": [
+            "practice"
+          ],
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "caps": {
+            "practice": 2
+          },
+          "signals": [],
+          "excluded_reason": null
+        }
+      ],
+      "assessment_ids": [
+        "asm_7aff17eced20a714c0ee",
+        "asm_121da5e8188feeec2d6a"
+      ]
+    },
+    "reverse_broken": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_036ea165c7322c880afd",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "rationale": "理解：基线 2（1 条已绑定主张）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [
+              {
+                "claim_id": "clm_6f6c1f1a73fb7d29b127",
+                "buckets": [
+                  "knowledge"
+                ],
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "cap": null,
+                "signals": []
+              }
+            ],
+            "excluded": [
+              {
+                "claim_id": "clm_fe32559fbcd6603aba97",
+                "reason": "攻击裁决 broken：主张不计入"
+              }
+            ],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ]
+          },
+          "claim_ids": [
+            "clm_6f6c1f1a73fb7d29b127"
+          ],
+          "assessment_id": "asm_7aff17eced20a714c0ee"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "insufficient_evidence",
+          "level": null,
+          "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据（已排除：clm_fe32559fbcd6603aba97：攻击裁决 broken：主张不计入）",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [],
+            "excluded": [
+              {
+                "claim_id": "clm_fe32559fbcd6603aba97",
+                "reason": "攻击裁决 broken：主张不计入"
+              }
+            ],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少可起评的实践证据"
+            ]
+          },
+          "claim_ids": [],
+          "assessment_id": "asm_6b4e192ad10da955f7a4"
+        }
+      },
+      "contributions": [
+        {
+          "claim_id": "clm_6f6c1f1a73fb7d29b127",
+          "buckets": [
+            "knowledge"
+          ],
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": null
+        },
+        {
+          "claim_id": "clm_fe32559fbcd6603aba97",
+          "buckets": [
+            "practice"
+          ],
+          "evidence_types": [],
+          "caps": {},
+          "signals": [],
+          "excluded_reason": "攻击裁决 broken：主张不计入"
+        }
+      ],
+      "assessment_ids": [
+        "asm_7aff17eced20a714c0ee",
+        "asm_6b4e192ad10da955f7a4"
+      ]
+    },
+    "no_evidence": {
+      "contract": "m4c-1",
+      "goal_id": "goal_m4c_smoke",
+      "capability_id": "cap_7288112acbe7ba0661ae",
+      "dimensions": {
+        "understanding": {
+          "dimension": "understanding",
+          "status": "insufficient_evidence",
+          "level": null,
+          "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "understanding",
+            "supports": [],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少可起评的理解证据"
+            ]
+          },
+          "claim_ids": [],
+          "assessment_id": "asm_4f60ab628ba661f2149d"
+        },
+        "practice": {
+          "dimension": "practice",
+          "status": "insufficient_evidence",
+          "level": null,
+          "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据",
+          "rubric": {
+            "contract": "m4c-1",
+            "dimension": "practice",
+            "supports": [],
+            "excluded": [],
+            "reverse_evidence": [],
+            "gaps": [
+              "缺少可起评的实践证据"
+            ]
+          },
+          "claim_ids": [],
+          "assessment_id": "asm_f569284398f00d33a553"
+        }
+      },
+      "contributions": [],
+      "assessment_ids": [
+        "asm_4f60ab628ba661f2149d",
+        "asm_f569284398f00d33a553"
+      ]
+    }
+  },
+  "evidence_counts": {
+    "sources": 5,
+    "passages": 10,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 5,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 5,
+    "evidence": 6,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 26
+  },
+  "audit_store": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "real_db_anchors": {
+    "content_hashes_match": true,
+    "counts_match": true
+  },
+  "artifact": "D:\\projects\\Personal Growth\\artifacts\\m4c\\rating-artifact.json",
+  "checks": {
+    "weak_understanding_2": true,
+    "weak_practice_insufficient": true,
+    "strong_practice_3": true,
+    "strong_minus_weak_ge_2": true,
+    "refutes_caps_practice_at_2": true,
+    "refutes_leaves_understanding": true,
+    "broken_removes_support": true,
+    "no_evidence_both_insufficient": true,
+    "repeat_run_idempotent": true,
+    "history_preserved": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true
+  },
+  "all_checks_passed": true,
+  "temp_db_deleted": true
+}
