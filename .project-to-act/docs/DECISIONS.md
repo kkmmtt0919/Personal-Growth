@@ -792,6 +792,19 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
 7. **运行手册记一条**：本机 `uv` 不自动加载 `.env`，真实运行须用 `uv run --env-file .env`，
    否则网关回落到 anthropic 默认并报 `ANTHROPIC_AUTH_TOKEN missing`。
 
+**关键设计结论（用户 2026-10-03 指定登记）**：
+
+> **LLM 在 evidence → capability 映射中仅作为候选生成器；最终绑定必须经过确定性 Gate。
+> Proposal 质量（漏提议、理由错误）不会直接影响知识库正确性。**
+
+落地依据：M4-b 的八步闸门（唯一写入位置在第 8 步，测试断言"桥表行数 == 接受数"）；
+真实运行中 LLM 的 id/理由错配与漏提议均未造成错误落库。
+
+**对后续阶段的约束**：M4-c 的评级（星级规则引擎）与 attack 结算**不得建立在未经治理的
+LLM 输出上**，而应建立在**已绑定、可审计的数据层**之上 —— 即
+`g_capability_claims`（经闸门绑定）+ `claim → evidence → passage → source` 证据链
++ attack 裁决记录（`attack_reports`）。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：
