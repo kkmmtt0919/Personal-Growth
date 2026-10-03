@@ -1,0 +1,481 @@
+{
+  "mode": "offline",
+  "checks": {
+    "pipeline_level_verification_consistent": true,
+    "pipeline_gap_verification_consistent": true,
+    "gap_a_practice_is_evidence_gap": true,
+    "gap_b_rag_practice_level_gap_1": true,
+    "gap_b_rag_understanding_2plus": true,
+    "gap_b_tool_practice_evidence_gap": true,
+    "gap_rows_carry_assessment_id": true,
+    "weakened_caps_practice_at_3": true,
+    "broken_excludes_claim": true,
+    "broken_makes_practice_insufficient": true,
+    "g3a_understanding_ge_2": true,
+    "g3a_practice_not_ge_2": true,
+    "g3a_mentions_missing_practice": true,
+    "g3b_practice_ge_2": true,
+    "g3b_understanding_not_lower": true,
+    "g3b_above_a_operational": true,
+    "g3c_jd_classified_domain_reference": true,
+    "g3c_jd_rejected_by_gate": true,
+    "g3c_jd_not_in_supports": true,
+    "chat_declaration_rejected_by_gate": true,
+    "g2_at_least_five_traceable": true,
+    "g2_all_traced_verbatim": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 25,
+  "checks_total": 25,
+  "all_checks_passed": true,
+  "detail": {
+    "tree": {
+      "rag": "cap_72c5cf53e0af71881981",
+      "tool": "cap_fd68a5f98d15f7631867",
+      "vector": "cap_495c70eb50bfce4f0c30"
+    },
+    "round_a": {
+      "decisions": [
+        {
+          "proposal_id": "prp_d2d8ec6ae7ab03ba",
+          "claim_id": "clm_aafdac7e331ba2fff121",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": false,
+          "gate_stage": "attribution_unchanged",
+          "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed"
+          ]
+        },
+        {
+          "proposal_id": "prp_ca88857f9e7a532b",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        }
+      ],
+      "dimensions": {
+        "understanding": [
+          "rated",
+          2
+        ],
+        "practice": [
+          "insufficient_evidence",
+          null
+        ]
+      },
+      "gaps": {
+        "understanding": [
+          "level_gap_2plus",
+          2
+        ],
+        "practice": [
+          "evidence_gap",
+          null
+        ]
+      }
+    },
+    "repo_claims": [
+      {
+        "claim_id": "clm_cf7f1feea57d09624760",
+        "topic": "RAG 检索服务相关实现"
+      },
+      {
+        "claim_id": "clm_dd8f6bded04d146e738f",
+        "topic": "Java 服务端源码"
+      },
+      {
+        "claim_id": "clm_becfcfb15cb03986fde3",
+        "topic": "MCP 工具注册与调用相关实现"
+      },
+      {
+        "claim_id": "clm_e1a0aefce3bb60e6b23a",
+        "topic": "测试用例生成相关内容"
+      },
+      {
+        "claim_id": "clm_c5f52cea7a5a2f18ba96",
+        "topic": "向量检索与向量库依赖"
+      }
+    ],
+    "round_b": {
+      "decisions": [
+        {
+          "proposal_id": "prp_e20f94755e826868",
+          "claim_id": "clm_cf7f1feea57d09624760",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_1f41551babb7fa19",
+          "claim_id": "clm_becfcfb15cb03986fde3",
+          "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_17058282ff32f494",
+          "claim_id": "clm_c5f52cea7a5a2f18ba96",
+          "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_dba7efe6ff44d647",
+          "claim_id": "clm_52f2702bc1ef985747bf",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": false,
+          "gate_stage": "bucket_allowed",
+          "reject_reason": "存在不可入桶的证据类型：['external_ref']",
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active"
+          ]
+        },
+        {
+          "proposal_id": "prp_b9f7fcc935095fc6",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_ddada7d1b72066c3",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        }
+      ],
+      "dimensions": {
+        "rag": {
+          "understanding": [
+            "rated",
+            2
+          ],
+          "practice": [
+            "rated",
+            3
+          ]
+        },
+        "tool": {
+          "understanding": [
+            "rated",
+            2
+          ],
+          "practice": [
+            "insufficient_evidence",
+            null
+          ]
+        },
+        "vector": {
+          "understanding": [
+            "rated",
+            2
+          ],
+          "practice": [
+            "rated",
+            3
+          ]
+        }
+      },
+      "gaps": {
+        "rag": {
+          "understanding": [
+            "level_gap_2plus",
+            2
+          ],
+          "practice": [
+            "level_gap_1",
+            3
+          ]
+        },
+        "tool": {
+          "understanding": [
+            "level_gap_2plus",
+            2
+          ],
+          "practice": [
+            "evidence_gap",
+            null
+          ]
+        },
+        "vector": {
+          "understanding": [
+            "level_gap_2plus",
+            2
+          ],
+          "practice": [
+            "level_gap_1",
+            3
+          ]
+        }
+      }
+    },
+    "gate_decisions": {
+      "round_a": [
+        {
+          "proposal_id": "prp_d2d8ec6ae7ab03ba",
+          "claim_id": "clm_aafdac7e331ba2fff121",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": false,
+          "gate_stage": "attribution_unchanged",
+          "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed"
+          ]
+        },
+        {
+          "proposal_id": "prp_ca88857f9e7a532b",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        }
+      ],
+      "round_b": [
+        {
+          "proposal_id": "prp_e20f94755e826868",
+          "claim_id": "clm_cf7f1feea57d09624760",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_1f41551babb7fa19",
+          "claim_id": "clm_becfcfb15cb03986fde3",
+          "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_17058282ff32f494",
+          "claim_id": "clm_c5f52cea7a5a2f18ba96",
+          "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_dba7efe6ff44d647",
+          "claim_id": "clm_52f2702bc1ef985747bf",
+          "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "accepted": false,
+          "gate_stage": "bucket_allowed",
+          "reject_reason": "存在不可入桶的证据类型：['external_ref']",
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active"
+          ]
+        },
+        {
+          "proposal_id": "prp_b9f7fcc935095fc6",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        },
+        {
+          "proposal_id": "prp_ddada7d1b72066c3",
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "claim_exists",
+            "capability_exists",
+            "capability_active",
+            "bucket_allowed",
+            "attribution_unchanged",
+            "duplicate",
+            "persisted"
+          ]
+        }
+      ],
+      "jd_classification": {
+        "kind": "domain_reference",
+        "reasons": [
+          "domain_reference 通道的材料不能支撑用户能力"
+        ]
+      }
+    },
+    "g2": {
+      "traceable": 7,
+      "walkable": 7,
+      "assessments_total": 7
+    },
+    "audit": {
+      "status": "pass",
+      "violations": null
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "counts": {
+        "sources": 3,
+        "passages": 109,
+        "entities": 60,
+        "entity_aliases": 3,
+        "events": 1,
+        "claims": 2,
+        "evidence": 6,
+        "relations": 2
+      },
+      "g_tables_in_real_db": []
+    }
+  },
+  "temp_db_deleted": true
+}

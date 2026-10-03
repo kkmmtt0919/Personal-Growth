@@ -861,6 +861,41 @@ legacy `current_level` **保留、停用、不写**；`current_level_status` 扩
 4. **报告纪律**：只复制规则引擎产出的等级与依据；不携带任何模型分值（JSON 扫描 + 渲染器源码
    AST 双重检查）；不把材料存在读成用户独立完成；`insufficient_evidence` 不读成低能力。
 
+### M4-e 决策记录与新增发现（2026-10-03）
+
+**用户冻结口径**：M4-e = 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 证据产出 + 回填统一编排；
+G3 主体 = `RAG 系统搭建与调优`（`cap_72c5cf53e0af7188`，不追加第二主体）；
+A/B 判定 = 「A 实践不存在 ≥2 等级（`insufficient_evidence` 也算符合）且 B 实践 ≥2」，
+B 实际等级 ≥3 只作增强观测、不作门条件；A 臂笔记在无真实笔记时受控构造并标注 `constructed=true`；
+真实运行 ≤17 HTTP、零额外重试、fail-stop、不降级为无 attack；真实库不写；
+编排顺序 `bind → attack → rate → report → apply → verify → gaps → verify_gaps`；
+`g_gaps` 只表达 target − current + rubric 缺口（gap ≠ recommendation）；不修改 evkg / verifier / 词表 / 结算规则。
+
+**实施中发现（三处，均已按最小方式处理并留档）**：
+
+1. **evkg `run_adversarial` 的 `max_probes` 只限制目标 claim 数，不限制 probe 数** ——
+   模型可对同一 claim 返回多条质疑，裁决调用数 = probe 数（实测 1 个目标返回 3–4 条）。
+   冻结表假设的"1 目标 = 1 probe"不成立 → 两轮 adversarial 各只针对 1 个目标
+   （单轮上限 A=4 / B=5，含 1 次 probe 生成），覆盖由 verifier 承担；
+   总预算 ≤17 与零额外重试不变。**该调整需要用户在验收时确认**。
+2. **evkg `get_claims()` 按 id 排序（非插入顺序）** —— verifier / adversarial 的覆盖目标
+   确定但不可指定；本轮实际复核 6 条不同主张（含仓库主题与 JD 主张），adversarial 目标为
+   对话材料与向量主题主张。材料的"创建顺序"不构成覆盖顺序保证。
+3. **`insufficient_evidence` 行按设计没有支撑集**（"证据不足"本身是结论）→ G2 追溯补
+   `trace_path=capability_bindings`（走该能力点绑定的主张集合），证明"不足"判断是对真实、
+   链路完整的已绑定证据做出的；既无支撑也无绑定的行记 `none`，不计入抽样。
+   `tests/test_traceability.py` 同时锁定"待验证声明可被追溯暴露"（`pending_declaration` → 不完整）。
+
+**真实运行成本（如实披露）**：M4-e 共发起 6 次真实进程运行（2 次因代码缺陷在模型调用前/早期中止，
+2 次因上述发现触发预算硬停，1 次完成但 G2 追溯器语义不足，1 次最终通过），
+**真实 HTTP 合计 ≈53**；单次运行均 ≤17。教训：预算表应表述为"**单次运行**上限 + 允许的重跑次数"，
+预算硬上限的价值在于把每次失败的成本封在 17 以内。
+
+**编排口径（落地）**：`assess_capability` 只做 rate → report → apply → verify → gaps → verify 六步，
+**无 LLM、无网络**；`verify_*` 失败即 `PipelineError`（fail-stop，不写缺口、不返回半成品结果）；
+重复运行幂等（评定 id 由证据集派生；缺口行按（能力点 × 维度）唯一键 upsert）。
+G2/G3 证据在**独立实验库**上产出，跑完即删；门证据 = `artifacts/gates/G2|G3/` 的 JSON/Markdown 归档。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

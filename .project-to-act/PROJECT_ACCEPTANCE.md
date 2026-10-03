@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-d 已完成待验收**（2026-10-03，EV-070）：能力解释报告（支持 / 不足 / 攻击 / 已排除 + 逐字引文）+ `current_level` 维度化回填与重建校验—— 离线 15/15。**M4-c / M4-b 已验收**（用户 2026-10-03 确认，EV-069/EV-068）。**M4-a 已验收**（EV-067）。**M4-PLAN v1.0 已冻结**（EV-066）。详见 `artifacts/m4d/README.md`
-- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a、M4-b）**
+- 结论：**M0–M3 全部通过并收口；M4 进行中**。**M4-e 已完成待验收**（2026-10-03，EV-071）：统一编排（`rate → report → 回填 → 重建校验 → 缺口 → 校验`）+ 缺口 `g_gaps` + **真实 attack 运行** + **G2/G3 门证据**—— 离线 25/25、真实 23/23（含 A/B 对照）。**M4-d 已验收**（用户 2026-10-03 确认，EV-070）。**M4-c / M4-b 已验收**（EV-069/EV-068）。**M4-a 已验收**（EV-067）。**M4-PLAN v1.0 已冻结**（EV-066）。详见 `artifacts/m4e/README.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a…M4-e）**
 - 最后检查：2026-10-03
-- 遗留问题：**M4 剩余步骤** —— M4-e（缺口 `g_gaps` + 真实 attack 运行 + G2/G3 证据产出 + 回填统一编排）→ M4 Gate；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G2–G6 与 QG3 未开始（G1、QG1/QG2/QG4/QG5 已有通过证据）
+- 遗留问题：**M4 剩余步骤** —— M4 Gate（G2/G3 已产出证据，待随 M4-e 验收后判定）；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**M4-e 待确认项** —— 真实运行预算口径调整（probe 数不受 `max_probes` 约束）与单步真实 HTTP 合计 ≈53（单次 ≤17）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；G4–G6 未开始（G1–G3、QG1–QG5 已有通过证据）
 
 ## 验收标准
 
@@ -16,8 +16,8 @@
 | 标准 ID | 标准 | 状态 | 验证方法摘要 | 证据 ID |
 |---|---|---|---|---|
 | G1 | Goal Clarification：模糊目标 → 明确目标 | **通过** | 冷启动 ≤6 轮产出含四要素的 confirmed goal；含反例检查（真实模型会话；截图豁免待 M8 补证） | EV-056 EV-057 |
-| G2 | Evidence Traceability：能力判断可追溯 | 待检查 | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass | 无 |
-| G3 | Capability Audit：识别"自称会但证据不足" | 待检查 | **A/B 对照实验**：弱证据组须得"理解高·实践低"，强证据组须显著更高 | 无 |
+| G2 | Evidence Traceability：能力判断可追溯 | **通过**（M4-e，待用户验收） | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass —— 7/7 评定行可追溯（5 条抽样，引文逐字） | EV-071 |
+| G3 | Capability Audit：识别"自称会但证据不足" | **通过**（M4-e，待用户验收） | **A/B 对照实验**：A 弱证据（理解 2 / 实践无 ≥2 等级）vs B 强证据（实践 3）；C（JD）不进 supports | EV-071 |
 | G4 | Task Quality：任务针对缺口且可验收 | 待检查 | 每个 task 可反向映射到 gap；"去学习 X"类任务必须被拒 | 无 |
 | G5 | Growth Loop：完成 → 新证据 → 能力变化自动发生 | 待检查 | 无人工干预的端到端运行；星级变化可归因到具体新证据 | 无 |
 | G6 | User Return Value：回来能看到变化与下一步 | 待检查 | snapshot diff + 变化摘要 + 下一步建议 + 引用长期偏好 | 无 |
@@ -28,7 +28,7 @@
 |---|---|---|---|---|
 | QG1 | 证据不变量 | **通过** | `evkg audit_store` = pass，9 项检查 0 violation（M3 Gate 复核 pass/0） | EV-065 |
 | QG2 | 攻击自测 | **通过**（M1-f 双向测量口径） | 伪造数据注入前/后双向测量（不采信内置 `status` 单值，C4）；三场景 caught 且清理后零差异 | EV-037…EV-041 |
-| QG3 | 评级规则覆盖 | 待检查（M4） | `tests/test_assessment_rules.py` 覆盖含 G3 A/B 场景的决定性用例 | 无 |
+| QG3 | 评级规则覆盖 | **通过** | `tests/test_assessment_rules.py` 覆盖含 G3 A/B 场景的决定性用例（M4-c 建立；M4-e 在真实材料上复核） | EV-069 EV-071 |
 | QG4 | 无密钥入库 | **通过** | 仓库与账本无明文密钥；`.env` 已 gitignore；日志脱敏（M3 Gate：119 个跟踪文件 0 命中） | EV-065 |
 | QG5 | 全量测试 | **通过** | `uv run pytest` 全绿（M3 Gate：Growth OS 267 项 + evkg 107 项 + ruff） | EV-065 |
 
@@ -72,11 +72,15 @@
 | EV-068 | 2026-10-03 | **M4-b 实现与验证**：证据绑定与分桶（LLM 提议 + 八步确定性闸门 + 映射落库）；离线闭环 + 逐步 reject 对例 + **1 次真实模型提议运行** | 离线 9/9；真实 8/8 | 新增 `growth_os/assessment/{buckets,binding}.py`、`store.get_capability_by_path`、`tests/test_assessment_binding.py`（20 项）、`artifacts/m4b/`；测试 287→**307** | ① 分桶映射确定性（6 类型全表；`external_ref` 不入桶）；② 提议 schema 仅三字段（confidence/level/score 注入 → schema 拒绝）；③ 八步闸门固定顺序、失败零写入；拒绝记录含 proposal_id/reject_reason/gate_stage/timestamp/run_id；④ **LLM 无直接落库路径**（桥表行数 == 接受数；二次运行全 duplicate）；⑤ 真实运行：`openai_compatible/glm-5.3`、1 次结构化调用 / 1 个 HTTP 请求（硬上限 1、零额外重试）、1364 tokens；6 候选 → 4 提议 → 3 接受（RAG×2、MCP×1）+ 1 拒绝（自述，attribution_unchanged）；⑥ 真实库逐表哈希 + 计数对锚一致（副本运行、`mode=ro`，真实库零写入）；audit_store pass/0；307 + ruff 全绿；⑦ 生成器接线按用户决定推迟（记 `M4-b.1`）。细节见 `artifacts/m4b/README.md` | 命令输出；`artifacts/m4b/` | 90d |
 | EV-069 | 2026-10-03 | **M4-c 实现与验证**：星级规则引擎（理解 / 实践两维度）+ attack 结算接入 + `rated` 写入路径（历史保留）；离线冒烟 12/12 | 12/12；回归全绿 | 新增 `growth_os/assessment/{rules,rater}.py`、`g_assessments` dimension/rated 契约、`tests/test_assessment_rules.py`（18 项）、`artifacts/m4c/`；测试 307→**325** | ① 两维度不合并；基线规则按冻结表（自述不单独产等级 → 不足；`uploaded_doc` 2；`+probe` 3；`repo` 3；`+task` 4；显式信号 5）；② 反向证据：`broken` 剔除、`refutes`/`disputed` 封顶 ≤2、`weakened` ≤3，且**不跨维度污染**；③ 无证据 → `insufficient_evidence`（level NULL，"缺失≠低分"）；④ 同输入同输出 + 幂等；⑤ 分数隔离（0.99 vs 0.05 同结论 + 规则引擎源码 AST 检查）；⑥ 历史语义：草案不被覆盖、等级变化 = 新行、当前视图用 `latest_assessment`；⑦ audit_store pass/0、真实库对锚一致、325 + ruff 全绿；⑧ 推迟项：`current_level` 回填（M4-d）、真实 attack 运行（M4-e）。细节见 `artifacts/m4c/README.md` | 命令输出；`artifacts/m4c/` | 90d |
 | EV-070 | 2026-10-03 | **M4-d 实现与验证**：能力解释报告（支持 / 不足 / 攻击 / 已排除 + 逐字引文）+ `current_level` 维度化回填与重建校验；离线冒烟 15/15 | 15/15；回归 335 全绿 | 新增 `growth_os/assessment/report.py`、`g_capabilities` 两维度列 + `apply_assessment_levels`/`verify_assessment_levels`、`tests/test_assessment_report.py`（10 项）、`artifacts/m4d/`；测试 325→**335** | ① 报告组成完整（capability/dimensions/supports/gaps/reverse_evidence/excluded/rule_version；含 level/status/base_level/rationale/why_not_higher）；② 支持证据可回溯：claim 三元组 + 绑定理由 + 逐字引文（quote_verbatim 全 True）；③ 不含模型分值（JSON 扫描 + 渲染器源码 AST）；④ 反向证据与已排除分别成节（含裁决与未确认项）；⑤ 回填只经 `apply_assessment_levels`（legacy 列保持 NULL，upsert 写入即报错）；⑥ 重建校验可发现篡改；⑦ 无评级 → NULL/`unassessed`，草案不影响当前视图；⑧ audit_store pass/0、对锚一致、335 + ruff 全绿。细节见 `artifacts/m4d/README.md` | 命令输出；`artifacts/m4d/` | 90d |
+| EV-071 | 2026-10-03 | **M4-e 实现与验证**：统一编排（rate → report → 回填 → 校验 → 缺口 → 校验，fail-stop）+ `g_gaps` + **真实 attack 运行**（独立实验库）+ **G2/G3 门证据**；离线 25/25、真实 23/23 | 离线 25/25；真实 23/23；回归 359 全绿 | 新增 `growth_os/assessment/pipeline.py`、`g_gaps` 派生/回填/校验、`tests/test_{gaps,assessment_pipeline,traceability}.py`（22 项）、`artifacts/m4e/`、`artifacts/gates/G2|G3/`；测试 335→**359** | **G3** 通过：独立实验库（真实目标树 + 真实对话摘录 + 标注构造笔记 + 真实仓库 `mytset-rag@c417a096`）；A（弱）理解 2 / 实践无 ≥2 等级 → B（强）实践 3（增强观测 ≥3）；C（JD）`domain_reference` 未进 supports；待验证声明被闸门拒。**真实 attack**：verifier（独立 `deepseek-flash`）复核 6 条主张 + adversarial 两轮（3+4 probe，全 sustained）；**17/17 HTTP**、零重试。**G2** 通过：7/7 评定行可追溯（5 条抽样、引文逐字、两条追溯路径）+ dossier 6 份 + `audit_store` pass/0。**g_gaps**：三档 severity 从评定行派生、唯一写路径（AST 守卫）、可发现篡改。**边界**：真实库对锚一致、`g_` 全空、实验库即删。**待确认**：预算口径调整；真实 HTTP 合计 ≈53（单次 ≤17）。细节见 `artifacts/m4e/README.md` | 命令输出；`artifacts/m4e/`、`artifacts/gates/G2|G3/` | 90d |
 
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
-| M4-d | 2026-10-03 | 可解释输出 + `current_level` 回填（报告 + 重建校验；离线，不调用模型） | `growth_os/assessment/report.py`；`artifacts/m4d/` | 通过（待用户验收） | EV-070 | — |
+| M4-e | 2026-10-03 | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP） | `growth_os/assessment/pipeline.py`、`g_gaps`、`tests/test_{gaps,assessment_pipeline,traceability}.py`、`artifacts/m4e/`、`artifacts/gates/G2|G3/` | 通过（待用户验收） | EV-071 | 待确认：预算口径调整 + 单步真实 HTTP 合计 ≈53 |
+| G2 | 2026-10-03 | **证据可追溯性门**：抽 5 条 assessment 逐跳（assessment → claim → evidence → passage → source）+ 引文逐字 | `artifacts/gates/G2/` | 通过 | EV-071 | — |
+| G3 | 2026-10-03 | **能力审计门**：A/B 对照（弱证据 → 理解 2 / 实践无 ≥2 等级；强证据 → 实践 3）+ C 负对照（JD 不进 supports） | `artifacts/gates/G3/` | 通过 | EV-071 | — |
+| M4-d | 2026-10-03 | 可解释输出 + `current_level` 回填（报告 + 重建校验；离线，不调用模型） | `growth_os/assessment/report.py`；`artifacts/m4d/` | 通过（用户已确认） | EV-070 | 用户 |
 | M4-c | 2026-10-03 | 评级与反向证据（星级规则引擎 + attack 结算 + `rated` 写入路径；离线，不调用模型） | `growth_os/assessment/{rules,rater}.py`；`artifacts/m4c/` | 通过（用户已确认） | EV-069 | 用户 |
 | M4-b | 2026-10-03 | 证据绑定与分桶（LLM 提议 + 八步确定性闸门 + 映射落库；含 1 次真实模型运行） | `growth_os/assessment/{buckets,binding}.py`；`artifacts/m4b/` | 通过（用户已确认） | EV-068 | 用户（批准真实运行） |
 | M4-a | 2026-10-02 | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact） | `growth_os/assessment/`；evkg @ `9a21552` | 通过（用户已确认） | EV-067 | 用户 |
@@ -148,7 +152,8 @@
 ## 验收记录
 
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
-| 2026-10-03 | M4-d（可解释输出 + `current_level` 回填与重建校验） | EV-070 | 通过（待用户验收） | 缺口表（`g_gaps`）、真实 attack 运行与 G2/G3（M4-e）未开始；统一编排（回填自动化）留 M4-e | **M4-d 阶段检查通过** |
+| 2026-10-03 | M4-e（统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据） | EV-071 | 通过（待用户验收） | M4 Gate 待判定；预算口径调整与单步真实 HTTP 合计 ≈53 待确认；M4-b.1 与 M3 两个开放项保持开放 | **M4-e 阶段检查通过** |
+| 2026-10-03 | M4-d（可解释输出 + `current_level` 回填与重建校验） | EV-070 | 通过（用户已确认） | 缺口表（`g_gaps`）、真实 attack 运行与 G2/G3（M4-e）未开始；统一编排（回填自动化）留 M4-e | **M4-d 阶段检查通过** |
 | 2026-10-03 | M4-c（评级与反向证据：规则引擎 + attack 结算 + rated 写入路径） | EV-069 | 通过（用户已确认） | `current_level` 回填（M4-d）、真实 attack 运行与 G3（M4-e）未开始 | **M4-c 验收通过** |
 | 2026-10-03 | M4-b（证据绑定与分桶：LLM 提议 + 确定性闸门 + 映射落库） | EV-068 | 通过（用户已确认） | 星级算法 / 攻击与反向证据（M4-c）未开始；生成器接线按用户决定推迟（`M4-b.1`） | **M4-b 验收通过** |
 | 2026-10-02 | M4-a（Assessment 基础模型与 provenance 前置） | EV-067 | 通过（用户已确认） | 星级算法 / LLM / UI / G3 未开始（按边界）；M4-b（证据绑定与分桶）待推进 | **M4-a 验收通过** |

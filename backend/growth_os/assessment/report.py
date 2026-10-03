@@ -169,6 +169,9 @@ def build_report(store, evidence_store, *, capability_id: str, generated_by: str
             if dimension not in record["dimensions"]:
                 record["dimensions"].append(dimension)
 
+    # M4-e 收紧（用户 2026-10-03 冻结的编排顺序：report 先于 apply_assessment_levels）：
+    # 当前视图必须从评定行**重算**，而不是读回填缓存列 —— 否则报告会写进回填前的旧值。
+    derived = store.expected_assessment_levels(capability_id)
     return {
         "artifact": "m4d-assessment-report",
         "capability": {
@@ -178,9 +181,9 @@ def build_report(store, evidence_store, *, capability_id: str, generated_by: str
             "depth": capability["depth"],
             "target_level": capability["target_level"],
             "status": capability["status"],
-            "current_level_status": capability["current_level_status"],
-            "current_level_understanding": capability["current_level_understanding"],
-            "current_level_practice": capability["current_level_practice"],
+            "current_level_status": derived["status"],
+            "current_level_understanding": derived["understanding"],
+            "current_level_practice": derived["practice"],
         },
         "dimensions": dimensions,
         "supports": supports,

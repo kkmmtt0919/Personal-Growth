@@ -1,0 +1,63 @@
+{
+  "status": "pass",
+  "total_violations": 0,
+  "checks": {
+    "evidence_quote_not_in_passage": {
+      "violations": 0,
+      "sample": []
+    },
+    "claims_without_evidence": {
+      "violations": 0,
+      "sample": []
+    },
+    "claims_without_passages": {
+      "violations": 0,
+      "sample": []
+    },
+    "evidence_missing_passage": {
+      "violations": 0,
+      "sample": []
+    },
+    "evidence_missing_claim": {
+      "violations": 0,
+      "sample": []
+    },
+    "relations_missing_claim": {
+      "violations": 0,
+      "sample": []
+    },
+    "passages_missing_source": {
+      "violations": 0,
+      "sample": []
+    },
+    "events_missing_passage": {
+      "violations": 0,
+      "sample": []
+    },
+    "aliases_self_referential": {
+      "violations": 0,
+      "sample": []
+    },
+    "ledger_complete_passage_missing": {
+      "violations": 0,
+      "sample": []
+    }
+  },
+  "counts": {
+    "sources": 23,
+    "passages": 197,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 8,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 8,
+    "evidence": 22,
+    "conflicts": 0,
+    "conflict_candidates": 1,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 270
+  }
+}

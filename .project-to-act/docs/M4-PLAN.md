@@ -302,7 +302,7 @@ M4-c  评定与反向证据（星级规则引擎 + attack 接入 + refutes/dispu
       ↓
 M4-d  可解释输出（assessment dossier：支持 / 不足 / 攻击结果）  ← 已完成（2026-10-03，EV-070）
       ↓
-M4-e  缺口识别 + G2/G3 证据产出（独立库 A/B 对照；真实运行留档）
+M4-e  缺口识别 + G2/G3 证据产出（独立库 A/B 对照；真实运行留档）  ← 已完成（2026-10-03，EV-071）
       ↓
 M4 Gate（G2 + G3 + 质量门）
 ```
@@ -323,6 +323,21 @@ M4 Gate（G2 + G3 + 质量门）
 `apply_assessment_levels` / `verify_assessment_levels`（唯一回填路径 + 重建校验）；
 legacy `current_level` 保留停用（upsert 写入即报错）；离线 **15/15**、**不调用模型**；
 回填的自动编排留 **M4-e**。
+
+**M4-e 落地结果（2026-10-03，EV-071）**：`assessment/pipeline.py`（`assess_capability`：rate → report →
+apply → verify → gaps → verify，fail-stop、无 LLM / 无网络）+ `g_gaps`（`evidence_gap` / `level_gap_1` /
+`level_gap_2plus`；只从评定行派生；唯一写路径 `apply_gaps` + 重建校验 `verify_gaps`）+
+`tests/test_{gaps,assessment_pipeline,traceability}.py`（22 项）；离线 **25/25**、真实 **23/23**。
+**真实 attack 运行**（独立实验库 `artifacts/m4e/tmp/g3-experiment.db`，跑完即删）：
+`verifier`（独立 `deepseek-flash`）复核 6 条主张 + `adversarial` 两轮各 1 目标（3 + 4 条 probe，
+裁决全 `sustained`）+ `deterministic` / `audit`；**17/17 HTTP、零额外重试、逐阶段硬上限**。
+**G3**：A（真实对话摘录 + 标注构造笔记）理解 2 / 实践无 ≥2 等级 → B（+ 真实仓库
+`kkmmtt0919/mytset-rag@c417a096`）实践 3（增强观测 ≥3 成立）；C（合成 JD）`domain_reference`
+被闸门拒、未进 supports。**G2**：7/7 评定行可追溯（5 条抽样 + dossier 6 份 + `audit_store` pass/0）。
+真实库逐表哈希 + 计数对锚一致、`g_` 表保持全空。
+**实施中发现三处**（probe 数不受 `max_probes` 约束 → 单轮上限调整 A=4/B=5；`get_claims()` 按 id 排序；
+`insufficient_evidence` 行需 `capability_bindings` 追溯路径），详见 `DECISIONS.md`；
+本步真实 HTTP 合计 ≈53（单次 ≤17，需用户确认口径）。
 
 ---
 

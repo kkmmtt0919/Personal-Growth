@@ -149,8 +149,8 @@ src/evkg/policies.py:28 score, rationale = _policy_table()[kind]   ← 直接字
 | `g_goal_clarifications` | id, goal_id, round, question, answer, created_at | 澄清轨迹，验收 G1 的证据 |
 | `g_capabilities` | id, goal_id, parent_id, name, aliases, weight, target_level, origin | 树形；origin: `generated/adjusted` |
 | `g_capability_claims` | capability_id, claim_id, role | 桥表；role: `supports/gap`；claim_id 指向 evkg claims |
-| `g_assessments` | id, user_id, capability_id, level, rubric_json, confidence, rationale, created_at | 五星评级；rubric_json 拆解四类证据贡献 |
-| `g_gaps` | id, capability_id, current_level, target_level, severity, rationale, status | 缺口 |
+| `g_assessments` | id, user_id, goal_id, capability_id, dimension, status, level, rubric_json, rationale, created_at | 两维度（理解 / 实践）评定；`status: draft/insufficient_evidence/rated`；rubric_json 记录可复算依据（无模型分值） |
+| `g_gaps` | id, user_id, goal_id, capability_id, dimension, current_level, target_level, severity, rationale, assessment_id, status | 缺口（M4-e）：severity `evidence_gap/level_gap_1/level_gap_2plus`；只从评定行派生、可重建校验；status `open/closed`（M5 起流转） |
 | `g_tasks` | id, user_id, gap_id, capability_id, title, objective, est_minutes, deliverable_type, acceptance, status | status: `proposed/active/blocked/done/abandoned` |
 | `g_task_submissions` | id, task_id, source_id, note, created_at | source_id 指向 evkg sources → 完成即产生新证据 |
 | `g_memories` | id, user_id, layer, key, value_json, updated_at | layer: `profile/state`（Growth History 见快照表） |

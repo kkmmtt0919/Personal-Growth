@@ -1,0 +1,31 @@
+{
+  "goal": {
+    "id": "goal_m2_real",
+    "source": "artifacts/m2/session-real.json（真实会话）"
+  },
+  "chat": {
+    "source_id": "src_91fd767b82ee4b31",
+    "kind": "m2_real_session_excerpt",
+    "constructed": false,
+    "attribution": "user_asserted"
+  },
+  "note": {
+    "source_id": "src_8c2b688826e1b42e",
+    "kind": "constructed_note",
+    "constructed": true,
+    "attribution": "user_declared"
+  },
+  "repo": {
+    "url": "kkmmtt0919/mytset-rag",
+    "sha": "c417a096927dbf1f36b1ae1e39fb61b356732d87",
+    "files_selected": 20,
+    "files_total": 35,
+    "constructed": false,
+    "attribution": "user_declared"
+  },
+  "jd": {
+    "fixture": "artifacts/m3d/fixtures/jd_sample.md",
+    "constructed": true,
+    "channel": "domain_reference"
+  }
+}

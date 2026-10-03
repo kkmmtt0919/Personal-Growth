@@ -1,0 +1,115 @@
+{
+  "mode": "real",
+  "checks": {
+    "binding_a_single_http": true,
+    "verifier_a_within_budget": true,
+    "adversarial_a_within_budget": true,
+    "adversarial_a_completed": true,
+    "binding_b_single_http": true,
+    "verifier_b_within_budget": true,
+    "adversarial_b_within_budget": true,
+    "adversarial_b_completed": true,
+    "total_http_within_budget_17": true,
+    "g3a_understanding_ge_2": true,
+    "g3a_practice_not_ge_2": true,
+    "g3b_practice_ge_2": true,
+    "g3b_understanding_not_lower": true,
+    "g3c_jd_classified_domain_reference": true,
+    "g3c_jd_not_in_supports": true,
+    "pipeline_level_verification_consistent": true,
+    "pipeline_gap_verification_consistent": true,
+    "gap_a_practice_is_evidence_gap": true,
+    "g2_at_least_five_traceable": true,
+    "g2_all_traced_verbatim": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 23,
+  "checks_total": 23,
+  "all_checks_passed": true,
+  "detail": {
+    "tree": {
+      "rag": "cap_72c5cf53e0af71881981",
+      "tool": "cap_fd68a5f98d15f7631867",
+      "vector": "cap_495c70eb50bfce4f0c30"
+    },
+    "budget_adjustment": {
+      "discovery": "evkg run_adversarial 的 max_probes 只限制目标 claim 数；模型可对同一 claim 返回多条 probe，裁决调用数 = probe 数（冻结表假设的 1 目标 = 1 probe 不成立；实测 1 个目标返回 ≥3 条 probe）。",
+      "adjustment": "两轮 adversarial 各针对 1 个目标（上限 A=4 / B=5，含 1 次 probe 生成）；verifier A=1（只复核笔记主张，声明类主张不占预算）、verifier B=5；总预算 ≤17 与零额外重试不变。",
+      "coverage": "第二轮 verifier 覆盖 5 条主张（笔记 + 对话 + 3 条仓库主题）；adversarial 每轮 1 条目标。",
+      "requires_user_confirmation": true
+    },
+    "gate_comparison": {
+      "gate": "G3",
+      "criteria": {
+        "primary": "A: practice 不存在 ≥2 等级（insufficient_evidence 也算符合）；B: practice ≥ 2",
+        "observation": "B 实际等级 ≥3 作为增强观察项（不作门条件）",
+        "negative_control": "JD（domain_reference）不得进入 supports"
+      },
+      "round_a": {
+        "understanding": 2,
+        "practice": null,
+        "practice_status": "insufficient_evidence"
+      },
+      "round_b": {
+        "understanding": 2,
+        "practice": 3,
+        "practice_status": "rated"
+      },
+      "passed": true,
+      "observation_b_practice_ge_3": true
+    },
+    "stages": {
+      "binding_a": {
+        "requests": 1
+      },
+      "verifier_a": {
+        "requests": 1,
+        "verified": 1
+      },
+      "adversarial_a": {
+        "requests": 4,
+        "probes": 3,
+        "completed": true
+      },
+      "binding_b": {
+        "requests": 1
+      },
+      "verifier_b": {
+        "requests": 5,
+        "verified": 5
+      },
+      "adversarial_b": {
+        "requests": 5,
+        "probes": 4,
+        "completed": true
+      }
+    },
+    "g2": {
+      "traceable": 7,
+      "walkable": 7,
+      "assessments_total": 7
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "counts": {
+        "sources": 3,
+        "passages": 109,
+        "entities": 60,
+        "entity_aliases": 3,
+        "events": 1,
+        "claims": 2,
+        "evidence": 6,
+        "relations": 2
+      },
+      "g_tables_in_real_db": []
+    },
+    "audit": {
+      "status": "pass",
+      "violations": null
+    }
+  },
+  "temp_db_deleted": true
+}

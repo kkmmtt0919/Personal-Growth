@@ -1,0 +1,742 @@
+{
+  "round_a": {
+    "dimensions": {
+      "understanding": {
+        "status": "rated",
+        "level": 2,
+        "assessment_id": "asm_d3ecf609e425a27f6587",
+        "rationale": null
+      },
+      "practice": {
+        "status": "insufficient_evidence",
+        "level": null,
+        "assessment_id": "asm_dba8703fd50912bd6da0",
+        "rationale": null
+      }
+    },
+    "levels": {
+      "understanding": 2,
+      "practice": null,
+      "status": "assessed"
+    },
+    "gaps": [
+      {
+        "id": "gap_cap_72c5cf53e0af71881981_understanding",
+        "user_id": "local",
+        "goal_id": "goal_m2_real",
+        "capability_id": "cap_72c5cf53e0af71881981",
+        "dimension": "understanding",
+        "current_level": 2,
+        "target_level": 4,
+        "severity": "level_gap_2plus",
+        "rationale": "理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+        "assessment_id": "asm_d3ecf609e425a27f6587",
+        "status": "open"
+      },
+      {
+        "id": "gap_cap_72c5cf53e0af71881981_practice",
+        "user_id": "local",
+        "goal_id": "goal_m2_real",
+        "capability_id": "cap_72c5cf53e0af71881981",
+        "dimension": "practice",
+        "current_level": null,
+        "target_level": 4,
+        "severity": "evidence_gap",
+        "rationale": "缺少可核验的实践证据（证据不足，不判定为低能力）；缺口：缺少可起评的实践证据",
+        "assessment_id": "asm_dba8703fd50912bd6da0",
+        "status": "open"
+      }
+    ],
+    "level_verification": true,
+    "gap_verification": true,
+    "report": {
+      "artifact": "m4d-assessment-report",
+      "capability": {
+        "id": "cap_72c5cf53e0af71881981",
+        "goal_id": "goal_m2_real",
+        "path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "depth": 3,
+        "target_level": 4,
+        "status": "active",
+        "current_level_status": "assessed",
+        "current_level_understanding": 2,
+        "current_level_practice": null
+      },
+      "dimensions": {
+        "understanding": {
+          "assessment_id": "asm_d3ecf609e425a27f6587",
+          "status": "rated",
+          "level": 2,
+          "base_level": 2,
+          "rationale": "理解：基线 2（1 条已绑定主张）",
+          "why_not_higher": [
+            "缺少行为证据（现场作答可通过 probe 补足到 3）"
+          ],
+          "supports": [
+            {
+              "buckets": [
+                "knowledge"
+              ],
+              "cap": null,
+              "claim_id": "clm_770e3c90825701bdb4bd",
+              "evidence_types": [
+                "uploaded_doc"
+              ],
+              "signals": []
+            }
+          ],
+          "reverse_evidence": [],
+          "excluded": []
+        },
+        "practice": {
+          "assessment_id": "asm_dba8703fd50912bd6da0",
+          "status": "insufficient_evidence",
+          "level": null,
+          "base_level": null,
+          "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据",
+          "why_not_higher": [
+            "缺少可起评的实践证据"
+          ],
+          "supports": [],
+          "reverse_evidence": [],
+          "excluded": []
+        }
+      },
+      "supports": [
+        {
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "present": true,
+          "subject": "笔记材料",
+          "predicate": "包含",
+          "object": "相关内容",
+          "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）",
+          "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_a｜proposer=openai_compatible/glm-5.3｜理由：笔记材料整理了RAG检索流程与向量库的要点，直接对应RAG系统搭建与调优相关内容。",
+          "quotes": [
+            {
+              "passage_id": "p_8fe6347ec3e1fa98",
+              "quote": "# 学习笔记：RAG 检索流程整理（受控构造样本）",
+              "quote_verbatim": true,
+              "source_id": "src_8c2b688826e1b42e",
+              "source_title": "note-rag-constructed"
+            }
+          ],
+          "dimension": "understanding",
+          "cap": null,
+          "signals": [],
+          "evidence_types": [
+            "uploaded_doc"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "dimension": "understanding",
+          "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+        },
+        {
+          "dimension": "practice",
+          "text": "缺少可起评的实践证据"
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": [],
+      "rule_version": "m4c-1",
+      "generated_at": "2026-10-03T11:13:34+00:00",
+      "generated_by": "growth_os.assessment.report",
+      "limitations": [
+        "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+        "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+        "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+        "报告不构成对系统整体评估可靠性的结论。"
+      ],
+      "read_only": true
+    },
+    "report_paths": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-a-rag.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-a-rag.md"
+    }
+  },
+  "round_b": {
+    "rag": {
+      "dimensions": {
+        "understanding": {
+          "status": "rated",
+          "level": 2,
+          "assessment_id": "asm_d3ecf609e425a27f6587",
+          "rationale": null
+        },
+        "practice": {
+          "status": "rated",
+          "level": 3,
+          "assessment_id": "asm_eb49ecd7139a41b481eb",
+          "rationale": null
+        }
+      },
+      "levels": {
+        "understanding": 2,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "gaps": [
+        {
+          "id": "gap_cap_72c5cf53e0af71881981_understanding",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "dimension": "understanding",
+          "current_level": 2,
+          "target_level": 4,
+          "severity": "level_gap_2plus",
+          "rationale": "理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+          "assessment_id": "asm_d3ecf609e425a27f6587",
+          "status": "open"
+        },
+        {
+          "id": "gap_cap_72c5cf53e0af71881981_practice",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_72c5cf53e0af71881981",
+          "dimension": "practice",
+          "current_level": 3,
+          "target_level": 4,
+          "severity": "level_gap_1",
+          "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+          "assessment_id": "asm_eb49ecd7139a41b481eb",
+          "status": "open"
+        }
+      ],
+      "level_verification": true,
+      "gap_verification": true,
+      "report": {
+        "artifact": "m4d-assessment-report",
+        "capability": {
+          "id": "cap_72c5cf53e0af71881981",
+          "goal_id": "goal_m2_real",
+          "path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+          "depth": 3,
+          "target_level": 4,
+          "status": "active",
+          "current_level_status": "assessed",
+          "current_level_understanding": 2,
+          "current_level_practice": 3
+        },
+        "dimensions": {
+          "understanding": {
+            "assessment_id": "asm_d3ecf609e425a27f6587",
+            "status": "rated",
+            "level": 2,
+            "base_level": 2,
+            "rationale": "理解：基线 2（1 条已绑定主张）",
+            "why_not_higher": [
+              "缺少行为证据（现场作答可通过 probe 补足到 3）"
+            ],
+            "supports": [
+              {
+                "buckets": [
+                  "knowledge"
+                ],
+                "cap": null,
+                "claim_id": "clm_770e3c90825701bdb4bd",
+                "evidence_types": [
+                  "uploaded_doc"
+                ],
+                "signals": []
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": []
+          },
+          "practice": {
+            "assessment_id": "asm_eb49ecd7139a41b481eb",
+            "status": "rated",
+            "level": 3,
+            "base_level": 3,
+            "rationale": "实践：基线 3（1 条已绑定主张）",
+            "why_not_higher": [
+              "缺少任务证据（独立完成完整任务可到 4）"
+            ],
+            "supports": [
+              {
+                "buckets": [
+                  "practice"
+                ],
+                "cap": null,
+                "claim_id": "clm_568e0c16016df64b06ec",
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "signals": []
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": []
+          }
+        },
+        "supports": [
+          {
+            "claim_id": "clm_770e3c90825701bdb4bd",
+            "present": true,
+            "subject": "笔记材料",
+            "predicate": "包含",
+            "object": "相关内容",
+            "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）",
+            "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_a｜proposer=openai_compatible/glm-5.3｜理由：笔记材料整理了RAG检索流程与向量库的要点，直接对应RAG系统搭建与调优相关内容。",
+            "quotes": [
+              {
+                "passage_id": "p_8fe6347ec3e1fa98",
+                "quote": "# 学习笔记：RAG 检索流程整理（受控构造样本）",
+                "quote_verbatim": true,
+                "source_id": "src_8c2b688826e1b42e",
+                "source_title": "note-rag-constructed"
+              }
+            ],
+            "dimension": "understanding",
+            "cap": null,
+            "signals": [],
+            "evidence_types": [
+              "uploaded_doc"
+            ]
+          },
+          {
+            "claim_id": "clm_568e0c16016df64b06ec",
+            "present": true,
+            "subject": "kkmmtt0919/mytset-rag 项目材料",
+            "predicate": "包含",
+            "object": "RAG 检索服务相关实现",
+            "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）",
+            "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_b｜proposer=openai_compatible/glm-5.3｜理由：项目材料中出现 RAG 检索服务相关实现，与 RAG 系统搭建与调优直接对应。",
+            "quotes": [
+              {
+                "passage_id": "p_97c7118cca0861a2",
+                "quote": "本项目是一个全本地化运行的 AI 驱动测试平台，通过 RAG（检索增强生成）技术实现历史测试用例的语义检索，结合大语言模型自动生成结构化测试用例，并基于自研的 MCP（Model Context Protocol）协议使 AI 能够自主调用 HTTP 工具执行测试，形成 **“需求输入 → 用例生成 → 自动执行 → 结果反馈”** 的完整闭环。",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              },
+              {
+                "passage_id": "p_f6b4c02e7aedcb63",
+                "quote": "# 基于 RAG 与 MCP 的智能接口测试用例生成与执行平台",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              },
+              {
+                "passage_id": "p_97c7118cca0861a2",
+                "quote": "本项目是一个全本地化运行的 AI 驱动测试平台，通过 RAG（检索增强生成）技术实现历史测试用例的语义检索，结合大语言模型自动生成结构化测试用例，并基于自研的 MCP（Model Context Protocol）协议使 AI 能够自主调用 HTTP 工具执行测试，形成 **“需求输入 → 用例生成 → 自动执行 → 结果反馈”** 的完整闭环。",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              },
+              {
+                "passage_id": "p_f6b4c02e7aedcb63",
+                "quote": "# 基于 RAG 与 MCP 的智能接口测试用例生成与执行平台",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              }
+            ],
+            "dimension": "practice",
+            "cap": null,
+            "signals": [],
+            "evidence_types": [
+              "repo_artifact"
+            ]
+          }
+        ],
+        "gaps": [
+          {
+            "dimension": "understanding",
+            "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+          },
+          {
+            "dimension": "practice",
+            "text": "缺少任务证据（独立完成完整任务可到 4）"
+          }
+        ],
+        "reverse_evidence": [],
+        "excluded": [],
+        "rule_version": "m4c-1",
+        "generated_at": "2026-10-03T11:14:11+00:00",
+        "generated_by": "growth_os.assessment.report",
+        "limitations": [
+          "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+          "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+          "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+          "报告不构成对系统整体评估可靠性的结论。"
+        ],
+        "read_only": true
+      },
+      "report_paths": {
+        "json": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-rag.json",
+        "markdown": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-rag.md"
+      }
+    },
+    "tool": {
+      "dimensions": {
+        "understanding": {
+          "status": "insufficient_evidence",
+          "level": null,
+          "assessment_id": "asm_5d1008612bd7811d7627",
+          "rationale": null
+        },
+        "practice": {
+          "status": "rated",
+          "level": 3,
+          "assessment_id": "asm_5ded9789d1e5fb17fd6a",
+          "rationale": null
+        }
+      },
+      "levels": {
+        "understanding": null,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "gaps": [
+        {
+          "id": "gap_cap_fd68a5f98d15f7631867_understanding",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "dimension": "understanding",
+          "current_level": null,
+          "target_level": 4,
+          "severity": "evidence_gap",
+          "rationale": "缺少可核验的理解证据（证据不足，不判定为低能力）；缺口：缺少可起评的理解证据",
+          "assessment_id": "asm_5d1008612bd7811d7627",
+          "status": "open"
+        },
+        {
+          "id": "gap_cap_fd68a5f98d15f7631867_practice",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_fd68a5f98d15f7631867",
+          "dimension": "practice",
+          "current_level": 3,
+          "target_level": 4,
+          "severity": "level_gap_1",
+          "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+          "assessment_id": "asm_5ded9789d1e5fb17fd6a",
+          "status": "open"
+        }
+      ],
+      "level_verification": true,
+      "gap_verification": true,
+      "report": {
+        "artifact": "m4d-assessment-report",
+        "capability": {
+          "id": "cap_fd68a5f98d15f7631867",
+          "goal_id": "goal_m2_real",
+          "path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+          "depth": 3,
+          "target_level": 4,
+          "status": "active",
+          "current_level_status": "assessed",
+          "current_level_understanding": null,
+          "current_level_practice": 3
+        },
+        "dimensions": {
+          "understanding": {
+            "assessment_id": "asm_5d1008612bd7811d7627",
+            "status": "insufficient_evidence",
+            "level": null,
+            "base_level": null,
+            "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据",
+            "why_not_higher": [
+              "缺少可起评的理解证据"
+            ],
+            "supports": [],
+            "reverse_evidence": [],
+            "excluded": []
+          },
+          "practice": {
+            "assessment_id": "asm_5ded9789d1e5fb17fd6a",
+            "status": "rated",
+            "level": 3,
+            "base_level": 3,
+            "rationale": "实践：基线 3（1 条已绑定主张）",
+            "why_not_higher": [
+              "缺少任务证据（独立完成完整任务可到 4）"
+            ],
+            "supports": [
+              {
+                "buckets": [
+                  "practice"
+                ],
+                "cap": null,
+                "claim_id": "clm_fd9d8f45f862f8766535",
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "signals": []
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": []
+          }
+        },
+        "supports": [
+          {
+            "claim_id": "clm_fd9d8f45f862f8766535",
+            "present": true,
+            "subject": "kkmmtt0919/mytset-rag 项目材料",
+            "predicate": "包含",
+            "object": "MCP 工具注册与调用相关实现",
+            "statement": "项目材料中出现MCP 工具注册与调用相关实现（依据所引原文段落）",
+            "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_b｜proposer=openai_compatible/glm-5.3｜理由：项目材料中出现 MCP 工具注册与调用相关实现，对应自定义工具集成与 MCP 能力点。",
+            "quotes": [
+              {
+                "passage_id": "p_f6b4c02e7aedcb63",
+                "quote": "# 基于 RAG 与 MCP 的智能接口测试用例生成与执行平台",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              },
+              {
+                "passage_id": "p_97c7118cca0861a2",
+                "quote": "本项目是一个全本地化运行的 AI 驱动测试平台，通过 RAG（检索增强生成）技术实现历史测试用例的语义检索，结合大语言模型自动生成结构化测试用例，并基于自研的 MCP（Model Context Protocol）协议使 AI 能够自主调用 HTTP 工具执行测试，形成 **“需求输入 → 用例生成 → 自动执行 → 结果反馈”** 的完整闭环。",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              }
+            ],
+            "dimension": "practice",
+            "cap": null,
+            "signals": [],
+            "evidence_types": [
+              "repo_artifact"
+            ]
+          }
+        ],
+        "gaps": [
+          {
+            "dimension": "understanding",
+            "text": "缺少可起评的理解证据"
+          },
+          {
+            "dimension": "practice",
+            "text": "缺少任务证据（独立完成完整任务可到 4）"
+          }
+        ],
+        "reverse_evidence": [],
+        "excluded": [],
+        "rule_version": "m4c-1",
+        "generated_at": "2026-10-03T11:14:11+00:00",
+        "generated_by": "growth_os.assessment.report",
+        "limitations": [
+          "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+          "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+          "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+          "报告不构成对系统整体评估可靠性的结论。"
+        ],
+        "read_only": true
+      },
+      "report_paths": {
+        "json": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-tool.json",
+        "markdown": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-tool.md"
+      }
+    },
+    "vector": {
+      "dimensions": {
+        "understanding": {
+          "status": "insufficient_evidence",
+          "level": null,
+          "assessment_id": "asm_00c6d6d819c2d2d701c3",
+          "rationale": null
+        },
+        "practice": {
+          "status": "rated",
+          "level": 3,
+          "assessment_id": "asm_fca6906c4374c9357f55",
+          "rationale": null
+        }
+      },
+      "levels": {
+        "understanding": null,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "gaps": [
+        {
+          "id": "gap_cap_495c70eb50bfce4f0c30_understanding",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "dimension": "understanding",
+          "current_level": null,
+          "target_level": 4,
+          "severity": "evidence_gap",
+          "rationale": "缺少可核验的理解证据（证据不足，不判定为低能力）；缺口：缺少可起评的理解证据",
+          "assessment_id": "asm_00c6d6d819c2d2d701c3",
+          "status": "open"
+        },
+        {
+          "id": "gap_cap_495c70eb50bfce4f0c30_practice",
+          "user_id": "local",
+          "goal_id": "goal_m2_real",
+          "capability_id": "cap_495c70eb50bfce4f0c30",
+          "dimension": "practice",
+          "current_level": 3,
+          "target_level": 4,
+          "severity": "level_gap_1",
+          "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+          "assessment_id": "asm_fca6906c4374c9357f55",
+          "status": "open"
+        }
+      ],
+      "level_verification": true,
+      "gap_verification": true,
+      "report": {
+        "artifact": "m4d-assessment-report",
+        "capability": {
+          "id": "cap_495c70eb50bfce4f0c30",
+          "goal_id": "goal_m2_real",
+          "path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+          "depth": 3,
+          "target_level": 4,
+          "status": "active",
+          "current_level_status": "assessed",
+          "current_level_understanding": null,
+          "current_level_practice": 3
+        },
+        "dimensions": {
+          "understanding": {
+            "assessment_id": "asm_00c6d6d819c2d2d701c3",
+            "status": "insufficient_evidence",
+            "level": null,
+            "base_level": null,
+            "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据",
+            "why_not_higher": [
+              "缺少可起评的理解证据"
+            ],
+            "supports": [],
+            "reverse_evidence": [],
+            "excluded": []
+          },
+          "practice": {
+            "assessment_id": "asm_fca6906c4374c9357f55",
+            "status": "rated",
+            "level": 3,
+            "base_level": 3,
+            "rationale": "实践：基线 3（1 条已绑定主张）",
+            "why_not_higher": [
+              "缺少任务证据（独立完成完整任务可到 4）"
+            ],
+            "supports": [
+              {
+                "buckets": [
+                  "practice"
+                ],
+                "cap": null,
+                "claim_id": "clm_18c52b82b62d169ee63d",
+                "evidence_types": [
+                  "repo_artifact"
+                ],
+                "signals": []
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": []
+          }
+        },
+        "supports": [
+          {
+            "claim_id": "clm_18c52b82b62d169ee63d",
+            "present": true,
+            "subject": "kkmmtt0919/mytset-rag 项目材料",
+            "predicate": "包含",
+            "object": "向量检索与向量库依赖",
+            "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）",
+            "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_b｜proposer=openai_compatible/glm-5.3｜理由：项目材料中出现向量检索与向量库依赖，对应记忆机制中的向量检索能力点。",
+            "quotes": [
+              {
+                "passage_id": "p_90729473ff0b0ce7",
+                "quote": "@Data\npublic class VectorSearchResult {\n    private String id;\n    private Map<String, Object> metadata;   // 存储用例的关键字段\n    private Double distance;\n    private String document;\n}",
+                "quote_verbatim": true,
+                "source_id": "src_05f573fc9ca9ce10",
+                "source_title": "kkmmtt0919/mytset-rag:src/main/java/com/hw/dto/VectorSearchResult.java"
+              },
+              {
+                "passage_id": "p_a379e5c4429aa3af",
+                "quote": "- 🔍 **RAG 智能检索**：基于 `bge-m3` 嵌入模型与 ChromaDB 实现语义检索，召回率（Hit@5）从 65% 提升至 92% - 🤖 **AI 用例生成**：结合检索结果与 Prompt 模板，生成正向、异常、边界、安全等多维度测试用例，场景覆盖率达 95% - 🔌 **MCP 自主执行**：自研 JSON-RPC over HTTP 的 MCP 协议端点，AI 可自主调用 HTTP 工具执行用例，执行成功率稳定在 82% 以上 - ⚙️ **全自动化闭环**：从需求输入到用例生成、执行、断言判断全流程自动化，首次可执行率 91%，人工介入时间下降 60% - 🚀 **高性能优化**：通过缓存、Prompt 精简等手段，单接口用例生成 P99 响应时间从 8s 优化至 2.5s",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              },
+              {
+                "passage_id": "p_90729473ff0b0ce7",
+                "quote": "@Data\npublic class VectorSearchResult {\n    private String id;\n    private Map<String, Object> metadata;   // 存储用例的关键字段\n    private Double distance;\n    private String document;\n}",
+                "quote_verbatim": true,
+                "source_id": "src_05f573fc9ca9ce10",
+                "source_title": "kkmmtt0919/mytset-rag:src/main/java/com/hw/dto/VectorSearchResult.java"
+              },
+              {
+                "passage_id": "p_a379e5c4429aa3af",
+                "quote": "- 🔍 **RAG 智能检索**：基于 `bge-m3` 嵌入模型与 ChromaDB 实现语义检索，召回率（Hit@5）从 65% 提升至 92% - 🤖 **AI 用例生成**：结合检索结果与 Prompt 模板，生成正向、异常、边界、安全等多维度测试用例，场景覆盖率达 95% - 🔌 **MCP 自主执行**：自研 JSON-RPC over HTTP 的 MCP 协议端点，AI 可自主调用 HTTP 工具执行用例，执行成功率稳定在 82% 以上 - ⚙️ **全自动化闭环**：从需求输入到用例生成、执行、断言判断全流程自动化，首次可执行率 91%，人工介入时间下降 60% - 🚀 **高性能优化**：通过缓存、Prompt 精简等手段，单接口用例生成 P99 响应时间从 8s 优化至 2.5s",
+                "quote_verbatim": true,
+                "source_id": "src_12e9a3b99b369f96",
+                "source_title": "kkmmtt0919/mytset-rag:README.md"
+              }
+            ],
+            "dimension": "practice",
+            "cap": null,
+            "signals": [],
+            "evidence_types": [
+              "repo_artifact"
+            ]
+          }
+        ],
+        "gaps": [
+          {
+            "dimension": "understanding",
+            "text": "缺少可起评的理解证据"
+          },
+          {
+            "dimension": "practice",
+            "text": "缺少任务证据（独立完成完整任务可到 4）"
+          }
+        ],
+        "reverse_evidence": [],
+        "excluded": [],
+        "rule_version": "m4c-1",
+        "generated_at": "2026-10-03T11:14:12+00:00",
+        "generated_by": "growth_os.assessment.report",
+        "limitations": [
+          "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+          "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+          "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+          "报告不构成对系统整体评估可靠性的结论。"
+        ],
+        "read_only": true
+      },
+      "report_paths": {
+        "json": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-vector.json",
+        "markdown": "D:\\projects\\Personal Growth\\artifacts\\gates\\G3\\reports\\g3-b-vector.md"
+      }
+    }
+  },
+  "checks": {
+    "binding_a_single_http": true,
+    "verifier_a_within_budget": true,
+    "adversarial_a_within_budget": true,
+    "adversarial_a_completed": true,
+    "binding_b_single_http": true,
+    "verifier_b_within_budget": true,
+    "adversarial_b_within_budget": true,
+    "adversarial_b_completed": true,
+    "total_http_within_budget_17": true,
+    "g3a_understanding_ge_2": true,
+    "g3a_practice_not_ge_2": true,
+    "g3b_practice_ge_2": true,
+    "g3b_understanding_not_lower": true,
+    "g3c_jd_classified_domain_reference": true,
+    "g3c_jd_not_in_supports": true,
+    "pipeline_level_verification_consistent": true,
+    "pipeline_gap_verification_consistent": true,
+    "gap_a_practice_is_evidence_gap": true,
+    "g2_at_least_five_traceable": true,
+    "g2_all_traced_verbatim": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  }
+}

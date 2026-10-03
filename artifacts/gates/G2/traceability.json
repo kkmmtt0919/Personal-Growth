@@ -1,0 +1,401 @@
+{
+  "gate": "G2",
+  "requirement": "随机抽 5 条 assessment：assessment → claim → evidence → passage → source 逐跳 + 引文逐字",
+  "sampling": "全量遍历可追溯评定行（确定性遍历，非人工挑选），取前 5 条为抽样",
+  "assessments_total": 7,
+  "traceable_total": 7,
+  "walkable_total": 7,
+  "sample_count": 5,
+  "all_traceable_complete": true,
+  "sample": [
+    {
+      "assessment_id": "asm_00c6d6d819c2d2d701c3",
+      "capability_id": "cap_495c70eb50bfce4f0c30",
+      "dimension": "understanding",
+      "status": "insufficient_evidence",
+      "level": null,
+      "trace_path": "capability_bindings",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_18c52b82b62d169ee63d",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_05f573fc9ca9ce10",
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_fca6906c4374c9357f55",
+      "capability_id": "cap_495c70eb50bfce4f0c30",
+      "dimension": "practice",
+      "status": "rated",
+      "level": 3,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_18c52b82b62d169ee63d",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_05f573fc9ca9ce10",
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_d3ecf609e425a27f6587",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "understanding",
+      "status": "rated",
+      "level": 2,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 1,
+          "missing": [],
+          "sources": [
+            "src_8c2b688826e1b42e"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_dba8703fd50912bd6da0",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "practice",
+      "status": "insufficient_evidence",
+      "level": null,
+      "trace_path": "capability_bindings",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_568e0c16016df64b06ec",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）"
+        },
+        {
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 1,
+          "missing": [],
+          "sources": [
+            "src_8c2b688826e1b42e"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_eb49ecd7139a41b481eb",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "practice",
+      "status": "rated",
+      "level": 3,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_568e0c16016df64b06ec",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）"
+        }
+      ]
+    }
+  ],
+  "all": [
+    {
+      "assessment_id": "asm_00c6d6d819c2d2d701c3",
+      "capability_id": "cap_495c70eb50bfce4f0c30",
+      "dimension": "understanding",
+      "status": "insufficient_evidence",
+      "level": null,
+      "trace_path": "capability_bindings",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_18c52b82b62d169ee63d",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_05f573fc9ca9ce10",
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_fca6906c4374c9357f55",
+      "capability_id": "cap_495c70eb50bfce4f0c30",
+      "dimension": "practice",
+      "status": "rated",
+      "level": 3,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_18c52b82b62d169ee63d",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_05f573fc9ca9ce10",
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_d3ecf609e425a27f6587",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "understanding",
+      "status": "rated",
+      "level": 2,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 1,
+          "missing": [],
+          "sources": [
+            "src_8c2b688826e1b42e"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_dba8703fd50912bd6da0",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "practice",
+      "status": "insufficient_evidence",
+      "level": null,
+      "trace_path": "capability_bindings",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_568e0c16016df64b06ec",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）"
+        },
+        {
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 1,
+          "missing": [],
+          "sources": [
+            "src_8c2b688826e1b42e"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_eb49ecd7139a41b481eb",
+      "capability_id": "cap_72c5cf53e0af71881981",
+      "dimension": "practice",
+      "status": "rated",
+      "level": 3,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_568e0c16016df64b06ec",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 4,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_5d1008612bd7811d7627",
+      "capability_id": "cap_fd68a5f98d15f7631867",
+      "dimension": "understanding",
+      "status": "insufficient_evidence",
+      "level": null,
+      "trace_path": "capability_bindings",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_fd9d8f45f862f8766535",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 2,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现MCP 工具注册与调用相关实现（依据所引原文段落）"
+        }
+      ]
+    },
+    {
+      "assessment_id": "asm_5ded9789d1e5fb17fd6a",
+      "capability_id": "cap_fd68a5f98d15f7631867",
+      "dimension": "practice",
+      "status": "rated",
+      "level": 3,
+      "trace_path": "supports",
+      "walkable": true,
+      "complete": true,
+      "claims": [
+        {
+          "claim_id": "clm_fd9d8f45f862f8766535",
+          "complete": true,
+          "classification": "admissible",
+          "admissible": true,
+          "chain_complete": true,
+          "quote_verbatim": true,
+          "evidence_rows": 2,
+          "missing": [],
+          "sources": [
+            "src_12e9a3b99b369f96"
+          ],
+          "channels": [
+            "user_evidence"
+          ],
+          "statement": "项目材料中出现MCP 工具注册与调用相关实现（依据所引原文段落）"
+        }
+      ]
+    }
+  ],
+  "note": "insufficient_evidence 行按设计没有支撑集（'证据不足'本身是结论）——其追溯走 trace_path=capability_bindings（该能力点绑定的主张集合），用于证明'不足'判断是对真实、链路完整的已绑定证据做出的。"
+}

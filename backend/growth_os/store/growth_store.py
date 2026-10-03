@@ -78,6 +78,16 @@ LEVEL_RANGE = (1, 5)
 CLAIM_ROLES = ("supports", "gap")
 """`g_capability_claims` 桥表角色（ARCHITECTURE §4.3）。"""
 
+GAP_SEVERITIES = ("evidence_gap", "level_gap_1", "level_gap_2plus")
+"""缺口严重度（M4-e 冻结）：只表达「与目标的差 + rubric 缺口」，不承担能力诊断。
+
+- `evidence_gap`：评定为 `insufficient_evidence` —— 缺可核验证据，**不判定为低能力**；
+- `level_gap_1` / `level_gap_2plus`：已评定但低于目标（差 1 / 差 ≥2 级）。
+"""
+
+GAP_STATUSES = ("open", "closed")
+"""缺口状态：M4-e 只产生 `open`；重算后不再成立 → `closed`（保留行，不删除历史）。"""
+
 GOAL_ELEMENTS = ("direction", "purpose", "horizon", "measurable_result")
 """confirmed goal 必须齐全的四要素：方向 / 目的 / 时间周期 / 可衡量结果。"""
 
@@ -89,6 +99,11 @@ def default_db_path() -> str:
 
 def normalize_name(value: str) -> str:
     return re.sub(r"\s+", " ", value or "").strip().casefold()
+
+
+def gap_id(capability_id_: str, dimension: str) -> str:
+    """缺口的稳定逻辑标识：一个（能力点 × 维度）最多一条当前缺口（幂等重算）。"""
+    return f"gap_{capability_id_}_{dimension}"
 
 
 def capability_id(goal_id: str, path: str, name: str) -> str:
@@ -263,6 +278,22 @@ class GrowthStore:
                 latency_ms INTEGER,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS g_gaps (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                goal_id TEXT NOT NULL,
+                capability_id TEXT NOT NULL,
+                dimension TEXT NOT NULL,
+                current_level INTEGER,
+                target_level INTEGER,
+                severity TEXT NOT NULL,
+                rationale TEXT NOT NULL,
+                assessment_id TEXT,
+                status TEXT NOT NULL DEFAULT 'open',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(capability_id, dimension)
+            );
             """
         )
         # 已有库的列迁移（CREATE TABLE IF NOT EXISTS 不会补列）：
@@ -290,6 +321,20 @@ class GrowthStore:
             self.db.execute(
                 "ALTER TABLE g_capabilities ADD COLUMN current_level_practice INTEGER"
             )
+        # M4-e：g_gaps 的早期形状（ARCHITECTURE §4.3 只有 id/capability_id/...）补维度列。
+        gap_columns = {
+            row[1] for row in self.db.execute("PRAGMA table_info(g_gaps)").fetchall()
+        }
+        if gap_columns and "dimension" not in gap_columns:
+            self.db.execute("ALTER TABLE g_gaps ADD COLUMN dimension TEXT")
+        if gap_columns and "user_id" not in gap_columns:
+            self.db.execute("ALTER TABLE g_gaps ADD COLUMN user_id TEXT NOT NULL DEFAULT 'local'")
+        if gap_columns and "goal_id" not in gap_columns:
+            self.db.execute("ALTER TABLE g_gaps ADD COLUMN goal_id TEXT NOT NULL DEFAULT ''")
+        if gap_columns and "assessment_id" not in gap_columns:
+            self.db.execute("ALTER TABLE g_gaps ADD COLUMN assessment_id TEXT")
+        if gap_columns and "updated_at" not in gap_columns:
+            self.db.execute("ALTER TABLE g_gaps ADD COLUMN updated_at TEXT")
         self.db.commit()
 
     # -- g_users ----------------------------------------------------------
@@ -844,6 +889,151 @@ class GrowthStore:
             "status": capability["current_level_status"],
         }
         return {"consistent": stored == expected, "expected": expected, "stored": stored}
+
+    # -- g_gaps -----------------------------------------------------------
+
+    def expected_gaps(self, capability_id: str) -> list[dict]:
+        """从**已存在的评定行**重算缺口（M4-e 冻结规则）。
+
+        * 无评定（含只有草案）→ 该维度**不产生缺口**（未评估 ≠ 缺口）；
+        * `insufficient_evidence` → `evidence_gap`（缺可核验证据，不判定为低能力）；
+        * `rated` 且低于目标 → `level_gap_1` / `level_gap_2plus`（差 1 / 差 ≥2）；
+        * `rated` 且达到/超过目标 → 无缺口（已有行会由 `apply_gaps` 置 `closed`）。
+
+        `rationale` 只由「等级对照 + `rubric.gaps` 原文」拼成 —— 不生成
+        额外的能力判断（M4-d 冻结的 gaps-only 纪律）。
+        """
+        capability = self.get_capability(capability_id)
+        _require(capability is not None, f"未知能力点: {capability_id}")
+        target = capability["target_level"]
+        gaps: list[dict] = []
+        for dimension in ASSESSMENT_DIMENSIONS:
+            row = self.latest_assessment(capability_id, dimension)
+            if row is None:
+                continue
+            rubric = json.loads(row["rubric_json"]) if row.get("rubric_json") else {}
+            texts = [str(item) for item in (rubric.get("gaps") or [])]
+            label = "理解" if dimension == "understanding" else "实践"
+            if row["status"] == "insufficient_evidence":
+                severity = "evidence_gap"
+                current = None
+                rationale = f"缺少可核验的{label}证据（证据不足，不判定为低能力）"
+            else:
+                current = row["level"]
+                if target is None or current >= target:
+                    continue
+                difference = target - current
+                severity = "level_gap_1" if difference == 1 else "level_gap_2plus"
+                rationale = f"{label} {current} 级，目标 {target} 级（差 {difference} 级）"
+            if texts:
+                rationale += "；缺口：" + "；".join(texts)
+            gaps.append(
+                {
+                    "id": gap_id(capability_id, dimension),
+                    "user_id": row["user_id"],
+                    "goal_id": row["goal_id"],
+                    "capability_id": capability_id,
+                    "dimension": dimension,
+                    "current_level": current,
+                    "target_level": target,
+                    "severity": severity,
+                    "rationale": rationale,
+                    "assessment_id": row["id"],
+                    "status": "open",
+                }
+            )
+        return gaps
+
+    def apply_gaps(self, capability_id: str) -> dict:
+        """缺口回填（**唯一**可写 `g_gaps` 的路径）：重算 → upsert `open` → 失效行 `closed`。
+
+        与 `apply_assessment_levels` 同款纪律：缺口是派生数据，任何时刻都必须能从
+        评定行重算；同一（能力点 × 维度）最多一条 `open` 行（UNIQUE 约束兜底）。
+        """
+        expected = self.expected_gaps(capability_id)
+        keep = {item["id"] for item in expected}
+        for item in expected:
+            self.db.execute(
+                """
+                INSERT INTO g_gaps(id, user_id, goal_id, capability_id, dimension,
+                                   current_level, target_level, severity, rationale,
+                                   assessment_id, status)
+                VALUES(:id, :user_id, :goal_id, :capability_id, :dimension,
+                       :current_level, :target_level, :severity, :rationale,
+                       :assessment_id, 'open')
+                ON CONFLICT(id) DO UPDATE SET
+                    current_level=excluded.current_level,
+                    target_level=excluded.target_level,
+                    severity=excluded.severity,
+                    rationale=excluded.rationale,
+                    assessment_id=excluded.assessment_id,
+                    status='open',
+                    updated_at=CURRENT_TIMESTAMP
+                """,
+                item,
+            )
+        stale = [
+            row["id"]
+            for row in self.db.execute(
+                "SELECT id FROM g_gaps WHERE capability_id=? AND status='open'",
+                (capability_id,),
+            ).fetchall()
+            if row["id"] not in keep
+        ]
+        for identifier in stale:
+            self.db.execute(
+                "UPDATE g_gaps SET status='closed', updated_at=CURRENT_TIMESTAMP WHERE id=?",
+                (identifier,),
+            )
+        self.db.commit()
+        return {"gaps": expected, "closed": stale}
+
+    def verify_gaps(self, capability_id: str) -> dict:
+        """重建校验：`open` 缺口行必须等于从评定行重算的结果（含"多出的行"）。"""
+        expected = self.expected_gaps(capability_id)
+        fields = (
+            "id",
+            "dimension",
+            "current_level",
+            "target_level",
+            "severity",
+            "rationale",
+            "assessment_id",
+            "status",
+        )
+        stored = [
+            {key: row[key] for key in fields}
+            for row in self.db.execute(
+                "SELECT * FROM g_gaps WHERE capability_id=? AND status='open' "
+                "ORDER BY dimension",
+                (capability_id,),
+            ).fetchall()
+        ]
+        expected_sorted = sorted(
+            ({key: item[key] for key in fields} for item in expected),
+            key=lambda item: item["dimension"],
+        )
+        return {
+            "consistent": stored == expected_sorted,
+            "expected": expected_sorted,
+            "stored": stored,
+        }
+
+    def list_gaps(
+        self, *, capability_id: str | None = None, status: str | None = None
+    ) -> list[dict]:
+        if status is not None:
+            _require(status in GAP_STATUSES, f"未知缺口状态: {status!r}")
+        sql = "SELECT * FROM g_gaps WHERE 1=1"
+        params: list[Any] = []
+        if capability_id:
+            sql += " AND capability_id=?"
+            params.append(capability_id)
+        if status:
+            sql += " AND status=?"
+            params.append(status)
+        sql += " ORDER BY capability_id, dimension"
+        return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
 
     # -- g_agent_runs -----------------------------------------------------
 

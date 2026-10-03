@@ -1,0 +1,587 @@
+{
+  "stages": {
+    "binding_a": {
+      "requests": 1
+    },
+    "verifier_a": {
+      "requests": 1,
+      "verified": 1
+    },
+    "adversarial_a": {
+      "requests": 4,
+      "probes": 3,
+      "completed": true
+    },
+    "binding_b": {
+      "requests": 1
+    },
+    "verifier_b": {
+      "requests": 5,
+      "verified": 5
+    },
+    "adversarial_b": {
+      "requests": 5,
+      "probes": 4,
+      "completed": true
+    }
+  },
+  "total_http": 17,
+  "binding_a": {
+    "artifact": "m4b-binding-proposals",
+    "mode": "real",
+    "generated_at": "2026-10-03T11:14:12+00:00",
+    "db_path": "D:\\projects\\Personal Growth\\artifacts\\m4e\\tmp\\g3-experiment.db",
+    "read_only": true,
+    "run_id": "m4e_real_bind_a",
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "goal_id": "goal_m2_real",
+    "candidates": [
+      "clm_770e3c90825701bdb4bd",
+      "clm_aafdac7e331ba2fff121"
+    ],
+    "proposals": [
+      {
+        "claim_id": "clm_770e3c90825701bdb4bd",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "笔记材料整理了RAG检索流程与向量库的要点，直接对应RAG系统搭建与调优相关内容。",
+        "proposal_id": "prp_0bc77c9f32ae3b7c",
+        "run_id": "m4e_real_bind_a"
+      }
+    ],
+    "decisions": [
+      {
+        "proposal_id": "prp_0bc77c9f32ae3b7c",
+        "claim_id": "clm_770e3c90825701bdb4bd",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "笔记材料整理了RAG检索流程与向量库的要点，直接对应RAG系统搭建与调优相关内容。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_72c5cf53e0af71881981",
+        "run_id": "m4e_real_bind_a",
+        "timestamp": "2026-10-03T11:13:20+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      }
+    ],
+    "accepted_count": 1,
+    "rejected_count": 0
+  },
+  "binding_b": {
+    "artifact": "m4b-binding-proposals",
+    "mode": "real",
+    "generated_at": "2026-10-03T11:14:12+00:00",
+    "db_path": "D:\\projects\\Personal Growth\\artifacts\\m4e\\tmp\\g3-experiment.db",
+    "read_only": true,
+    "run_id": "m4e_real_bind_b",
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "goal_id": "goal_m2_real",
+    "candidates": [
+      "clm_770e3c90825701bdb4bd",
+      "clm_aafdac7e331ba2fff121",
+      "clm_568e0c16016df64b06ec",
+      "clm_25b8fb047f3615790424",
+      "clm_fd9d8f45f862f8766535",
+      "clm_0165b3190334b596b4e0",
+      "clm_18c52b82b62d169ee63d",
+      "clm_52f2702bc1ef985747bf"
+    ],
+    "proposals": [
+      {
+        "claim_id": "clm_770e3c90825701bdb4bd",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "笔记材料整理了 RAG 检索流程与向量库的要点，与 RAG 系统搭建与调优相关。",
+        "proposal_id": "prp_d65ae335c0642670",
+        "run_id": "m4e_real_bind_b"
+      },
+      {
+        "claim_id": "clm_568e0c16016df64b06ec",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "项目材料中出现 RAG 检索服务相关实现，与 RAG 系统搭建与调优直接对应。",
+        "proposal_id": "prp_2f0233facd2bf15b",
+        "run_id": "m4e_real_bind_b"
+      },
+      {
+        "claim_id": "clm_fd9d8f45f862f8766535",
+        "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+        "rationale": "项目材料中出现 MCP 工具注册与调用相关实现，对应自定义工具集成与 MCP 能力点。",
+        "proposal_id": "prp_0c670e864ca8ec8c",
+        "run_id": "m4e_real_bind_b"
+      },
+      {
+        "claim_id": "clm_18c52b82b62d169ee63d",
+        "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+        "rationale": "项目材料中出现向量检索与向量库依赖，对应记忆机制中的向量检索能力点。",
+        "proposal_id": "prp_3cdcc115f011e7b4",
+        "run_id": "m4e_real_bind_b"
+      }
+    ],
+    "decisions": [
+      {
+        "proposal_id": "prp_d65ae335c0642670",
+        "claim_id": "clm_770e3c90825701bdb4bd",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "笔记材料整理了 RAG 检索流程与向量库的要点，与 RAG 系统搭建与调优相关。",
+        "accepted": false,
+        "gate_stage": "duplicate",
+        "reject_reason": "该主张已绑定到此能力点（幂等：重复提议不再落库）",
+        "capability_id": "cap_72c5cf53e0af71881981",
+        "run_id": "m4e_real_bind_b",
+        "timestamp": "2026-10-03T11:13:40+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged"
+        ]
+      },
+      {
+        "proposal_id": "prp_2f0233facd2bf15b",
+        "claim_id": "clm_568e0c16016df64b06ec",
+        "capability_path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+        "rationale": "项目材料中出现 RAG 检索服务相关实现，与 RAG 系统搭建与调优直接对应。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_72c5cf53e0af71881981",
+        "run_id": "m4e_real_bind_b",
+        "timestamp": "2026-10-03T11:13:40+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_0c670e864ca8ec8c",
+        "claim_id": "clm_fd9d8f45f862f8766535",
+        "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+        "rationale": "项目材料中出现 MCP 工具注册与调用相关实现，对应自定义工具集成与 MCP 能力点。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_fd68a5f98d15f7631867",
+        "run_id": "m4e_real_bind_b",
+        "timestamp": "2026-10-03T11:13:40+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_3cdcc115f011e7b4",
+        "claim_id": "clm_18c52b82b62d169ee63d",
+        "capability_path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+        "rationale": "项目材料中出现向量检索与向量库依赖，对应记忆机制中的向量检索能力点。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_495c70eb50bfce4f0c30",
+        "run_id": "m4e_real_bind_b",
+        "timestamp": "2026-10-03T11:13:40+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      }
+    ],
+    "accepted_count": 3,
+    "rejected_count": 1
+  },
+  "verifier_a": {
+    "status": "complete",
+    "verified": 1,
+    "evidence_sufficient": 1,
+    "disputed": 0,
+    "independent_verifier": true,
+    "details": [
+      {
+        "claim_id": "clm_0165b3190334b596b4e0",
+        "evidence_sufficient": true,
+        "polarity": "supports",
+        "concerns": [],
+        "revised_confidence": 0.95,
+        "status": "machine_reviewed",
+        "verifier_model": "deepseek-flash"
+      }
+    ]
+  },
+  "verifier_b": {
+    "status": "complete",
+    "verified": 5,
+    "evidence_sufficient": 4,
+    "disputed": 1,
+    "independent_verifier": true,
+    "details": [
+      {
+        "claim_id": "clm_0165b3190334b596b4e0",
+        "evidence_sufficient": true,
+        "polarity": "supports",
+        "concerns": [
+          "证据为项目材料中的自述性描述，能够证明材料中出现了“测试用例生成”相关内容，但不能证明该能力已被实际实现或经过实践验证；不过本主张范围仅限项目材料内容，因此不影响判断。"
+        ],
+        "revised_confidence": 0.95,
+        "status": "machine_reviewed",
+        "verifier_model": "deepseek-flash"
+      },
+      {
+        "claim_id": "clm_18c52b82b62d169ee63d",
+        "evidence_sufficient": true,
+        "polarity": "supports",
+        "concerns": [
+          "原文段落明确提到 bge-m3 与 ChromaDB 语义检索，但未展示具体依赖声明文件（如 pom.xml/build.gradle）来证明“依赖”层面的存在；此处仅按“项目材料中出现”这一材料口径判断。"
+        ],
+        "revised_confidence": 0.88,
+        "status": "machine_reviewed",
+        "verifier_model": "deepseek-flash"
+      },
+      {
+        "claim_id": "clm_25b8fb047f3615790424",
+        "evidence_sufficient": true,
+        "polarity": "supports",
+        "concerns": [
+          "所引片段仅展示一个 Java DTO 类，不能证明完整服务端实现或功能可用性。",
+          "“服务端”属性主要由包名 com.hw.dto 和类名 VectorSearchResult 推断，未提供构建/运行配置佐证。",
+          "不能证明代码由项目作者独立完成。"
+        ],
+        "revised_confidence": 0.9,
+        "status": "machine_reviewed",
+        "verifier_model": "deepseek-flash"
+      },
+      {
+        "claim_id": "clm_52f2702bc1ef985747bf",
+        "evidence_sufficient": false,
+        "polarity": "partial",
+        "concerns": [
+          "所引 passage 仅为标题“AI 应用工程师（Agent 方向）· 岗位要求（合成样本）”，未出现 RAG 相关要求的具体条目或文本。",
+          "无法核对“列出 RAG 相关岗位要求”这一断言，缺失可验证内容。",
+          "该材料属外部参考/合成 JD，不参与用户能力评级，需避免据此推断用户具备 RAG 能力。"
+        ],
+        "revised_confidence": 0.15,
+        "status": "disputed",
+        "verifier_model": "deepseek-flash"
+      },
+      {
+        "claim_id": "clm_568e0c16016df64b06ec",
+        "evidence_sufficient": true,
+        "polarity": "supports",
+        "concerns": [
+          "原文仅为项目概述，未展示RAG检索服务的具体实现代码或架构细节，仅证明材料中提及该实现"
+        ],
+        "revised_confidence": 0.85,
+        "status": "machine_reviewed",
+        "verifier_model": "deepseek-flash"
+      }
+    ]
+  },
+  "adversarial_a": {
+    "status": "complete",
+    "probed_claims": 1,
+    "probes": 3,
+    "verdicts": {
+      "sustained": 3,
+      "weakened": 0,
+      "broken": 0
+    },
+    "independent_judge": true,
+    "details": [
+      {
+        "target": "clm_0165b3190334b596b4e0",
+        "verdict": "sustained",
+        "question": "该主张的依据仅是 README 中的项目描述文字，是否只有理论性介绍，而没有任何可运行的代码、提交记录或实际测试用例生成结果等实践产物作为佐证？"
+      },
+      {
+        "target": "clm_0165b3190334b596b4e0",
+        "verdict": "sustained",
+        "question": "项目声称'基于自研 MCP 协议'形成完整闭环，但 MCP 是 Anthropic 的公开协议标准，代码实现是否只是照抄官方 SDK 示例或教程，RAG 检索部分是否仅调用 LangChain 等现成 API 而无独立设计？"
+      },
+      {
+        "target": "clm_0165b3190334b596b4e0",
+        "verdict": "sustained",
+        "question": "该'完整闭环'能力是独立完成，还是跟随教程、他人协作或复用开源项目？项目材料中是否存在失败记录、未完成模块（如'执行'或'反馈'环节仅有 TODO）与'完整闭环'自述相矛盾的证据？这是缺失证据，不得默认成立。"
+      }
+    ]
+  },
+  "adversarial_b": {
+    "status": "complete",
+    "probed_claims": 1,
+    "probes": 4,
+    "verdicts": {
+      "sustained": 4,
+      "weakened": 0,
+      "broken": 0
+    },
+    "independent_judge": true,
+    "details": [
+      {
+        "target": "clm_18c52b82b62d169ee63d",
+        "verdict": "sustained",
+        "question": "片段中『召回率（Hit@5）从 65% 提升至 92%』『场景覆盖率达 95%』这些数字是用户自述还是来自可复核的评测报告、评测脚本输出或第三方验证？若仅为 README 中的宣传性表述，是否有任何 benchmark 代码、评测数据集或日志佐证？"
+      },
+      {
+        "target": "clm_18c52b82b62d169ee63d",
+        "verdict": "sustained",
+        "question": "所引证据仅为一个 POJO 类 VectorSearchResult 和 Markdown 宣传描述，属于最浅层的『包含依赖』痕迹；是否有实际的检索调用代码、ChromaDB 集成代码或 embedding 生成流程的实现产物？目前这是缺失证据，不能证明存在真实的向量检索功能。"
+      },
+      {
+        "target": "clm_18c52b82b62d169ee63d",
+        "verdict": "sustained",
+        "question": "bge-m3 与 ChromaDB 的组合是市面上 RAG 教程的标准搭配，该项目中向量检索部分是独立设计与实现的，还是直接套用现成模板/复制示例代码？『自研 MCP 端点』与直接使用现成 SDK 的边界在哪里，如何证明存在独立设计？"
+      },
+      {
+        "target": "clm_18c52b82b62d169ee63d",
+        "verdict": "sustained",
+        "question": "是否检索过该项目的 issue、commit 历史、失败记录或他人评审意见，确认宣称的 92% 召回率与实际代码实现是否矛盾（例如是否存在嵌入模型切换记录、指标被质疑或回滚的痕迹）？目前这是缺失证据。"
+      }
+    ]
+  },
+  "attack_a": {
+    "db": "D:\\projects\\Personal Growth\\artifacts\\m4e\\tmp\\g3-experiment.db",
+    "modules": [
+      "deterministic",
+      "audit"
+    ],
+    "summary": {
+      "deterministic": "pending_model_review",
+      "audit": "pass"
+    },
+    "results": {
+      "deterministic": {
+        "status": "pending_model_review",
+        "task_id": "conflict_review",
+        "candidates": 1,
+        "candidate_counts": {
+          "relation": 1,
+          "statement": 0,
+          "time": 0,
+          "place": 0
+        },
+        "scanned": {
+          "claims": 8,
+          "events": 0,
+          "entities": 0,
+          "passages": 197
+        },
+        "counts": {
+          "sources": 23,
+          "passages": 197,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 8,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 8,
+          "evidence": 15,
+          "conflicts": 0,
+          "conflict_candidates": 1,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 248
+        }
+      },
+      "audit": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 23,
+          "passages": 197,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 8,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 8,
+          "evidence": 15,
+          "conflicts": 0,
+          "conflict_candidates": 1,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 248
+        }
+      }
+    }
+  },
+  "attack_b": {
+    "db": "D:\\projects\\Personal Growth\\artifacts\\m4e\\tmp\\g3-experiment.db",
+    "modules": [
+      "deterministic",
+      "audit"
+    ],
+    "summary": {
+      "deterministic": "pending_model_review",
+      "audit": "pass"
+    },
+    "results": {
+      "deterministic": {
+        "status": "pending_model_review",
+        "task_id": "conflict_review",
+        "candidates": 1,
+        "candidate_counts": {
+          "relation": 1,
+          "statement": 0,
+          "time": 0,
+          "place": 0
+        },
+        "scanned": {
+          "claims": 8,
+          "events": 0,
+          "entities": 0,
+          "passages": 197
+        },
+        "counts": {
+          "sources": 23,
+          "passages": 197,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 8,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 8,
+          "evidence": 22,
+          "conflicts": 0,
+          "conflict_candidates": 1,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 268
+        }
+      },
+      "audit": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 23,
+          "passages": 197,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 8,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 8,
+          "evidence": 22,
+          "conflicts": 0,
+          "conflict_candidates": 1,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 268
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_72c5cf53e0af71881981",
+    "goal_id": "goal_m2_real",
+    "path": "AI Agent 核心技术/工具与执行/RAG 系统搭建与调优",
+    "depth": 3,
+    "target_level": 4,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 2,
+    "current_level_practice": 3
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_d3ecf609e425a27f6587",
+      "status": "rated",
+      "level": 2,
+      "base_level": 2,
+      "rationale": "理解：基线 2（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少行为证据（现场作答可通过 probe 补足到 3）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_770e3c90825701bdb4bd",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_53d6d430e3aa466f769c",
+      "status": "rated",
+      "level": 3,
+      "base_level": 3,
+      "rationale": "实践：基线 3（1 条已绑定主张）；反向证据封顶 ≤3（未改变基线 3）",
+      "why_not_higher": [
+        "缺少任务证据（独立完成完整任务可到 4）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "practice"
+          ],
+          "cap": 3,
+          "claim_id": "clm_cf7f1feea57d09624760",
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [
+        {
+          "cap": 3,
+          "claim_id": "clm_cf7f1feea57d09624760"
+        }
+      ],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_770e3c90825701bdb4bd",
+      "present": true,
+      "subject": "笔记材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "笔记材料中整理了 RAG 检索流程与向量库、工具调用要点（受控构造样本）",
+      "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_offline_a｜proposer=offline_deterministic｜理由：（离线确定性提议）笔记材料 → RAG 能力点",
+      "quotes": [
+        {
+          "passage_id": "p_8fe6347ec3e1fa98",
+          "quote": "# 学习笔记：RAG 检索流程整理（受控构造样本）",
+          "quote_verbatim": true,
+          "source_id": "src_8c2b688826e1b42e",
+          "source_title": "note-rag-constructed"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    },
+    {
+      "claim_id": "clm_cf7f1feea57d09624760",
+      "present": true,
+      "subject": "构造仓库摘要（离线） 项目材料",
+      "predicate": "包含",
+      "object": "RAG 检索服务相关实现",
+      "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）",
+      "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_offline_b｜proposer=offline_deterministic｜理由：（离线确定性提议）RAG 主题 → RAG 能力点",
+      "quotes": [
+        {
+          "passage_id": "p_0e0a05cfcefee426",
+          "quote": "README：项目包含 RAG 检索服务（RagService）与向量检索（ChromaDB、VectorSearch）。",
+          "quote_verbatim": true,
+          "source_id": "src_416ff66156f7b43d",
+          "source_title": "repo-digest-constructed"
+        },
+        {
+          "passage_id": "p_9affbb8657932ec8",
+          "quote": "Java 服务端源码：package com.hw; public class RagService; @RestController。",
+          "quote_verbatim": true,
+          "source_id": "src_416ff66156f7b43d",
+          "source_title": "repo-digest-constructed"
+        }
+      ],
+      "dimension": "practice",
+      "cap": 3,
+      "signals": [],
+      "evidence_types": [
+        "repo_artifact"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+    },
+    {
+      "dimension": "practice",
+      "text": "缺少任务证据（独立完成完整任务可到 4）"
+    }
+  ],
+  "reverse_evidence": [
+    {
+      "dimension": "practice",
+      "claim_id": "clm_cf7f1feea57d09624760",
+      "cap": 3,
+      "attacks": [
+        {
+          "angle": "注入式等价物",
+          "question": "注入式质疑",
+          "verdict": "weakened",
+          "reasoning": "注入式等价物：证据强度不足，部分支持",
+          "missing_evidence": []
+        }
+      ],
+      "refuting_evidence": []
+    }
+  ],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T11:12:46+00:00",
+  "generated_by": "growth_os.assessment.report",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

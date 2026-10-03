@@ -8,6 +8,8 @@ from .growth_store import (
     CAPABILITY_STATUSES,
     CLAIM_ROLES,
     DRAFT_STATUSES,
+    GAP_SEVERITIES,
+    GAP_STATUSES,
     GOAL_ELEMENTS,
     GOAL_STATUSES,
     LEVEL_RANGE,
@@ -19,6 +21,7 @@ from .growth_store import (
     assessment_id,
     capability_id,
     default_db_path,
+    gap_id,
     normalize_name,
 )
 
@@ -30,6 +33,8 @@ __all__ = [
     "CAPABILITY_STATUSES",
     "CLAIM_ROLES",
     "DRAFT_STATUSES",
+    "GAP_SEVERITIES",
+    "GAP_STATUSES",
     "GOAL_ELEMENTS",
     "GOAL_STATUSES",
     "LEVEL_RANGE",
@@ -41,5 +46,6 @@ __all__ = [
     "assessment_id",
     "capability_id",
     "default_db_path",
+    "gap_id",
     "normalize_name",
 ]

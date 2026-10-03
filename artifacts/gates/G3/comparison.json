@@ -1,0 +1,20 @@
+{
+  "gate": "G3",
+  "criteria": {
+    "primary": "A: practice 不存在 ≥2 等级（insufficient_evidence 也算符合）；B: practice ≥ 2",
+    "observation": "B 实际等级 ≥3 作为增强观察项（不作门条件）",
+    "negative_control": "JD（domain_reference）不得进入 supports"
+  },
+  "round_a": {
+    "understanding": 2,
+    "practice": null,
+    "practice_status": "insufficient_evidence"
+  },
+  "round_b": {
+    "understanding": 2,
+    "practice": 3,
+    "practice_status": "rated"
+  },
+  "passed": true,
+  "observation_b_practice_ge_3": true
+}

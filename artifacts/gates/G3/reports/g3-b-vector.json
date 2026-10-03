@@ -1,0 +1,123 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_495c70eb50bfce4f0c30",
+    "goal_id": "goal_m2_real",
+    "path": "AI Agent 核心技术/Agent 架构设计/记忆机制（短期、长期、向量检索）",
+    "depth": 3,
+    "target_level": 4,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": null,
+    "current_level_practice": 3
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_00c6d6d819c2d2d701c3",
+      "status": "insufficient_evidence",
+      "level": null,
+      "base_level": null,
+      "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据",
+      "why_not_higher": [
+        "缺少可起评的理解证据"
+      ],
+      "supports": [],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_fca6906c4374c9357f55",
+      "status": "rated",
+      "level": 3,
+      "base_level": 3,
+      "rationale": "实践：基线 3（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少任务证据（独立完成完整任务可到 4）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "practice"
+          ],
+          "cap": null,
+          "claim_id": "clm_18c52b82b62d169ee63d",
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_18c52b82b62d169ee63d",
+      "present": true,
+      "subject": "kkmmtt0919/mytset-rag 项目材料",
+      "predicate": "包含",
+      "object": "向量检索与向量库依赖",
+      "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）",
+      "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4e_real_bind_b｜proposer=openai_compatible/glm-5.3｜理由：项目材料中出现向量检索与向量库依赖，对应记忆机制中的向量检索能力点。",
+      "quotes": [
+        {
+          "passage_id": "p_90729473ff0b0ce7",
+          "quote": "@Data\npublic class VectorSearchResult {\n    private String id;\n    private Map<String, Object> metadata;   // 存储用例的关键字段\n    private Double distance;\n    private String document;\n}",
+          "quote_verbatim": true,
+          "source_id": "src_05f573fc9ca9ce10",
+          "source_title": "kkmmtt0919/mytset-rag:src/main/java/com/hw/dto/VectorSearchResult.java"
+        },
+        {
+          "passage_id": "p_a379e5c4429aa3af",
+          "quote": "- 🔍 **RAG 智能检索**：基于 `bge-m3` 嵌入模型与 ChromaDB 实现语义检索，召回率（Hit@5）从 65% 提升至 92% - 🤖 **AI 用例生成**：结合检索结果与 Prompt 模板，生成正向、异常、边界、安全等多维度测试用例，场景覆盖率达 95% - 🔌 **MCP 自主执行**：自研 JSON-RPC over HTTP 的 MCP 协议端点，AI 可自主调用 HTTP 工具执行用例，执行成功率稳定在 82% 以上 - ⚙️ **全自动化闭环**：从需求输入到用例生成、执行、断言判断全流程自动化，首次可执行率 91%，人工介入时间下降 60% - 🚀 **高性能优化**：通过缓存、Prompt 精简等手段，单接口用例生成 P99 响应时间从 8s 优化至 2.5s",
+          "quote_verbatim": true,
+          "source_id": "src_12e9a3b99b369f96",
+          "source_title": "kkmmtt0919/mytset-rag:README.md"
+        },
+        {
+          "passage_id": "p_90729473ff0b0ce7",
+          "quote": "@Data\npublic class VectorSearchResult {\n    private String id;\n    private Map<String, Object> metadata;   // 存储用例的关键字段\n    private Double distance;\n    private String document;\n}",
+          "quote_verbatim": true,
+          "source_id": "src_05f573fc9ca9ce10",
+          "source_title": "kkmmtt0919/mytset-rag:src/main/java/com/hw/dto/VectorSearchResult.java"
+        },
+        {
+          "passage_id": "p_a379e5c4429aa3af",
+          "quote": "- 🔍 **RAG 智能检索**：基于 `bge-m3` 嵌入模型与 ChromaDB 实现语义检索，召回率（Hit@5）从 65% 提升至 92% - 🤖 **AI 用例生成**：结合检索结果与 Prompt 模板，生成正向、异常、边界、安全等多维度测试用例，场景覆盖率达 95% - 🔌 **MCP 自主执行**：自研 JSON-RPC over HTTP 的 MCP 协议端点，AI 可自主调用 HTTP 工具执行用例，执行成功率稳定在 82% 以上 - ⚙️ **全自动化闭环**：从需求输入到用例生成、执行、断言判断全流程自动化，首次可执行率 91%，人工介入时间下降 60% - 🚀 **高性能优化**：通过缓存、Prompt 精简等手段，单接口用例生成 P99 响应时间从 8s 优化至 2.5s",
+          "quote_verbatim": true,
+          "source_id": "src_12e9a3b99b369f96",
+          "source_title": "kkmmtt0919/mytset-rag:README.md"
+        }
+      ],
+      "dimension": "practice",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "repo_artifact"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少可起评的理解证据"
+    },
+    {
+      "dimension": "practice",
+      "text": "缺少任务证据（独立完成完整任务可到 4）"
+    }
+  ],
+  "reverse_evidence": [],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T11:14:12+00:00",
+  "generated_by": "growth_os.assessment.report",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

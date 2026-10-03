@@ -9,9 +9,11 @@
 * **M4-c**：评级与反向证据 —— 两维度（理解 / 实践）星级规则引擎 + attack 结算
   + `rated` 写入路径（历史保留）；
 * **M4-d**：可解释输出 —— 能力评估报告（支持 / 不足 / 攻击结果 + 逐字引文）
-  + 维度化 `current_level` 回填与重建校验。
+  + 维度化 `current_level` 回填与重建校验；
+* **M4-e**：统一编排 —— `rate → report → apply_levels → verify → gaps → verify`
+  固定顺序（无 LLM / 无网络 / fail-stop），缺口 `g_gaps` 从评定行派生。
 
-**不做**：缺口表（`g_gaps`）与 G3 实验（M4-e）、任务（M5）、Memory（M6）、UI（M8）。
+**不做**：任务（M5）、Memory（M6）、UI（M8）。
 """
 
 from .audit import build_audit, write_audit
@@ -46,6 +48,7 @@ from .contract import (
     classify_claim,
 )
 from .draft import DRAFT, INSUFFICIENT, AssessmentDrafter, AssessmentError
+from .pipeline import PIPELINE_VERSION, PipelineError, assess_capability
 from .rater import AssessmentRater
 from .report import REPORT_LIMITATIONS, build_report, render_report, write_report
 from .rules import (
@@ -83,6 +86,7 @@ __all__ = [
     "NOT_ADMISSIBLE",
     "OVERREACH",
     "PENDING_DECLARATION",
+    "PIPELINE_VERSION",
     "PLAN",
     "PRACTICE",
     "PRACTICE_SIGNALS",
@@ -103,7 +107,9 @@ __all__ = [
     "ClaimClassification",
     "ClaimContribution",
     "GateDecision",
+    "PipelineError",
     "ProposalItem",
+    "assess_capability",
     "bucket_for",
     "build_audit",
     "build_binding_artifact",
