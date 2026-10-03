@@ -843,6 +843,24 @@ LLM 输出上**，而应建立在**已绑定、可审计的数据层**之上 —
 后续约束：M4-d 的可解释输出与 `current_level` 回填必须从**已存储的评定行 + 证据链**派生，
 不得引入无法从评定重算的独立状态。
 
+### M4-d 决策记录与新增发现（2026-10-03）
+
+**用户冻结口径**：回填方案 A（`current_level_understanding` / `current_level_practice` 两维度列 + 重建校验）；
+legacy `current_level` **保留、停用、不写**；`current_level_status` 扩为 `unassessed` / `assessed`
+（允许部分评估：理解有、实践无 → `assessed`）；回填只经显式方法，不接入自动评级流程
+（统一编排放 M4-e）；解释输出 Markdown + JSON 双份；"为什么不是更高"**只来自 `rubric.gaps`**。
+
+1. **回填是派生缓存，不是新事实**：`apply_assessment_levels` 从 `latest_assessment` 取值；
+   `verify_assessment_levels` 用同一重算比对列值（测试包含"人为篡改可被发现"）。
+   这把 M4-c 结论 4（"评级结果是可重算派生数据"）在能力树上落成可校验的不变量。
+2. **唯一写路径**：`upsert_capability` / `adjust_capability` / 生成器都不能写维度化等级列
+   （写入即报错）；legacy `current_level` 保持 NULL —— schema 迁移不动历史数据。
+3. **实施中收紧两处**（可读性/可复算）：① `rubric` 落 `base_level` 与 `level`
+   （回填与报告都能从评定行复算，不靠推断）；② 报告的"已排除"按 claim 去重聚合
+   （同一主张不再按维度重复列出），"反向证据"按（claim × 维度）带封顶值。
+4. **报告纪律**：只复制规则引擎产出的等级与依据；不携带任何模型分值（JSON 扫描 + 渲染器源码
+   AST 双重检查）；不把材料存在读成用户独立完成；`insufficient_evidence` 不读成低能力。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

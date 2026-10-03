@@ -229,6 +229,8 @@ def _dimension_report(dimension: str, contributions: list[ClaimContribution]) ->
                 "（如自述；需要可核对的材料或行为证据）"
             )
         rubric["gaps"] = [f"缺少可起评的{label}证据"]
+        rubric["base_level"] = None
+        rubric["level"] = None
         return {
             "dimension": dimension,
             "status": INSUFFICIENT,
@@ -246,6 +248,8 @@ def _dimension_report(dimension: str, contributions: list[ClaimContribution]) ->
         rationale += f"；反向证据封顶 ≤{cap} → 最终 {level}"
     elif cap is not None:
         rationale += f"；反向证据封顶 ≤{cap}（未改变基线 {level}）"
+    rubric["base_level"] = base
+    rubric["level"] = level
     gaps = [text for (dim, threshold), text in _GAPS.items() if dim == dimension and level == threshold]
     if gaps:
         rubric["gaps"] = gaps

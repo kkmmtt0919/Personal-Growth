@@ -7,9 +7,11 @@
 * **M4-b**：证据绑定与分桶 —— `claim → LLM 提议 → 确定性闸门 → g_capability_claims`，
   proposal / reject / accept 全量留档；
 * **M4-c**：评级与反向证据 —— 两维度（理解 / 实践）星级规则引擎 + attack 结算
-  + `rated` 写入路径（历史保留）。
+  + `rated` 写入路径（历史保留）；
+* **M4-d**：可解释输出 —— 能力评估报告（支持 / 不足 / 攻击结果 + 逐字引文）
+  + 维度化 `current_level` 回填与重建校验。
 
-**不做**：解释输出（M4-d）、G3 实验与缺口（M4-e）、UI。
+**不做**：缺口表（`g_gaps`）与 G3 实验（M4-e）、任务（M5）、Memory（M6）、UI（M8）。
 """
 
 from .audit import build_audit, write_audit
@@ -45,6 +47,7 @@ from .contract import (
 )
 from .draft import DRAFT, INSUFFICIENT, AssessmentDrafter, AssessmentError
 from .rater import AssessmentRater
+from .report import REPORT_LIMITATIONS, build_report, render_report, write_report
 from .rules import (
     BUCKET_DIMENSION,
     DIMENSIONS,
@@ -85,6 +88,7 @@ __all__ = [
     "PRACTICE_SIGNALS",
     "PRACTICE_SIGNAL_KEY",
     "RATED",
+    "REPORT_LIMITATIONS",
     "REVERSE_CAPS",
     "RULES_CONTRACT_VERSION",
     "UNDERSTANDING",
@@ -103,6 +107,7 @@ __all__ = [
     "bucket_for",
     "build_audit",
     "build_binding_artifact",
+    "build_report",
     "check_chain",
     "claim_buckets",
     "classify_claim",
@@ -111,6 +116,8 @@ __all__ = [
     "rate_capability",
     "rate_contributions",
     "render_binding_prompt",
+    "render_report",
     "write_audit",
     "write_binding_artifact",
+    "write_report",
 ]

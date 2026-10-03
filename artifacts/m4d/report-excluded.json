@@ -1,0 +1,132 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_549f8599f04c464dd990",
+    "goal_id": "goal_m4d_smoke",
+    "path": "LLM 基础/检索增强/反向证据演示",
+    "depth": 3,
+    "target_level": 3,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 2,
+    "current_level_practice": null
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_58afd46139b58fdd76e4",
+      "status": "rated",
+      "level": 2,
+      "base_level": 2,
+      "rationale": "理解：基线 2（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少行为证据（现场作答可通过 probe 补足到 3）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_61f4cdf358286e42e41e",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": [
+        {
+          "claim_id": "clm_01c1832775651d96767c",
+          "reason": "攻击裁决 broken：主张不计入"
+        }
+      ]
+    },
+    "practice": {
+      "assessment_id": "asm_cc9899a4a643c4802766",
+      "status": "insufficient_evidence",
+      "level": null,
+      "base_level": null,
+      "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据（已排除：clm_01c1832775651d96767c：攻击裁决 broken：主张不计入）",
+      "why_not_higher": [
+        "缺少可起评的实践证据"
+      ],
+      "supports": [],
+      "reverse_evidence": [],
+      "excluded": [
+        {
+          "claim_id": "clm_01c1832775651d96767c",
+          "reason": "攻击裁决 broken：主张不计入"
+        }
+      ]
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_61f4cdf358286e42e41e",
+      "present": true,
+      "subject": "项目材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "项目材料中包含相关内容（r-notes.md）",
+      "binding_rationale": "M4-b 闸门通过（等价写入）",
+      "quotes": [
+        {
+          "passage_id": "p_c3a50857067a609b",
+          "quote": "# 笔记",
+          "quote_verbatim": true,
+          "source_id": "src_40f269bdcf22eac3",
+          "source_title": "r-notes"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+    },
+    {
+      "dimension": "practice",
+      "text": "缺少可起评的实践证据"
+    }
+  ],
+  "reverse_evidence": [],
+  "excluded": [
+    {
+      "claim_id": "clm_01c1832775651d96767c",
+      "reason": "攻击裁决 broken：主张不计入",
+      "dimensions": [
+        "understanding",
+        "practice"
+      ],
+      "attacks": [
+        {
+          "angle": "注入式",
+          "question": "注入式质疑",
+          "verdict": "broken",
+          "reasoning": "注入式反例（M4-d 只验证已存在裁决的呈现与回填）",
+          "missing_evidence": [
+            "用户本人角色说明"
+          ]
+        }
+      ]
+    }
+  ],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T09:15:49+00:00",
+  "generated_by": "artifacts/m4d/run_report.py",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

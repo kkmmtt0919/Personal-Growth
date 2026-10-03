@@ -1,7 +1,7 @@
 {
   "artifact": "m4c-rating",
   "contract": "m4c-1",
-  "generated_at": "2026-10-03T08:55:00+00:00",
+  "generated_at": "2026-10-03T09:15:54+00:00",
   "db_path": "D:\\projects\\Personal Growth\\artifacts\\m4c\\tmp\\rating.db",
   "read_only": true,
   "notes": [
@@ -18,12 +18,14 @@
           "level": 2,
           "rationale": "理解：基线 2（2 条已绑定主张）",
           "rubric": {
+            "base_level": 2,
             "contract": "m4c-1",
             "dimension": "understanding",
             "excluded": [],
             "gaps": [
               "缺少行为证据（现场作答可通过 probe 补足到 3）"
             ],
+            "level": 2,
             "reverse_evidence": [],
             "supports": [
               {
@@ -57,12 +59,14 @@
           "level": 3,
           "rationale": "实践：基线 3（1 条已绑定主张）",
           "rubric": {
+            "base_level": 3,
             "contract": "m4c-1",
             "dimension": "practice",
             "excluded": [],
             "gaps": [
               "缺少任务证据（独立完成完整任务可到 4）"
             ],
+            "level": 3,
             "reverse_evidence": [],
             "supports": [
               {
@@ -88,16 +92,16 @@
           "level": null
         },
         {
-          "assessment_id": "asm_f4595372163b126037e2",
-          "dimension": "understanding",
-          "status": "rated",
-          "level": 2
-        },
-        {
           "assessment_id": "asm_aa3e1da5fee37a81fc4a",
           "dimension": "practice",
           "status": "rated",
           "level": 3
+        },
+        {
+          "assessment_id": "asm_f4595372163b126037e2",
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2
         }
       ]
     },
@@ -110,6 +114,7 @@
           "level": 2,
           "rationale": "理解：基线 2（1 条已绑定主张）",
           "rubric": {
+            "base_level": 2,
             "contract": "m4c-1",
             "dimension": "understanding",
             "excluded": [
@@ -121,6 +126,7 @@
             "gaps": [
               "缺少行为证据（现场作答可通过 probe 补足到 3）"
             ],
+            "level": 2,
             "reverse_evidence": [],
             "supports": [
               {
@@ -143,6 +149,7 @@
           "level": null,
           "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据（已排除：clm_fe32559fbcd6603aba97：攻击裁决 broken：主张不计入）",
           "rubric": {
+            "base_level": null,
             "contract": "m4c-1",
             "dimension": "practice",
             "excluded": [
@@ -154,6 +161,7 @@
             "gaps": [
               "缺少可起评的实践证据"
             ],
+            "level": null,
             "reverse_evidence": [],
             "supports": []
           }
@@ -195,12 +203,14 @@
           "level": null,
           "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据",
           "rubric": {
+            "base_level": null,
             "contract": "m4c-1",
             "dimension": "understanding",
             "excluded": [],
             "gaps": [
               "缺少可起评的理解证据"
             ],
+            "level": null,
             "reverse_evidence": [],
             "supports": []
           }
@@ -211,12 +221,14 @@
           "level": null,
           "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据",
           "rubric": {
+            "base_level": null,
             "contract": "m4c-1",
             "dimension": "practice",
             "excluded": [],
             "gaps": [
               "缺少可起评的实践证据"
             ],
+            "level": null,
             "reverse_evidence": [],
             "supports": []
           }

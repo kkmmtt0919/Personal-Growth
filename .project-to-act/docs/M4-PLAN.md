@@ -300,7 +300,7 @@ M4-b  证据绑定与分桶（LLM 提议 + 确定性闸门 + 映射落库）  �
       ↓
 M4-c  评定与反向证据（星级规则引擎 + attack 接入 + refutes/disputed 压低）  ← 已完成（2026-10-03，EV-069）
       ↓
-M4-d  可解释输出（assessment dossier：支持 / 不足 / 攻击结果）
+M4-d  可解释输出（assessment dossier：支持 / 不足 / 攻击结果）  ← 已完成（2026-10-03，EV-070）
       ↓
 M4-e  缺口识别 + G2/G3 证据产出（独立库 A/B 对照；真实运行留档）
       ↓
@@ -317,6 +317,12 @@ M4 Gate（G2 + G3 + 质量门）
 `assessment/rater.py`（`rated` 写入路径）+ `g_assessments` dimension 化契约已落地；
 离线 **12/12**、**不调用模型**；真实 attack 运行与 G3 素材按用户决定并入 **M4-e**；
 `current_level` 回填推迟 **M4-d**；生成器接线仍记 `M4-b.1`。
+
+**M4-d 落地结果（2026-10-03，EV-070）**：`assessment/report.py`（能力解释报告，Markdown + JSON，
+"为什么不是更高"只来自 `rubric.gaps`）+ `g_capabilities` 两维度列 +
+`apply_assessment_levels` / `verify_assessment_levels`（唯一回填路径 + 重建校验）；
+legacy `current_level` 保留停用（upsert 写入即报错）；离线 **15/15**、**不调用模型**；
+回填的自动编排留 **M4-e**。
 
 ---
 

@@ -1,0 +1,151 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_549f8599f04c464dd990",
+    "goal_id": "goal_m4d_smoke",
+    "path": "LLM 基础/检索增强/反向证据演示",
+    "depth": 3,
+    "target_level": 3,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 2,
+    "current_level_practice": 2
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_58afd46139b58fdd76e4",
+      "status": "rated",
+      "level": 2,
+      "base_level": 2,
+      "rationale": "理解：基线 2（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少行为证据（现场作答可通过 probe 补足到 3）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_61f4cdf358286e42e41e",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_64db587c2a554581adae",
+      "status": "rated",
+      "level": 2,
+      "base_level": 3,
+      "rationale": "实践：基线 3（1 条已绑定主张）；反向证据封顶 ≤2 → 最终 2",
+      "why_not_higher": [],
+      "supports": [
+        {
+          "buckets": [
+            "practice"
+          ],
+          "cap": 2,
+          "claim_id": "clm_01c1832775651d96767c",
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [
+        {
+          "cap": 2,
+          "claim_id": "clm_01c1832775651d96767c"
+        }
+      ],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_61f4cdf358286e42e41e",
+      "present": true,
+      "subject": "项目材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "项目材料中包含相关内容（r-notes.md）",
+      "binding_rationale": "M4-b 闸门通过（等价写入）",
+      "quotes": [
+        {
+          "passage_id": "p_c3a50857067a609b",
+          "quote": "# 笔记",
+          "quote_verbatim": true,
+          "source_id": "src_40f269bdcf22eac3",
+          "source_title": "r-notes"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    },
+    {
+      "claim_id": "clm_01c1832775651d96767c",
+      "present": true,
+      "subject": "项目材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "项目材料中包含相关内容（r-repo.md）",
+      "binding_rationale": "M4-b 闸门通过（等价写入）",
+      "quotes": [
+        {
+          "passage_id": "p_cb9dcafd300ffc55",
+          "quote": "# 项目",
+          "quote_verbatim": true,
+          "source_id": "src_a64bb27b38f5ca3f",
+          "source_title": "r-repo"
+        }
+      ],
+      "dimension": "practice",
+      "cap": 2,
+      "signals": [],
+      "evidence_types": [
+        "repo_artifact"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+    }
+  ],
+  "reverse_evidence": [
+    {
+      "dimension": "practice",
+      "claim_id": "clm_01c1832775651d96767c",
+      "cap": 2,
+      "attacks": [],
+      "refuting_evidence": [
+        {
+          "passage_id": "p_cb9dcafd300ffc55",
+          "quote": "# 项目",
+          "reasoning": "注入式反向证据（M4-d）"
+        }
+      ]
+    }
+  ],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T09:15:49+00:00",
+  "generated_by": "artifacts/m4d/run_report.py",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

@@ -1,0 +1,137 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_57f9b774199b2f52dc38",
+    "goal_id": "goal_m4d_smoke",
+    "path": "LLM 基础/检索增强/RAG 实现",
+    "depth": 3,
+    "target_level": 3,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 2,
+    "current_level_practice": null
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_fc5abc15ed48c69f6195",
+      "status": "rated",
+      "level": 2,
+      "base_level": 2,
+      "rationale": "理解：基线 2（2 条已绑定主张）",
+      "why_not_higher": [
+        "缺少行为证据（现场作答可通过 probe 补足到 3）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_dfe6f395c10d05e1cd04",
+          "evidence_types": [
+            "chat_assertion"
+          ],
+          "signals": []
+        },
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_f9ed58148d1228077592",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_420d3aff0aa71e6166d0",
+      "status": "insufficient_evidence",
+      "level": null,
+      "base_level": null,
+      "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的实践证据",
+      "why_not_higher": [
+        "缺少可起评的实践证据"
+      ],
+      "supports": [],
+      "reverse_evidence": [],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_dfe6f395c10d05e1cd04",
+      "present": true,
+      "subject": "项目材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "项目材料中包含相关内容（chat.md）",
+      "binding_rationale": "M4-b 闸门通过（等价写入）",
+      "quotes": [
+        {
+          "passage_id": "p_3f10b8479e31d965",
+          "quote": "# 对话",
+          "quote_verbatim": true,
+          "source_id": "src_c66aaa7cf0bd32a0",
+          "source_title": "chat"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "chat_assertion"
+      ]
+    },
+    {
+      "claim_id": "clm_f9ed58148d1228077592",
+      "present": true,
+      "subject": "项目材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "项目材料中包含相关内容（notes.md）",
+      "binding_rationale": "M4-b 闸门通过（等价写入）",
+      "quotes": [
+        {
+          "passage_id": "p_dcd68fe235e53a52",
+          "quote": "# 笔记",
+          "quote_verbatim": true,
+          "source_id": "src_e1ca95b2dd7e7eb6",
+          "source_title": "notes"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+    },
+    {
+      "dimension": "practice",
+      "text": "缺少可起评的实践证据"
+    }
+  ],
+  "reverse_evidence": [],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T09:15:49+00:00",
+  "generated_by": "artifacts/m4d/run_report.py",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

@@ -6,19 +6,31 @@
 * 与 evkg 表族同库共存（决定 D2），跨表族引用（`claim_id` / `source_id`）
   由应用层保证 —— M2 不产生这类引用。
 
-M2 的三条数据语义（来自 `M2-PLAN.md` §3.1，均为验收项）：
+    M2 的三条数据语义（来自 `M2-PLAN.md` §3.1，均为验收项）：
 
 1. **稳定逻辑标识**：能力点 id 由 `goal_id + path + name` 决定，与生成批次、模型、
    时间无关。再生成走 upsert，不得重复累积 —— 这是 M1-b.5c「id 含内容导致静默累积」
    教训在能力树上的对应物。
 2. **人工调整受保护**：`origin=adjusted` 的行在再生成时保留 `target_level` 与
    `adjustment_note`（补充约束 C1）。
-3. **未评估 ≠ 低等级**：`current_level` 在 M2 恒为 NULL，`current_level_status`
+3. **未评估 ≠ 低等级**：M2 阶段 `current_level` 恒为 NULL，`current_level_status`
    恒为 `unassessed`；写入非空 `current_level` 会直接报错，而不是被静默接受
-   （沿用 M1-b.5b「缺失不得伪装成数字」的语义）。
+   （沿用 M1-b.5b「缺失不得伪装成数字」的语义）。M4-d 起允许回填维度化等级列
+   （`current_level_understanding` / `current_level_practice`），但只能经
+   `apply_assessment_levels` 显式方法，不允许 upsert/adjust 直接写。
 4. **M4-a 的生命周期与草案语义**：能力节点带 `generation_id` / `status`
    （history + current view，§4）；assessment 只允许草案状态且 `level` 恒为 NULL ——
    星级算法不在本步，写入任何等级数字都报错。
+
+M4-d 的维度化等级列（用户 2026-10-03 冻结）：
+
+- **`current_level`**（legacy，标注 deprecated）：保留列、停用不写；新代码禁止读写。
+- **`current_level_understanding` / `current_level_practice`**（维度化）：
+  可存储理解与实践两个独立等级（1..5 或 NULL）；只能由 `apply_assessment_levels`
+  显式回填（从 `g_assessments` 的 latest_assessment 取值），不得通过
+  upsert/adjust/generate 路径直接写入 —— 违反即报错。
+- **`current_level_status`**：扩为 `unassessed` / `assessed` 两态；
+  两个维度均为 NULL → `unassessed`；至少一个维度非 NULL → `assessed`。
 """
 
 from __future__ import annotations
@@ -50,6 +62,12 @@ ASSESSMENT_STATUSES = ("draft", "insufficient_evidence", "rated")
 
 DRAFT_STATUSES = ("draft", "insufficient_evidence")
 """草案阶段的状态（`level` 恒 NULL）；M4-c 的评定写入走 `save_assessment`。"""
+
+CAPABILITY_LEVEL_STATUSES = ("unassessed", "assessed")
+"""能力点评估状态（M4-d 扩展）：
+- unassessed: 两个维度均无有效评级（或能力点从未被评估）
+- assessed: 至少存在一个维度有有效评级
+"""
 
 ASSESSMENT_DIMENSIONS = ("understanding", "practice")
 """两个独立维度（用户 2026-10-03 冻结）：理解与实践不合并成单一等级。"""
@@ -197,6 +215,8 @@ class GrowthStore:
                 generated_by_run_id TEXT,
                 current_level INTEGER,
                 current_level_status TEXT NOT NULL DEFAULT 'unassessed',
+                current_level_understanding INTEGER,
+                current_level_practice INTEGER,
                 weight REAL,
                 generation_id TEXT,
                 status TEXT NOT NULL DEFAULT 'active',
@@ -261,6 +281,15 @@ class GrowthStore:
         }
         if "dimension" not in assessment_columns:
             self.db.execute("ALTER TABLE g_assessments ADD COLUMN dimension TEXT")
+        # M4-d：维度化等级列（两个独立维度，替代 legacy 单值 current_level）。
+        if "current_level_understanding" not in columns:
+            self.db.execute(
+                "ALTER TABLE g_capabilities ADD COLUMN current_level_understanding INTEGER"
+            )
+        if "current_level_practice" not in columns:
+            self.db.execute(
+                "ALTER TABLE g_capabilities ADD COLUMN current_level_practice INTEGER"
+            )
         self.db.commit()
 
     # -- g_users ----------------------------------------------------------
@@ -394,11 +423,19 @@ class GrowthStore:
 
         _require(
             payload.get("current_level") is None,
-            "M2 不得写入 current_level：现状一律为「尚未评估」，不得用任何数字（含 target_level）填充",
+            "禁止直接写入 current_level（legacy 列已 deprecated；M4-d 起使用维度化列，且只能经 apply_assessment_levels 回填）",
+        )
+        _require(
+            payload.get("current_level_understanding") is None,
+            "禁止通过 upsert_capability 写入 current_level_understanding（只能由 apply_assessment_levels 回填）",
+        )
+        _require(
+            payload.get("current_level_practice") is None,
+            "禁止通过 upsert_capability 写入 current_level_practice（只能由 apply_assessment_levels 回填）",
         )
         _require(
             payload.get("current_level_status", "unassessed") == "unassessed",
-            "M2 的 current_level_status 只能是 unassessed",
+            "能力树生成时 current_level_status 只能是 unassessed（评估状态由 apply_assessment_levels 更新）",
         )
         status = payload.get("status", "active")
         _require(status in CAPABILITY_STATUSES, f"未知生命周期状态: {status!r}")
@@ -753,6 +790,60 @@ class GrowthStore:
             (capability_id, dimension),
         ).fetchone()
         return dict(row) if row else None
+
+    def expected_assessment_levels(self, capability_id: str) -> dict:
+        """从评定行**重算**该能力点的（理解 / 实践 / 状态）——回填与校验共用同一计算。
+
+        这是"评级结果是可重算派生数据"（M4-c 结论 4）的落地：任何时刻，
+        `g_capabilities` 上的回填值都必须等于这里的重算结果。
+        """
+        capability = self.get_capability(capability_id)
+        _require(capability is not None, f"未知能力点: {capability_id}")
+        levels: dict[str, int | None] = {}
+        for dimension in ASSESSMENT_DIMENSIONS:
+            row = self.latest_assessment(capability_id, dimension)
+            levels[dimension] = row["level"] if row and row["status"] == "rated" else None
+        status = "assessed" if any(value is not None for value in levels.values()) else "unassessed"
+        return {**levels, "status": status}
+
+    def apply_assessment_levels(self, capability_id: str) -> dict:
+        """从 latest_assessment 回填维度化等级列（M4-d 显式方法）。
+
+        规则（用户 2026-10-03 冻结）：
+        - 读取两维度的最新评定结果（rated / insufficient_evidence）；
+        - 回填 `current_level_understanding` / `current_level_practice`
+          （rated → level 数字；insufficient_evidence / 无评定 → NULL）；
+        - 更新 `current_level_status`：两维度均 NULL → `unassessed`，
+          至少一个非 NULL → `assessed`（允许"理解有、实践无"的部分评估状态）；
+        - legacy `current_level` 保持 NULL 不写（deprecated，M4-d 起停用）。
+
+        本方法是**唯一可写维度化等级列的路径** —— upsert/adjust 直接写入会报错。
+        返回本次写入的（重算）结果，便于调用方对照。
+        """
+        expected = self.expected_assessment_levels(capability_id)
+        self.db.execute(
+            "UPDATE g_capabilities SET current_level_understanding=?, current_level_practice=?, "
+            "current_level_status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?",
+            (
+                expected["understanding"],
+                expected["practice"],
+                expected["status"],
+                capability_id,
+            ),
+        )
+        self.db.commit()
+        return expected
+
+    def verify_assessment_levels(self, capability_id: str) -> dict:
+        """重建校验：回填列必须等于从评定行重算的结果（不一致即报告差异）。"""
+        expected = self.expected_assessment_levels(capability_id)
+        capability = self.get_capability(capability_id)
+        stored = {
+            "understanding": capability["current_level_understanding"],
+            "practice": capability["current_level_practice"],
+            "status": capability["current_level_status"],
+        }
+        return {"consistent": stored == expected, "expected": expected, "stored": stored}
 
     # -- g_agent_runs -----------------------------------------------------
 

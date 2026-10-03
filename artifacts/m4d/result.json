@@ -1,0 +1,151 @@
+{
+  "smoke": "M4-d 能力解释报告 + current_level 回填（离线）",
+  "db": "D:\\projects\\Personal Growth\\artifacts\\m4d\\tmp\\report.db",
+  "generated_at": "2026-10-03T09:15:49+00:00",
+  "backfill": {
+    "weak": {
+      "understanding": 2,
+      "practice": null,
+      "status": "assessed"
+    },
+    "strong": {
+      "understanding": 2,
+      "practice": 3,
+      "status": "assessed"
+    },
+    "reverse_after_refutes": {
+      "understanding": 2,
+      "practice": 2,
+      "status": "assessed"
+    },
+    "reverse_after_broken": {
+      "understanding": 2,
+      "practice": null,
+      "status": "assessed"
+    },
+    "no_evidence": {
+      "understanding": null,
+      "practice": null,
+      "status": "unassessed"
+    }
+  },
+  "rebuild_checks": {
+    "weak": {
+      "consistent": true,
+      "expected": {
+        "understanding": 2,
+        "practice": null,
+        "status": "assessed"
+      },
+      "stored": {
+        "understanding": 2,
+        "practice": null,
+        "status": "assessed"
+      }
+    },
+    "strong": {
+      "consistent": true,
+      "expected": {
+        "understanding": 2,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "stored": {
+        "understanding": 2,
+        "practice": 3,
+        "status": "assessed"
+      }
+    },
+    "reverse": {
+      "consistent": true,
+      "expected": {
+        "understanding": 2,
+        "practice": null,
+        "status": "assessed"
+      },
+      "stored": {
+        "understanding": 2,
+        "practice": null,
+        "status": "assessed"
+      }
+    },
+    "no_evidence": {
+      "consistent": true,
+      "expected": {
+        "understanding": null,
+        "practice": null,
+        "status": "unassessed"
+      },
+      "stored": {
+        "understanding": null,
+        "practice": null,
+        "status": "unassessed"
+      }
+    }
+  },
+  "report_paths": {
+    "weak": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-weak-to-strong.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-weak-to-strong.md"
+    },
+    "strong": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-evaluated.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-evaluated.md"
+    },
+    "reverse_refuted": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-reverse-evidence.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-reverse-evidence.md"
+    },
+    "reverse_broken": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-excluded.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-excluded.md"
+    },
+    "no_evidence": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-no-evidence.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m4d\\report-no-evidence.md"
+    }
+  },
+  "evidence_counts": {
+    "sources": 6,
+    "passages": 12,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 6,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 6,
+    "evidence": 7,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 31
+  },
+  "audit_store": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "real_db_anchors": {
+    "content_hashes_match": true,
+    "counts_match": true
+  },
+  "checks": {
+    "report_sections_complete": true,
+    "weak_understanding_2_practice_null": true,
+    "strong_practice_3": true,
+    "quotes_walk_back": true,
+    "no_model_scores_in_report": true,
+    "reverse_evidence_rendered": true,
+    "excluded_rendered": true,
+    "refutes_capped_practice_2": true,
+    "broken_backfill_follows": true,
+    "rebuild_consistent": true,
+    "no_rating_null_unassessed": true,
+    "draft_not_in_current_view": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true,
+    "artifacts_written": true
+  },
+  "all_checks_passed": true
+}
