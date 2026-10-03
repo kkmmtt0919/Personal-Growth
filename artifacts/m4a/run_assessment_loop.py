@@ -26,7 +26,6 @@ REPO = HERE.parents[1]
 sys.path.insert(0, str(REPO / "backend"))
 
 from evkg.attack.auditor import audit_store
-
 from growth_os.assessment import AssessmentDrafter, build_audit, classify_claim, write_audit
 from growth_os.evidence import adapter
 from growth_os.store import GrowthStore

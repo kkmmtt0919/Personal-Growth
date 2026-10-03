@@ -767,6 +767,31 @@ M3-e 需要一处小的产品侧校验改动，实现前会单独确认。）
    （准入分类 / 链路逐跳 / 引文逐字 / provenance），并附全库 `claims_scan`；
    显式声明 `read_only=true` / `mutated_evidence_store=false`。
 
+### M4-b 新增发现与设计决定（2026-10-03）
+
+1. **闸门是"治理边界"，不是"质量过滤器"**：八步固定顺序（schema → claim_exists →
+   capability_exists → capability_active → bucket_allowed → attribution_unchanged →
+   duplicate → persisted），任何一步失败即返回、**不落库**。真实运行暴露了 LLM 的两处提议
+   质量缺陷（把"测试用例"的 rationale 写到自述 claim 上、5 条仓库 claim 漏提议 2 条）——
+   结论：**治理边界不依赖提议质量**：错配被归属闸门拦下，漏提议只是未绑定，
+   两者都不会造成错误数据。
+2. **proposal schema 用 `extra="forbid"` 封死评价字段**：`confidence` / `level` / `score`
+   一旦出现，schema 阶段直接拒绝 —— 结构性防住"提前引入评价体系"。
+   `run_id` 不由 LLM 提供，由运行记录（`g_agent_runs`）补。
+3. **分桶映射确定性且 fail-closed**：六个既有 `growth_evidence_type` 全表；
+   `external_ref`（JD/论文）映射为 `None`（不入桶），未知类型同样拒绝 ——
+   不静默丢证据、不硬塞进知识桶。
+4. **LLM 输出没有直接落库路径**（结构性）：`ClaimBinder.propose()` 只返回决策；
+   唯一写 `g_capability_claims` 的位置是闸门第 8 步，测试断言"桥表行数 == 接受数"。
+5. **真实运行（1 次，用户授权）**：`openai_compatible/glm-5.3`、1 次结构化调用 /
+   1 个 HTTP 请求（硬上限 1 + 零额外重试）、1364 tokens；6 候选 → 4 提议 → 3 接受 + 1 拒绝；
+   真实库以 `mode=ro` 复制副本运行，逐表哈希 + 计数对锚一致（真实库零写入）。
+6. **生成器接线推迟（用户决定）**：`M4-b scope: supersede_missing = contract visible only;
+   generator wiring = deferred` —— 不把 `CapabilityModelGenerator.generate` 混进绑定的闸门，
+   避免扩大 blast radius 与问题定位困难；后续单独开 `M4-b.1` 或并入 M4-c 前治理项。
+7. **运行手册记一条**：本机 `uv` 不自动加载 `.env`，真实运行须用 `uv run --env-file .env`，
+   否则网关回落到 anthropic 默认并报 `ANTHROPIC_AUTH_TOKEN missing`。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

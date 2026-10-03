@@ -1,0 +1,138 @@
+{
+  "artifact": "m4b-binding-proposals",
+  "mode": "real",
+  "generated_at": "2026-10-03T08:34:39+00:00",
+  "db_path": "D:\\projects\\Personal Growth\\artifacts\\m4b\\tmp\\binding-real.db",
+  "read_only": true,
+  "run_id": "m4b_real_run_001",
+  "provider": "openai_compatible",
+  "model": "glm-5.3",
+  "goal_id": "goal_m2_real",
+  "candidates": [
+    "clm_a2a9cf0859a8cbde6252",
+    "clm_3d1cbd5bff9674150caa",
+    "clm_81b35aaa61c0d47ffee7",
+    "clm_f3cfb0284e2346adad92",
+    "clm_cadc7e62a9c37aa4d014",
+    "clm_419ed3a61ea18e1875b1"
+  ],
+  "proposals": [
+    {
+      "claim_id": "clm_a2a9cf0859a8cbde6252",
+      "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+      "rationale": "材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。",
+      "proposal_id": "prp_bb0e41366c809193",
+      "run_id": "m4b_real_run_001"
+    },
+    {
+      "claim_id": "clm_81b35aaa61c0d47ffee7",
+      "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+      "rationale": "材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。",
+      "proposal_id": "prp_91422dc5326278ed",
+      "run_id": "m4b_real_run_001"
+    },
+    {
+      "claim_id": "clm_cadc7e62a9c37aa4d014",
+      "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+      "rationale": "材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。",
+      "proposal_id": "prp_14af0ee480992c9d",
+      "run_id": "m4b_real_run_001"
+    },
+    {
+      "claim_id": "clm_419ed3a61ea18e1875b1",
+      "capability_path": "工程化与求职/工程落地/Agent 项目调试与评估",
+      "rationale": "材料中出现测试用例生成相关内容，与 Agent 项目调试与评估中的测试实践相关。",
+      "proposal_id": "prp_cb3669826c67e528",
+      "run_id": "m4b_real_run_001"
+    }
+  ],
+  "decisions": [
+    {
+      "proposal_id": "prp_bb0e41366c809193",
+      "claim_id": "clm_a2a9cf0859a8cbde6252",
+      "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+      "rationale": "材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。",
+      "accepted": true,
+      "gate_stage": "persisted",
+      "reject_reason": null,
+      "capability_id": "cap_8e4dc689d02219739587",
+      "run_id": "m4b_real_run_001",
+      "timestamp": "2026-10-03T08:34:39+00:00",
+      "stages_passed": [
+        "schema",
+        "claim_exists",
+        "capability_exists",
+        "capability_active",
+        "bucket_allowed",
+        "attribution_unchanged",
+        "duplicate",
+        "persisted"
+      ]
+    },
+    {
+      "proposal_id": "prp_91422dc5326278ed",
+      "claim_id": "clm_81b35aaa61c0d47ffee7",
+      "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+      "rationale": "材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。",
+      "accepted": true,
+      "gate_stage": "persisted",
+      "reject_reason": null,
+      "capability_id": "cap_fd68a5f98d15f7631867",
+      "run_id": "m4b_real_run_001",
+      "timestamp": "2026-10-03T08:34:39+00:00",
+      "stages_passed": [
+        "schema",
+        "claim_exists",
+        "capability_exists",
+        "capability_active",
+        "bucket_allowed",
+        "attribution_unchanged",
+        "duplicate",
+        "persisted"
+      ]
+    },
+    {
+      "proposal_id": "prp_14af0ee480992c9d",
+      "claim_id": "clm_cadc7e62a9c37aa4d014",
+      "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+      "rationale": "材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。",
+      "accepted": true,
+      "gate_stage": "persisted",
+      "reject_reason": null,
+      "capability_id": "cap_8e4dc689d02219739587",
+      "run_id": "m4b_real_run_001",
+      "timestamp": "2026-10-03T08:34:39+00:00",
+      "stages_passed": [
+        "schema",
+        "claim_exists",
+        "capability_exists",
+        "capability_active",
+        "bucket_allowed",
+        "attribution_unchanged",
+        "duplicate",
+        "persisted"
+      ]
+    },
+    {
+      "proposal_id": "prp_cb3669826c67e528",
+      "claim_id": "clm_419ed3a61ea18e1875b1",
+      "capability_path": "工程化与求职/工程落地/Agent 项目调试与评估",
+      "rationale": "材料中出现测试用例生成相关内容，与 Agent 项目调试与评估中的测试实践相关。",
+      "accepted": false,
+      "gate_stage": "attribution_unchanged",
+      "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+      "capability_id": "cap_16e81174899b939538e1",
+      "run_id": "m4b_real_run_001",
+      "timestamp": "2026-10-03T08:34:39+00:00",
+      "stages_passed": [
+        "schema",
+        "claim_exists",
+        "capability_exists",
+        "capability_active",
+        "bucket_allowed"
+      ]
+    }
+  ],
+  "accepted_count": 3,
+  "rejected_count": 1
+}

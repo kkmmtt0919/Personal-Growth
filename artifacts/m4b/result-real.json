@@ -1,0 +1,304 @@
+{
+  "mode": "real",
+  "db": "D:\\projects\\Personal Growth\\artifacts\\m4b\\tmp\\binding-real.db",
+  "goal_id": "goal_m2_real",
+  "tree": {
+    "seeded": 25,
+    "leaf": 16
+  },
+  "repo": {
+    "name": "kkmmtt0919/mytset-rag",
+    "sha": "c417a096927dbf1f36b1ae1e39fb61b356732d87",
+    "files_ingested": 20,
+    "tech_stack": {
+      "java": [
+        "pom.xml",
+        "src/main/java/com/hw/Application.java",
+        "src/main/java/com/hw/Main.java",
+        "src/main/java/com/hw/Mybatisgenerator.java",
+        "src/main/java/com/hw/controller/InterfaceDocController.java",
+        "src/main/java/com/hw/controller/McpController.java",
+        "src/main/java/com/hw/controller/TestCaseController.java",
+        "src/main/java/com/hw/controller/TestController.java",
+        "src/main/java/com/hw/dto/VectorSearchResult.java",
+        "src/main/java/com/hw/entity/InterfaceDoc.java",
+        "src/main/java/com/hw/entity/TestCase.java",
+        "src/main/java/com/hw/mapper/InterfaceDocMapper.java",
+        "src/main/java/com/hw/mapper/TestCaseMapper.java",
+        "src/main/java/com/hw/mcp/HttpTool.java",
+        "src/main/java/com/hw/mcp/ToolRegistry.java",
+        "src/main/java/com/hw/mcp/ToolRequest.java",
+        "src/main/java/com/hw/mcp/ToolResponse.java",
+        "src/main/java/com/hw/service/AiService.java",
+        "src/main/java/com/hw/service/IInterfaceDocService.java",
+        "src/main/java/com/hw/service/ITestCaseService.java",
+        "src/main/java/com/hw/service/RagService.java",
+        "src/main/java/com/hw/service/TestGenerationService.java",
+        "src/main/java/com/hw/service/VectorRetrievalService.java",
+        "src/main/java/com/hw/service/impl/InterfaceDocServiceImpl.java",
+        "src/main/java/com/hw/service/impl/TestCaseServiceImpl.java"
+      ],
+      "python": [
+        "scripts/retrieval_service.py",
+        "scripts/vectorize_cases.py"
+      ],
+      "xml": [
+        "pom.xml",
+        "src/main/resources/mapper/InterfaceDocMapper.xml",
+        "src/main/resources/mapper/TestCaseMapper.xml"
+      ],
+      "yaml": [
+        "src/main/resources/application.yml"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "claim_id": "clm_a2a9cf0859a8cbde6252",
+      "classification": "admissible",
+      "statement": "项目材料中出现RAG 检索服务相关实现（依据所引原文段落）"
+    },
+    {
+      "claim_id": "clm_3d1cbd5bff9674150caa",
+      "classification": "admissible",
+      "statement": "项目材料中出现Java 服务端源码（依据所引原文段落）"
+    },
+    {
+      "claim_id": "clm_81b35aaa61c0d47ffee7",
+      "classification": "admissible",
+      "statement": "项目材料中出现MCP 工具注册与调用相关实现（依据所引原文段落）"
+    },
+    {
+      "claim_id": "clm_f3cfb0284e2346adad92",
+      "classification": "admissible",
+      "statement": "项目材料中出现测试用例生成相关内容（依据所引原文段落）"
+    },
+    {
+      "claim_id": "clm_cadc7e62a9c37aa4d014",
+      "classification": "admissible",
+      "statement": "项目材料中出现向量检索与向量库依赖（依据所引原文段落）"
+    },
+    {
+      "claim_id": "clm_419ed3a61ea18e1875b1",
+      "classification": "pending_declaration",
+      "statement": "对话材料中包含用户熟悉 RAG 的自述（构造样本）"
+    }
+  ],
+  "budget": {
+    "application_calls": 1,
+    "http_requests": 1,
+    "http_cap": 1
+  },
+  "run": {
+    "run_id": "m4b_real_run_001",
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "goal_id": "goal_m2_real",
+    "candidates": [
+      "clm_a2a9cf0859a8cbde6252",
+      "clm_3d1cbd5bff9674150caa",
+      "clm_81b35aaa61c0d47ffee7",
+      "clm_f3cfb0284e2346adad92",
+      "clm_cadc7e62a9c37aa4d014",
+      "clm_419ed3a61ea18e1875b1"
+    ],
+    "proposals": [
+      {
+        "claim_id": "clm_a2a9cf0859a8cbde6252",
+        "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+        "rationale": "材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。",
+        "proposal_id": "prp_bb0e41366c809193",
+        "run_id": "m4b_real_run_001"
+      },
+      {
+        "claim_id": "clm_81b35aaa61c0d47ffee7",
+        "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+        "rationale": "材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。",
+        "proposal_id": "prp_91422dc5326278ed",
+        "run_id": "m4b_real_run_001"
+      },
+      {
+        "claim_id": "clm_cadc7e62a9c37aa4d014",
+        "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+        "rationale": "材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。",
+        "proposal_id": "prp_14af0ee480992c9d",
+        "run_id": "m4b_real_run_001"
+      },
+      {
+        "claim_id": "clm_419ed3a61ea18e1875b1",
+        "capability_path": "工程化与求职/工程落地/Agent 项目调试与评估",
+        "rationale": "材料中出现测试用例生成相关内容，与 Agent 项目调试与评估中的测试实践相关。",
+        "proposal_id": "prp_cb3669826c67e528",
+        "run_id": "m4b_real_run_001"
+      }
+    ],
+    "decisions": [
+      {
+        "proposal_id": "prp_bb0e41366c809193",
+        "claim_id": "clm_a2a9cf0859a8cbde6252",
+        "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+        "rationale": "材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_8e4dc689d02219739587",
+        "run_id": "m4b_real_run_001",
+        "timestamp": "2026-10-03T08:34:39+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_91422dc5326278ed",
+        "claim_id": "clm_81b35aaa61c0d47ffee7",
+        "capability_path": "Agent 开发/工具与框架/自定义工具集成与 MCP",
+        "rationale": "材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_fd68a5f98d15f7631867",
+        "run_id": "m4b_real_run_001",
+        "timestamp": "2026-10-03T08:34:39+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_14af0ee480992c9d",
+        "claim_id": "clm_cadc7e62a9c37aa4d014",
+        "capability_path": "Agent 开发/工具与框架/RAG 与向量检索集成",
+        "rationale": "材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_8e4dc689d02219739587",
+        "run_id": "m4b_real_run_001",
+        "timestamp": "2026-10-03T08:34:39+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_cb3669826c67e528",
+        "claim_id": "clm_419ed3a61ea18e1875b1",
+        "capability_path": "工程化与求职/工程落地/Agent 项目调试与评估",
+        "rationale": "材料中出现测试用例生成相关内容，与 Agent 项目调试与评估中的测试实践相关。",
+        "accepted": false,
+        "gate_stage": "attribution_unchanged",
+        "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+        "capability_id": "cap_16e81174899b939538e1",
+        "run_id": "m4b_real_run_001",
+        "timestamp": "2026-10-03T08:34:39+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed"
+        ]
+      }
+    ],
+    "accepted": [
+      "prp_bb0e41366c809193",
+      "prp_91422dc5326278ed",
+      "prp_14af0ee480992c9d"
+    ],
+    "rejected": [
+      "prp_cb3669826c67e528"
+    ]
+  },
+  "bridge_links": [
+    {
+      "capability_id": "cap_8e4dc689d02219739587",
+      "claim_id": "clm_a2a9cf0859a8cbde6252",
+      "role": "supports",
+      "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4b_real_run_001｜proposer=openai_compatible/glm-5.3｜理由：材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。",
+      "created_at": "2026-10-03 08:34:39"
+    },
+    {
+      "capability_id": "cap_8e4dc689d02219739587",
+      "claim_id": "clm_cadc7e62a9c37aa4d014",
+      "role": "supports",
+      "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4b_real_run_001｜proposer=openai_compatible/glm-5.3｜理由：材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。",
+      "created_at": "2026-10-03 08:34:39"
+    },
+    {
+      "capability_id": "cap_fd68a5f98d15f7631867",
+      "claim_id": "clm_81b35aaa61c0d47ffee7",
+      "role": "supports",
+      "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=m4b_real_run_001｜proposer=openai_compatible/glm-5.3｜理由：材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。",
+      "created_at": "2026-10-03 08:34:39"
+    }
+  ],
+  "runs": [
+    {
+      "id": "m4b_real_run_001",
+      "user_id": "local",
+      "agent": "claim_binding",
+      "status": "ok",
+      "provider": "openai_compatible",
+      "model": "glm-5.3",
+      "model_source": "result",
+      "goal_id": "goal_m2_real",
+      "correlation_id": "goal_m2_real",
+      "input": "材料口径主张（claim_id 只能从这里选）：\n- clm_a2a9cf0859a8cbde6252：项目材料中出现RAG 检索服务相关实现（依据所引原文段落）\n- clm_3d1cbd5bff9674150caa：项目材料中出现Java 服务端源码（依据所引原文段落）\n- clm_81b35aaa61c0d47ffee7：项目材料中出现MCP 工具注册与调用相关实现（依据所引原文段落）\n- clm_f3cfb0284e2346adad92：项目材料中出现测试用例生成相关内容（依据所引原文段落）\n- clm_cadc7e62a9c37aa4d014：项目材料中出现向量检索与向量库依赖（依据所引原文段落）\n- clm_419ed3a61ea18e1875b1：对话材料中包含用户熟悉 RAG 的自述（构造样本）\n\n目标能力树（active 能力点；capability_path 必须逐字来自这里）：\n- Agent 开发\n- Agent 开发/Agent 架构设计\n- Agent 开发/Agent 架构设计/ReAct 与规划循环设计\n- Agent 开发/Agent 架构设计/多 Agent 协作模式\n- Agent 开发/Agent 架构设计/记忆机制设计\n- Agent 开发/工具与框架\n- Agent 开发/工具与框架/RAG 与向量检索集成\n- Agent 开发/工具与框架/框架使用（LangChain、LlamaIndex）\n- Agent 开发/工具与框架/自定义工具集成与 MCP\n- LLM 基础\n- LLM 基础/Prompt 工程\n- LLM 基础/Prompt 工程/少样本与思维链技巧\n- LLM 基础/Prompt 工程/系统提示词设计\n- LLM 基础/模型与 API 使用\n- LLM 基础/模型与 API 使用/Function Calling 与结构化输出\n- LLM 基础/模型与 API 使用/上下文与 Token 管理\n- LLM 基础/模型与 API 使用/主流模型选型与对比\n- 工程化与求职\n- 工程化与求职/工程落地\n- 工程化与求职/工程落地/Agent 项目调试与评估\n- 工程化与求职/工程落地/成本与安全控制\n- 工程化与求职/工程落地/部署与 API 服务化\n- 工程化与求职/求职准备\n- 工程化与求职/求职准备/Agent 技术面试题演练\n- 工程化与求职/求职准备/项目展示与作品集\n\n为每条主张提议至多一个最相关的能力点；不相关就不提议。输出严格 JSON。",
+      "tool_calls_json": null,
+      "output": "{\"proposals\": [{\"capability_path\": \"Agent 开发/工具与框架/RAG 与向量检索集成\", \"claim_id\": \"clm_a2a9cf0859a8cbde6252\", \"rationale\": \"材料中出现 RAG 检索服务相关实现，与 RAG 与向量检索集成能力点直接对应。\"}, {\"capability_path\": \"Agent 开发/工具与框架/自定义工具集成与 MCP\", \"claim_id\": \"clm_81b35aaa61c0d47ffee7\", \"rationale\": \"材料中出现 MCP 工具注册与调用相关实现，与自定义工具集成与 MCP 能力点直接对应。\"}, {\"capability_path\": \"Agent 开发/工具与框架/RAG 与向量检索集成\", \"claim_id\": \"clm_cadc7e62a9c37aa4d014\", \"rationale\": \"材料中出现向量检索与向量库依赖，与 RAG 与向量检索集成能力点相关。\"}, {\"capability_path\": \"工程化与求职/工程落地/Agent 项目调试与评估\", \"claim_id\": \"clm_419ed3a61ea18e1875b1\", \"rationale\": \"材料中出现测试用例生成相关内容，与 Agent 项目调试与评估中的测试实践相关。\"}]}",
+      "error": null,
+      "tokens": 1364,
+      "latency_ms": 4218,
+      "created_at": "2026-10-03 08:34:39"
+    }
+  ],
+  "audit_store": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "real_db_anchors": {
+    "content_hashes_match": true,
+    "counts_match": true,
+    "counts": {
+      "sources": 3,
+      "passages": 109,
+      "entities": 60,
+      "entity_aliases": 3,
+      "events": 1,
+      "claims": 2,
+      "evidence": 6,
+      "relations": 2
+    }
+  },
+  "artifact": "D:\\projects\\Personal Growth\\artifacts\\m4b\\binding-real.json",
+  "checks": {
+    "single_structured_call": true,
+    "single_http_request": true,
+    "run_recorded_from_result": true,
+    "llm_output_has_no_direct_write": true,
+    "accepted_has_full_reason": true,
+    "audit_store_pass": true,
+    "real_db_untouched": true,
+    "artifact_read_only": true
+  },
+  "all_checks_passed": true
+}

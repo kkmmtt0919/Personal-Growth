@@ -1,0 +1,379 @@
+{
+  "mode": "offline-fake",
+  "db": "D:\\projects\\Personal Growth\\artifacts\\m4b\\tmp\\binding-offline.db",
+  "goal_id": "goal_m4b_offline",
+  "capabilities": {
+    "rag": {
+      "id": "cap_e1ad86284a95d8ae3552",
+      "path": "LLM 基础/检索增强/RAG 实现"
+    },
+    "test": {
+      "id": "cap_c43790f9b7736a9e76d8",
+      "path": "LLM 基础/工程实践/测试设计"
+    }
+  },
+  "candidates": [
+    {
+      "claim_id": "clm_43fba15b8f475a3f72d8",
+      "classification": "admissible",
+      "statement": "项目材料中包含 RAG 检索实现相关内容"
+    },
+    {
+      "claim_id": "clm_d7b42c2bff0aa51eb2ef",
+      "classification": "pending_declaration",
+      "statement": "对话材料中包含用户熟悉 RAG 的自述"
+    },
+    {
+      "claim_id": "clm_c24937802adbc5f58e21",
+      "classification": "domain_reference",
+      "statement": "岗位材料中包含 RAG 工程经验要求"
+    }
+  ],
+  "run": {
+    "run_id": "run_f65ad4c4b91c49d4",
+    "provider": "fake-provider",
+    "model": "fake-model-x",
+    "goal_id": "goal_m4b_offline",
+    "candidates": [
+      "clm_43fba15b8f475a3f72d8",
+      "clm_d7b42c2bff0aa51eb2ef",
+      "clm_c24937802adbc5f58e21"
+    ],
+    "proposals": [
+      {
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "材料内容与该能力点直接相关",
+        "proposal_id": "prp_91f6f961de2e61e6",
+        "run_id": "run_f65ad4c4b91c49d4"
+      },
+      {
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "杜撰/路径/不存在",
+        "rationale": "路径不存在，应在 capability_exists 阶段被拒",
+        "proposal_id": "prp_a0bb0e3f588d21fd",
+        "run_id": "run_f65ad4c4b91c49d4"
+      },
+      {
+        "claim_id": "clm_d7b42c2bff0aa51eb2ef",
+        "capability_path": "LLM 基础/工程实践/测试设计",
+        "rationale": "自述不得进入绑定，应在归属复核阶段被拒",
+        "proposal_id": "prp_97448639bb627d33",
+        "run_id": "run_f65ad4c4b91c49d4"
+      },
+      {
+        "claim_id": "clm_c24937802adbc5f58e21",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "岗位要求不是用户证据，应在分桶阶段被拒",
+        "proposal_id": "prp_9ad56a7891282626",
+        "run_id": "run_f65ad4c4b91c49d4"
+      }
+    ],
+    "decisions": [
+      {
+        "proposal_id": "prp_91f6f961de2e61e6",
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "材料内容与该能力点直接相关",
+        "accepted": true,
+        "gate_stage": "persisted",
+        "reject_reason": null,
+        "capability_id": "cap_e1ad86284a95d8ae3552",
+        "run_id": "run_f65ad4c4b91c49d4",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged",
+          "duplicate",
+          "persisted"
+        ]
+      },
+      {
+        "proposal_id": "prp_a0bb0e3f588d21fd",
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "杜撰/路径/不存在",
+        "rationale": "路径不存在，应在 capability_exists 阶段被拒",
+        "accepted": false,
+        "gate_stage": "capability_exists",
+        "reject_reason": "capability_path 不在目标树中（不得杜撰路径）",
+        "capability_id": null,
+        "run_id": "run_f65ad4c4b91c49d4",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists"
+        ]
+      },
+      {
+        "proposal_id": "prp_97448639bb627d33",
+        "claim_id": "clm_d7b42c2bff0aa51eb2ef",
+        "capability_path": "LLM 基础/工程实践/测试设计",
+        "rationale": "自述不得进入绑定，应在归属复核阶段被拒",
+        "accepted": false,
+        "gate_stage": "attribution_unchanged",
+        "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+        "capability_id": "cap_c43790f9b7736a9e76d8",
+        "run_id": "run_f65ad4c4b91c49d4",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed"
+        ]
+      },
+      {
+        "proposal_id": "prp_9ad56a7891282626",
+        "claim_id": "clm_c24937802adbc5f58e21",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "岗位要求不是用户证据，应在分桶阶段被拒",
+        "accepted": false,
+        "gate_stage": "bucket_allowed",
+        "reject_reason": "存在不可入桶的证据类型：['external_ref']",
+        "capability_id": "cap_e1ad86284a95d8ae3552",
+        "run_id": "run_f65ad4c4b91c49d4",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active"
+        ]
+      }
+    ],
+    "accepted": [
+      "prp_91f6f961de2e61e6"
+    ],
+    "rejected": [
+      "prp_a0bb0e3f588d21fd",
+      "prp_97448639bb627d33",
+      "prp_9ad56a7891282626"
+    ]
+  },
+  "second_run": {
+    "run_id": "run_514200f01a1b417f",
+    "provider": "fake-provider",
+    "model": "fake-model-x",
+    "goal_id": "goal_m4b_offline",
+    "candidates": [
+      "clm_43fba15b8f475a3f72d8",
+      "clm_d7b42c2bff0aa51eb2ef",
+      "clm_c24937802adbc5f58e21"
+    ],
+    "proposals": [
+      {
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "材料内容与该能力点直接相关",
+        "proposal_id": "prp_c70054a9266d1d64",
+        "run_id": "run_514200f01a1b417f"
+      },
+      {
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "杜撰/路径/不存在",
+        "rationale": "路径不存在，应在 capability_exists 阶段被拒",
+        "proposal_id": "prp_ed353b6a763f5e27",
+        "run_id": "run_514200f01a1b417f"
+      },
+      {
+        "claim_id": "clm_d7b42c2bff0aa51eb2ef",
+        "capability_path": "LLM 基础/工程实践/测试设计",
+        "rationale": "自述不得进入绑定，应在归属复核阶段被拒",
+        "proposal_id": "prp_d5c297fc1583f888",
+        "run_id": "run_514200f01a1b417f"
+      },
+      {
+        "claim_id": "clm_c24937802adbc5f58e21",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "岗位要求不是用户证据，应在分桶阶段被拒",
+        "proposal_id": "prp_bbb777b0071dc081",
+        "run_id": "run_514200f01a1b417f"
+      }
+    ],
+    "decisions": [
+      {
+        "proposal_id": "prp_c70054a9266d1d64",
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "材料内容与该能力点直接相关",
+        "accepted": false,
+        "gate_stage": "duplicate",
+        "reject_reason": "该主张已绑定到此能力点（幂等：重复提议不再落库）",
+        "capability_id": "cap_e1ad86284a95d8ae3552",
+        "run_id": "run_514200f01a1b417f",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed",
+          "attribution_unchanged"
+        ]
+      },
+      {
+        "proposal_id": "prp_ed353b6a763f5e27",
+        "claim_id": "clm_43fba15b8f475a3f72d8",
+        "capability_path": "杜撰/路径/不存在",
+        "rationale": "路径不存在，应在 capability_exists 阶段被拒",
+        "accepted": false,
+        "gate_stage": "capability_exists",
+        "reject_reason": "capability_path 不在目标树中（不得杜撰路径）",
+        "capability_id": null,
+        "run_id": "run_514200f01a1b417f",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists"
+        ]
+      },
+      {
+        "proposal_id": "prp_d5c297fc1583f888",
+        "claim_id": "clm_d7b42c2bff0aa51eb2ef",
+        "capability_path": "LLM 基础/工程实践/测试设计",
+        "rationale": "自述不得进入绑定，应在归属复核阶段被拒",
+        "accepted": false,
+        "gate_stage": "attribution_unchanged",
+        "reject_reason": "准入复核未通过：pending_declaration（归属不是 user_declared（实际：['user_asserted']））",
+        "capability_id": "cap_c43790f9b7736a9e76d8",
+        "run_id": "run_514200f01a1b417f",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active",
+          "bucket_allowed"
+        ]
+      },
+      {
+        "proposal_id": "prp_bbb777b0071dc081",
+        "claim_id": "clm_c24937802adbc5f58e21",
+        "capability_path": "LLM 基础/检索增强/RAG 实现",
+        "rationale": "岗位要求不是用户证据，应在分桶阶段被拒",
+        "accepted": false,
+        "gate_stage": "bucket_allowed",
+        "reject_reason": "存在不可入桶的证据类型：['external_ref']",
+        "capability_id": "cap_e1ad86284a95d8ae3552",
+        "run_id": "run_514200f01a1b417f",
+        "timestamp": "2026-10-03T08:35:49+00:00",
+        "stages_passed": [
+          "schema",
+          "claim_exists",
+          "capability_exists",
+          "capability_active"
+        ]
+      }
+    ],
+    "accepted": [],
+    "rejected": [
+      "prp_c70054a9266d1d64",
+      "prp_ed353b6a763f5e27",
+      "prp_d5c297fc1583f888",
+      "prp_bbb777b0071dc081"
+    ]
+  },
+  "bridge_links": [
+    {
+      "capability_id": "cap_e1ad86284a95d8ae3552",
+      "claim_id": "clm_43fba15b8f475a3f72d8",
+      "role": "supports",
+      "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_f65ad4c4b91c49d4｜proposer=fake-provider/fake-model-x｜理由：材料内容与该能力点直接相关",
+      "created_at": "2026-10-03 08:35:49"
+    }
+  ],
+  "runs": [
+    {
+      "id": "run_514200f01a1b417f",
+      "user_id": "local",
+      "agent": "claim_binding",
+      "status": "ok",
+      "provider": "fake-provider",
+      "model": "fake-model-x",
+      "model_source": "result",
+      "goal_id": "goal_m4b_offline",
+      "correlation_id": "goal_m4b_offline",
+      "input": "材料口径主张（claim_id 只能从这里选）：\n- clm_43fba15b8f475a3f72d8：项目材料中包含 RAG 检索实现相关内容\n- clm_d7b42c2bff0aa51eb2ef：对话材料中包含用户熟悉 RAG 的自述\n- clm_c24937802adbc5f58e21：岗位材料中包含 RAG 工程经验要求\n\n目标能力树（active 能力点；capability_path 必须逐字来自这里）：\n- LLM 基础\n- LLM 基础/工程实践\n- LLM 基础/工程实践/测试设计\n- LLM 基础/检索增强\n- LLM 基础/检索增强/RAG 实现\n\n为每条主张提议至多一个最相关的能力点；不相关就不提议。输出严格 JSON。",
+      "tool_calls_json": null,
+      "output": "{\"proposals\": [{\"capability_path\": \"LLM 基础/检索增强/RAG 实现\", \"claim_id\": \"clm_43fba15b8f475a3f72d8\", \"rationale\": \"材料内容与该能力点直接相关\"}, {\"capability_path\": \"杜撰/路径/不存在\", \"claim_id\": \"clm_43fba15b8f475a3f72d8\", \"rationale\": \"路径不存在，应在 capability_exists 阶段被拒\"}, {\"capability_path\": \"LLM 基础/工程实践/测试设计\", \"claim_id\": \"clm_d7b42c2bff0aa51eb2ef\", \"rationale\": \"自述不得进入绑定，应在归属复核阶段被拒\"}, {\"capability_path\": \"LLM 基础/检索增强/RAG 实现\", \"claim_id\": \"clm_c24937802adbc5f58e21\", \"rationale\": \"岗位要求不是用户证据，应在分桶阶段被拒\"}]}",
+      "error": null,
+      "tokens": 1165,
+      "latency_ms": 0,
+      "created_at": "2026-10-03 08:35:49"
+    },
+    {
+      "id": "run_f65ad4c4b91c49d4",
+      "user_id": "local",
+      "agent": "claim_binding",
+      "status": "ok",
+      "provider": "fake-provider",
+      "model": "fake-model-x",
+      "model_source": "result",
+      "goal_id": "goal_m4b_offline",
+      "correlation_id": "goal_m4b_offline",
+      "input": "材料口径主张（claim_id 只能从这里选）：\n- clm_43fba15b8f475a3f72d8：项目材料中包含 RAG 检索实现相关内容\n- clm_d7b42c2bff0aa51eb2ef：对话材料中包含用户熟悉 RAG 的自述\n- clm_c24937802adbc5f58e21：岗位材料中包含 RAG 工程经验要求\n\n目标能力树（active 能力点；capability_path 必须逐字来自这里）：\n- LLM 基础\n- LLM 基础/工程实践\n- LLM 基础/工程实践/测试设计\n- LLM 基础/检索增强\n- LLM 基础/检索增强/RAG 实现\n\n为每条主张提议至多一个最相关的能力点；不相关就不提议。输出严格 JSON。",
+      "tool_calls_json": null,
+      "output": "{\"proposals\": [{\"capability_path\": \"LLM 基础/检索增强/RAG 实现\", \"claim_id\": \"clm_43fba15b8f475a3f72d8\", \"rationale\": \"材料内容与该能力点直接相关\"}, {\"capability_path\": \"杜撰/路径/不存在\", \"claim_id\": \"clm_43fba15b8f475a3f72d8\", \"rationale\": \"路径不存在，应在 capability_exists 阶段被拒\"}, {\"capability_path\": \"LLM 基础/工程实践/测试设计\", \"claim_id\": \"clm_d7b42c2bff0aa51eb2ef\", \"rationale\": \"自述不得进入绑定，应在归属复核阶段被拒\"}, {\"capability_path\": \"LLM 基础/检索增强/RAG 实现\", \"claim_id\": \"clm_c24937802adbc5f58e21\", \"rationale\": \"岗位要求不是用户证据，应在分桶阶段被拒\"}]}",
+      "error": null,
+      "tokens": 1165,
+      "latency_ms": 0,
+      "created_at": "2026-10-03 08:35:49"
+    }
+  ],
+  "evidence_counts_before": {
+    "sources": 3,
+    "passages": 6,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 3,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 3,
+    "evidence": 3,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 15
+  },
+  "evidence_counts_after": {
+    "sources": 3,
+    "passages": 6,
+    "entities": 0,
+    "entity_aliases": 0,
+    "events": 0,
+    "relations": 3,
+    "timeline_entries": 0,
+    "place_assertions": 0,
+    "claims": 3,
+    "evidence": 3,
+    "conflicts": 0,
+    "conflict_candidates": 0,
+    "review_feedback": 0,
+    "evolution_snapshots": 0,
+    "audit_log": 15
+  },
+  "audit_store": {
+    "status": "pass",
+    "total_violations": 0
+  },
+  "artifact": "D:\\projects\\Personal Growth\\artifacts\\m4b\\binding-offline.json",
+  "checks": {
+    "gate_stages_expected": true,
+    "one_accepted_three_rejected": true,
+    "llm_output_has_no_direct_write": true,
+    "evidence_store_untouched": true,
+    "second_run_all_rejected": true,
+    "reject_records_complete": true,
+    "run_recorded_from_result": true,
+    "audit_store_pass": true,
+    "artifact_read_only": true
+  },
+  "all_checks_passed": true
+}

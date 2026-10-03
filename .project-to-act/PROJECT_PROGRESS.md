@@ -32,8 +32,9 @@
 | M3-c | GitHub 公共仓库接入（浅克隆；逐文件走单入口；技术栈清单） | 已完成 | ZCode | 真实公共仓库 20 文件入库 / 179 段 / audit pass-0 / 幂等 / 归属通道贯穿；新增 21 项离线测试 | EV-062 | 2026-10-02 |
 | M3-d | 外部参考通道（JD / domain_reference；通道锁定 + 抽取只读） | 已完成 | ZCode | 8 项边界检查全过（含不能支撑用户断言、user_evidence 为空、claims=0）；27 个技术词带 passage 证据 | EV-063 | 2026-10-02 |
 | M3-e | 材料口径 claim + audit + provenance（越权校验接线；历史主张只读 dry-run） | 已完成 | ZCode | 5 条材料口径 claim、audit pass-0、provenance 可走通、越权闸门零写入；顺带修掉校验器否定语境假阳性 | EV-064 | 2026-10-02 |
-| M4 | 能力审计（产品内核：assessment / 证据充分性 / 星级） | **进行中（M4-a 已验收）** | — | 通过验收门 G2、G3；当前：M4-PLAN v1.0 已冻结，M4-a 已验收；M4-b 待确认边界 | EV-066 EV-067 | 2026-10-02 |
+| M4 | 能力审计（产品内核：assessment / 证据充分性 / 星级） | **进行中（M4-b 已完成，待验收）** | — | 通过验收门 G2、G3；当前：M4-PLAN v1.0 已冻结，M4-a 已验收，M4-b 待验收；下一步 M4-c | EV-066 EV-067 EV-068 | 2026-10-03 |
 | M4-a | Assessment 基础模型与 provenance 前置（契约 + 最小闭环 + 独立 audit artifact；不做星级/LLM/UI/G3） | **已完成（已验收，用户 2026-10-02 确认）** | ZCode | 11/11 检查：草案契约（level=NULL）、四类矩阵准入、history+current view、C5 上游修（`9a21552`）、零写回证据库、audit_store pass/0；真实库对基一致 | EV-067 | 2026-10-02 |
+| M4-b | 证据绑定与分桶（LLM 提议 + 八步确定性闸门 + 映射落库；离线闭环 + 1 次真实模型运行） | **已完成（待验收）** | ZCode | 离线 9/9 + 真实 8/8：schema 三字段 / 八步闸门逐步对例 / LLM 无直接落库路径 / 真实运行 1 次调用 1 个 HTTP 请求（3 接受 1 拒绝）/ 真实库零写入 / audit_store pass | EV-068 | 2026-10-03 |
 | M5 | 任务闭环与成长循环 | 已规划 | — | 通过验收门 G4、G5 | 无 | 2026-10-01 |
 | M6 | Memory 三层 | 已规划 | — | 见 `docs/ROADMAP.md` M6 | 无 | 2026-10-01 |
 | M7 | 主动 Agent | 已规划 | — | 见 `docs/ROADMAP.md` M7 | 无 | 2026-10-01 |
@@ -64,7 +65,10 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
      确定性准入闸门（四类矩阵 + 越权 + 链完整性/逐字）、C5 抽取 provenance 上游修（evkg `9a21552`）、
      `claim/evidence → assessment draft → 独立 audit artifact` 最小闭环（只读、零写回证据库）；
    - 边界（用户指定）：不做星级算法、不做 LLM、不做 UI、不接 G3 实验；
-   - **下一步 M4-b（证据绑定与分桶：LLM 提议 + 确定性闸门 + 映射落库）：边界提议已提交，待确认后开工**。
+   - **M4-b 已完成待验收**（EV-068，`artifacts/m4b/`）：LLM 提议（schema 仅三字段，confidence/level/score 进不来）
+     + 八步确定性闸门（失败零写入、拒绝记录五字段）+ 映射落库；离线 9/9、真实运行 8/8
+     （1 次调用 / 1 个 HTTP 请求、3 接受 + 1 拒绝、真实库零写入）；生成器接线按你的决定推迟（`M4-b.1`）；
+   - **下一步 M4-c（评级与反向证据：星级规则引擎 + attack 接入）待你发话**。
 3. **C5 已解决**（evkg `9a21552`，本地未推送）：抽取 provenance（provider/model/prompt 哈希/领域包）写入 claim metadata 与批账本，
    档案渲染器优先显示；发布/CI 前 pin `git + rev` 时须包含该提交。
 4. **M3 两个开放项保持开放、不阻塞 M4**：① PDF 适配层 V1 入口（产品上传链路未完成）；
@@ -97,3 +101,4 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 | 2026-10-02 | M4-PLAN v0.1（范围冻结草案） | 依据 M3 收口后的输入撰写 `docs/M4-PLAN.md` v0.1：G2/G3 拆问（"证据充分性/可追溯" + "声明 vs 证据"四类矩阵）；assessment 归属模型（source attribution / claim scope / capability ownership 三分离 + 证据准入合取链）；M2 再生成语义三方向对照（推荐 history + current view）；范围、步骤 M4-a…e + Gate、12 项验收映射 | ① 按用户指定**只冻结设计：不写代码、不跑实验**；② C5 抽取模型持久化列为 M4 验收前置；③ 历史越权按独立 artifact 处理、不改真实库；④ 两个 M3 开放项（PDF 入口、页码 locator）保持开放、不阻塞 M4；⑤ 同步修正账本：M3 收口结论、B-06 解除、evkg 领先 5 提交、功能清单状态、验收门状态（G1/QG1/QG2/QG4/QG5） | 无（计划文档待确认；确认后转 v1.0 并赋 EV 号） | 待用户确认三处冻结点与 C5 解法 | M4-a（确认后） |
 | 2026-10-02 | M4-PLAN v1.0 + M4-a | 用户逐项确认七项冻结 → `docs/M4-PLAN.md` 升 v1.0 执行基线（EV-066）；实施 M4-a：`g_` 表族契约（g_capability_claims / g_assessments / 生命周期字段）、确定性准入闸门（四类矩阵 + 越权 + 链完整性/逐字）、AssessmentDrafter 最小闭环、独立 audit artifact（只读）、C5 上游最小修（evkg `9a21552`） | ① 用户指定边界：不做星级算法/LLM/UI/G3；② C5 provenance 取自实际返回值，档案渲染器三态显示（已记录 / 材料口径"不适用" / 修复前"未记录在案"）；③ 历史主张只读扫描分类 overreach/plan，与 M3-e 判定一致、零写入；④ 数据边界：真实库逐表内容哈希 + 计数对 M3-a 锚点一致、真实库无任何 `g_` 表；⑤ 全量 287 项 + evkg 111 + ruff 全绿；冒烟 11/11 通过 | EV-066 EV-067 | M4-a 待用户验收；下一步 M4-b（验收后） | M4-b |
 | 2026-10-02 | M4-a 验收 | 用户确认 M4-a 通过（无附加条件） | 账本同步：M4-a 转"已验收"、Gate/验收记录更新；M4-b 边界提议已提交、待确认后开工 | EV-067 | M4-b（待确认后开工） | M4-b |
+| 2026-10-03 | M4-b（证据绑定与分桶） | 用户确认边界（生成器接线推迟、授权 1 次真实运行）→ 实现 `assessment/buckets.py`（六类型→四桶确定性映射）+ `assessment/binding.py`（ProposalItem extra=forbid / 八步闸门 / ClaimBinder）+ `store.get_capability_by_path` → 20 项契约测试 → 离线冒烟 9/9 → 真实运行 8/8 | ① 闸门固定顺序 schema→claim_exists→capability_exists→capability_active→bucket_allowed→attribution_unchanged→duplicate→persisted，失败零写入且记录五字段；② LLM 无直接落库路径（桥表行数==接受数）；③ 真实运行：glm-5.3、1 次调用/1 个 HTTP 请求、6 候选→4 提议→3 接受 + 1 拒绝（自述，归属不通过）；**如实记录两处提议质量问题**（id/理由错配、漏提议 2 条），治理边界不依赖提议质量；④ 真实库 `mode=ro` 副本运行、逐表哈希 + 计数对锚一致；⑤ 307 + ruff 全绿 | EV-068 | M4-b 待用户验收；生成器接线记 `M4-b.1` | M4-c（待发话） |

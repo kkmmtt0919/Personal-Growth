@@ -232,6 +232,11 @@ Capability mapping                   （写入 g_capability_claims；记录提�
 - 闸门是确定性的（可离线回归），提议与拒绝都留档（`rationale` + run id）；
 - M4-a 落地**契约与闸门**；LLM 提议链路随 M4-b（此时才引入 LLM，且仅提议）。
 
+**落地结果（2026-10-03，M4-b，EV-068）**：`assessment/buckets.py`（六类型 → 四桶映射）+ 
+`assessment/binding.py`（提议 schema 仅三字段、八步闸门、ClaimBinder）已落地；离线闭环 9/9、
+真实运行 8/8（1 次调用、3 接受 + 1 拒绝），proposal / reject / accept 全量留档；
+**生成器接线按用户决定推迟**（`M4-b.1`，`supersede_missing` 仅契约层可见）。
+
 ---
 
 ## 7. G3 实验设计（已冻结）
@@ -287,7 +292,7 @@ Capability mapping                   （写入 g_capability_claims；记录提�
 ```text
 M4-a  Assessment 基础模型与 provenance 前置   ← 已完成并验收（2026-10-02，EV-067）
       ↓
-M4-b  证据绑定与分桶（LLM 提议 + 确定性闸门 + 映射落库）
+M4-b  证据绑定与分桶（LLM 提议 + 确定性闸门 + 映射落库）  ← 已完成（2026-10-03，EV-068）
       ↓
 M4-c  评定与反向证据（星级规则引擎 + attack 接入 + refutes/disputed 压低）
       ↓

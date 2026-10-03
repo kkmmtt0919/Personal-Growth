@@ -448,6 +448,13 @@ class GrowthStore:
         row = self.db.execute("SELECT * FROM g_capabilities WHERE id=?", (capability,)).fetchone()
         return dict(row) if row else None
 
+    def get_capability_by_path(self, goal_id: str, path: str) -> dict | None:
+        """按（目标 + 路径）取能力点 —— LLM 提议只用路径引用，闸门据此解析成稳定 id。"""
+        row = self.db.execute(
+            "SELECT * FROM g_capabilities WHERE goal_id=? AND path=?", (goal_id, path)
+        ).fetchone()
+        return dict(row) if row else None
+
     def list_capabilities(self, goal_id: str, *, status: str | None = None) -> list[dict]:
         sql = "SELECT * FROM g_capabilities WHERE goal_id=?"
         params: list[Any] = [goal_id]
