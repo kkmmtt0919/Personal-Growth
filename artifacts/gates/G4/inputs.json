@@ -1,0 +1,33 @@
+{
+  "mode": "real",
+  "goal_id": "goal_m5b_smoke",
+  "materials": "受控构造（growth_constructed=true，如实标注）",
+  "capability": "cap_195c770a156d4bd48933",
+  "levels": {
+    "understanding": 2,
+    "practice": 3,
+    "status": "assessed"
+  },
+  "gaps": {
+    "practice": [
+      "gap_cap_195c770a156d4bd48933_practice",
+      "level_gap_1",
+      3
+    ],
+    "understanding": [
+      "gap_cap_195c770a156d4bd48933_understanding",
+      "level_gap_2plus",
+      2
+    ]
+  },
+  "target_gaps": [
+    "gap_cap_195c770a156d4bd48933_understanding",
+    "gap_cap_195c770a156d4bd48933_practice"
+  ],
+  "severity_order": {
+    "level_gap_2plus": 0,
+    "level_gap_1": 1,
+    "evidence_gap": 2
+  },
+  "max_target_gaps": 2
+}

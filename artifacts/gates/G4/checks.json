@@ -1,0 +1,57 @@
+{
+  "checks": {
+    "every_task_maps_to_gap": true,
+    "every_task_has_required_elements": true,
+    "provenance_chain_walkable": true,
+    "literal_anti_pattern_rejected": true,
+    "capability_judgment_field_rejected": true,
+    "dimension_mismatch_rejected": true,
+    "vague_acceptance_rejected": true,
+    "pass_rate_recorded": true,
+    "no_forbidden_fields_in_artifact": true,
+    "rows_equal_accepted": true
+  },
+  "pass_rate": {
+    "accepted": 2,
+    "total": 6,
+    "rate": 0.333
+  },
+  "mapping": [
+    {
+      "task_id": "task_0f449a0b1811ba23d61e",
+      "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+      "capability_id": "cap_195c770a156d4bd48933",
+      "gap_exists": true,
+      "dimension": "understanding",
+      "severity": "level_gap_2plus"
+    },
+    {
+      "task_id": "task_e7058c2f0c4ea1e9dc4f",
+      "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+      "capability_id": "cap_195c770a156d4bd48933",
+      "gap_exists": true,
+      "dimension": "practice",
+      "severity": "level_gap_1"
+    }
+  ],
+  "provenance": [
+    {
+      "task_id": "task_0f449a0b1811ba23d61e",
+      "assessment_id": "asm_dd554d8ea98c604880db",
+      "traceable": true,
+      "claims": [
+        "clm_62f75a0ae91fc9e8a29b"
+      ]
+    },
+    {
+      "task_id": "task_e7058c2f0c4ea1e9dc4f",
+      "assessment_id": "asm_34aa84e0cce1712a26f5",
+      "traceable": true,
+      "claims": [
+        "clm_827482eba8644016337a"
+      ]
+    }
+  ],
+  "forbidden_key_hits": [],
+  "all_checks_passed": true
+}

@@ -96,9 +96,32 @@ LLM 提议 {title, objective, deliverable_type, est_minutes, acceptance_type, ac
 g_tasks（status=proposed）
 ```
 
-闸门步骤（固定顺序）：`schema`（`extra="forbid"`，`confidence/level/score` 进不来）→ `gap_exists` →
-`gap_open_and_active` → `deliverable_allowed`（维度 ↔ 枚举匹配）→ `acceptance_verifiable`
-（枚举合法 + 文本非空 + 反例模式）→ `est_minutes_range` → `duplicate` → `persisted`。
+闸门步骤（**七步**，固定顺序；M5-b 冻结的命名收口：缺口存在 / open / 能力点 active 合并为
+`gap_taskable`，`reject_reason` 仍区分三种情形）：
+
+```text
+1 schema                 （extra="forbid"；能力判断与排序字段进不来）
+2 gap_taskable           （缺口存在 ∧ status='open' ∧ 能力点 active ∧ 有 assessment_id，provenance 完整）
+3 deliverable_allowed    （维度 ↔ 交付物枚举匹配）
+4 acceptance_verifiable  （acceptance_type 枚举 + 文本 ≥8 字符 + 反例模式）
+5 est_minutes_range      （10–600；**越界只做形式夹取**并记 adjustment_note）
+6 duplicate              （同缺口存在 proposed/active/blocked 任务 → 拒）
+7 persisted              （唯一写入点：store.create_task → status='proposed'）
+```
+
+**adjustment 只允许形式夹取**（`est_minutes` clamp）；**禁止**改写 title / objective / acceptance
+（闸门是 validator，不是第二个生成器）。**declined 是运行结果、不是任务状态**：
+LLM 无法为该缺口设计可验收任务时给出 `decline_reason` → 记 `declined` + reason，不落 `g_tasks`。
+
+**M5-b 实现约束（用户 2026-10-03 补充冻结）**：
+
+1. **Generator 不直接拥有 `create_task` 权限** —— 链为 `generator → TaskProposal → gate → create_task()`；
+   `LLM output ≠ database mutation`（与 M4-b ClaimBinder 同构）；
+2. **accepted task 的 provenance 必须完整** —— 每条 `g_tasks` 可回溯
+   `task_id → gap_id → assessment_id → claim/evidence`；M5-b 不实现 claim 链，但不得破坏入口
+   （闸门第 2 步强制 `assessment_id` 存在）；
+3. **禁止任务排序字段** —— `priority` / `difficulty` / `learning_value` 等不得进入 schema：
+   M5-b 只解决「gap exists → task exists」，不解决「哪个任务先做」。
 
 **反例必须被拒（G4 硬要求）**：冻结反例模式（"去学习 X"、纯"了解/熟悉/掌握"且无产出物名词、
 验收为空/不可操作）→ 拒绝并记录 `reject_reason`（含字面反例"去学习 Agent Evaluation"）；
@@ -181,10 +204,11 @@ proposed ──activate──▶ active ──complete_task──▶ done（终�
 M5-a  数据契约 + 状态机 + 工具注册（list_gaps / create_task / complete_task / write_event）
       ↓
 M5-b  gap → task 生成器（LLM 提议 + 七步闸门 + 反例拒绝 + 全量留档）
+      + **G4 门证据**（用户 2026-10-03 调整：G4 随 M5-b 产出，`artifacts/gates/G4/`）
       ↓
 M5-c  提交 → 单入口证据 → claim → 绑定 → 重评 → 归因链
       ↓
-M5-d  G4 / G5 门证据（独立实验库；真实运行）+ M5 Gate 封板
+M5-d  G5 门证据（独立实验库；真实运行）+ M5 Gate 封板
 ```
 
 ## 10. 验收标准映射（自动化验证 / 归档证据）
@@ -215,11 +239,12 @@ M5-d  G4 / G5 门证据（独立实验库；真实运行）+ M5 Gate 封板
 
 ## 12. 真实运行预算（单次运行上限口径）
 
-| 运行 | 调用 | 上限 |
+| 运行 | 调用 | 上限（M5-b 冻结，收紧） |
 |---|---|---|
-| G4（生成 ≤2 个任务 + 绑定 ≤1） | 3 | ≤4 HTTP |
-| G5（提交后绑定 1；生成复用 G4 产物） | 1 | ≤3 HTTP |
-| **合计** | | **≤7 HTTP**，零额外重试、fail-stop、允许重跑但每次独立记录 |
+| M5-b 生成器（per-gap 1 次 × 前 2 个缺口） | ≤2 | **≤2 HTTP** |
+| M5-c 提交后绑定（1 次/提交） | 1 | ≤1 HTTP（M5-c 冻结时确认） |
+| 离线对例（fake gateway） | 0 | — |
+| **M5-b 本步合计** | | **≤2 HTTP**，零额外重试、fail-stop、允许重跑但每次独立记录 |
 
 ## 13. 开工前检查（设计级）
 

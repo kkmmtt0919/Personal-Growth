@@ -1118,6 +1118,10 @@ class GrowthStore:
             "stored": stored,
         }
 
+    def get_gap(self, gap_id_: str) -> dict | None:
+        row = self.db.execute("SELECT * FROM g_gaps WHERE id=?", (gap_id_,)).fetchone()
+        return dict(row) if row else None
+
     def list_gaps(
         self, *, capability_id: str | None = None, status: str | None = None
     ) -> list[dict]:

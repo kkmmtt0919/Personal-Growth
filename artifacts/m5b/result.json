@@ -1,0 +1,235 @@
+{
+  "mode": "m5b-offline",
+  "checks": {
+    "real_run_within_budget": true,
+    "generation_produced_tasks": true,
+    "every_task_maps_to_gap": true,
+    "every_task_has_required_elements": true,
+    "provenance_chain_walkable": true,
+    "literal_anti_pattern_rejected": true,
+    "capability_judgment_field_rejected": true,
+    "dimension_mismatch_rejected": true,
+    "vague_acceptance_rejected": true,
+    "pass_rate_recorded": true,
+    "no_forbidden_fields_in_artifact": true,
+    "rows_equal_accepted": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 14,
+  "checks_total": 14,
+  "all_checks_passed": true,
+  "detail": {
+    "scenario": {
+      "capability": "cap_195c770a156d4bd48933",
+      "levels": {
+        "understanding": 2,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "gaps": {
+        "practice": [
+          "gap_cap_195c770a156d4bd48933_practice",
+          "level_gap_1",
+          3
+        ],
+        "understanding": [
+          "gap_cap_195c770a156d4bd48933_understanding",
+          "level_gap_2plus",
+          2
+        ]
+      },
+      "targets": [
+        "gap_cap_195c770a156d4bd48933_understanding",
+        "gap_cap_195c770a156d4bd48933_practice"
+      ]
+    },
+    "report": {
+      "run_id": "run_cc39a97f4b234b69+run_42cd599c94ac4d36",
+      "provider": "fake",
+      "model": "fake-deterministic",
+      "goal_id": "goal_m5b_smoke",
+      "gaps": [
+        {
+          "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "dimension": "understanding",
+          "severity": "level_gap_2plus",
+          "assessment_id": "asm_dd554d8ea98c604880db",
+          "status": "open"
+        },
+        {
+          "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "dimension": "practice",
+          "severity": "level_gap_1",
+          "assessment_id": "asm_34aa84e0cce1712a26f5",
+          "status": "open"
+        }
+      ],
+      "proposals": [
+        {
+          "title": "现场作答：RAG 检索流程五问",
+          "objective": "产出一份现场作答记录，覆盖切分、向量化、召回、重排、评测五个环节",
+          "deliverable_type": "probe_answer",
+          "est_minutes": 25,
+          "acceptance_type": "probe_rubric",
+          "acceptance": "提交作答正文，按五个环节逐项核对要点是否完整",
+          "decline_reason": null,
+          "proposal_id": "tpr_bf758df9f3e2b0a1",
+          "run_id": "run_cc39a97f4b234b69"
+        },
+        {
+          "title": "写一个 10 条样本的检索评测集",
+          "objective": "产出一份 Markdown 评测集，覆盖 10 条检索样本与判定标准",
+          "deliverable_type": "markdown",
+          "est_minutes": 60,
+          "acceptance_type": "artifact_check",
+          "acceptance": "提交 Markdown，且包含 10 条样本与判定标准",
+          "decline_reason": null,
+          "proposal_id": "tpr_ca69ae4a2c45fbd4",
+          "run_id": "run_42cd599c94ac4d36"
+        }
+      ],
+      "decisions": [
+        {
+          "proposal_id": "tpr_bf758df9f3e2b0a1",
+          "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "gap_taskable",
+            "deliverable_allowed",
+            "acceptance_verifiable",
+            "est_minutes_range",
+            "duplicate",
+            "persisted"
+          ],
+          "task_id": "task_4da6ef0d4c47b5af9ee0",
+          "adjustment_note": null,
+          "run_id": "run_cc39a97f4b234b69",
+          "timestamp": "2026-10-03T12:30:23+00:00",
+          "proposer": "fake/fake-deterministic"
+        },
+        {
+          "proposal_id": "tpr_ca69ae4a2c45fbd4",
+          "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "reject_reason": null,
+          "stages_passed": [
+            "schema",
+            "gap_taskable",
+            "deliverable_allowed",
+            "acceptance_verifiable",
+            "est_minutes_range",
+            "duplicate",
+            "persisted"
+          ],
+          "task_id": "task_9752de0d3c89635c0eb0",
+          "adjustment_note": null,
+          "run_id": "run_42cd599c94ac4d36",
+          "timestamp": "2026-10-03T12:30:23+00:00",
+          "proposer": "fake/fake-deterministic"
+        }
+      ],
+      "per_gap_runs": [
+        {
+          "run_id": "run_cc39a97f4b234b69",
+          "gaps": [
+            "gap_cap_195c770a156d4bd48933_understanding"
+          ]
+        },
+        {
+          "run_id": "run_42cd599c94ac4d36",
+          "gaps": [
+            "gap_cap_195c770a156d4bd48933_practice"
+          ]
+        }
+      ]
+    },
+    "budget": {
+      "mode": "offline",
+      "requests": 0,
+      "cap": 0,
+      "provider": "fake",
+      "model": "fake-deterministic"
+    },
+    "gate": {
+      "mapping": [
+        {
+          "task_id": "task_4da6ef0d4c47b5af9ee0",
+          "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "gap_exists": true,
+          "dimension": "understanding",
+          "severity": "level_gap_2plus"
+        },
+        {
+          "task_id": "task_9752de0d3c89635c0eb0",
+          "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+          "capability_id": "cap_195c770a156d4bd48933",
+          "gap_exists": true,
+          "dimension": "practice",
+          "severity": "level_gap_1"
+        }
+      ],
+      "provenance": [
+        {
+          "task_id": "task_4da6ef0d4c47b5af9ee0",
+          "assessment_id": "asm_dd554d8ea98c604880db",
+          "traceable": true,
+          "claims": [
+            "clm_62f75a0ae91fc9e8a29b"
+          ]
+        },
+        {
+          "task_id": "task_9752de0d3c89635c0eb0",
+          "assessment_id": "asm_34aa84e0cce1712a26f5",
+          "traceable": true,
+          "claims": [
+            "clm_827482eba8644016337a"
+          ]
+        }
+      ],
+      "pass_rate": {
+        "accepted": 2,
+        "total": 6,
+        "rate": 0.333
+      },
+      "forbidden_key_hits": [],
+      "tasks": [
+        {
+          "task_id": "task_4da6ef0d4c47b5af9ee0",
+          "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+          "title": "现场作答：RAG 检索流程五问",
+          "deliverable_type": "probe_answer",
+          "est_minutes": 25,
+          "acceptance_type": "probe_rubric",
+          "acceptance": "提交作答正文，按五个环节逐项核对要点是否完整",
+          "status": "proposed"
+        },
+        {
+          "task_id": "task_9752de0d3c89635c0eb0",
+          "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+          "title": "写一个 10 条样本的检索评测集",
+          "deliverable_type": "markdown",
+          "est_minutes": 60,
+          "acceptance_type": "artifact_check",
+          "acceptance": "提交 Markdown，且包含 10 条样本与判定标准",
+          "status": "proposed"
+        }
+      ]
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "g_tables_in_real_db": []
+    }
+  },
+  "temp_db_deleted": true
+}

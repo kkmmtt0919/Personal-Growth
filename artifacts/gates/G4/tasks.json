@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "task_0f449a0b1811ba23d61e",
+    "gap_id": "gap_cap_195c770a156d4bd48933_understanding",
+    "title": "RAG 系统设计决策现场问答",
+    "deliverable_type": "probe_answer",
+    "est_minutes": 30,
+    "acceptance_type": "probe_rubric",
+    "acceptance": "按评分细则核验：1) 至少回答 6 道题；2) 每题回答包含具体技术要点（如评估用 recall@k / MRR，而非泛泛而谈）；3) 至少 3 题展示了权衡分析（如成本 vs 召回率）；4) 回答与题目直接相关，无答非所问。满足全部 4 条为通过。",
+    "status": "proposed"
+  },
+  {
+    "task_id": "task_e7058c2f0c4ea1e9dc4f",
+    "gap_id": "gap_cap_195c770a156d4bd48933_practice",
+    "title": "搭建并调优一个可运行的最小 RAG 问答系统",
+    "deliverable_type": "archive",
+    "est_minutes": 240,
+    "acceptance_type": "test_run",
+    "acceptance": "交付包含源代码、requirements 与 README 的压缩包。验收标准：1) 按文档步骤可在本地一键运行；2) 针对预置的至少 5 个测试问题，系统输出包含引用来源的回答；3) README 中含对照实验记录（两种策略在召回/回答质量上的对比数据），且实验结果可由代码复现。",
+    "status": "proposed"
+  }
+]
