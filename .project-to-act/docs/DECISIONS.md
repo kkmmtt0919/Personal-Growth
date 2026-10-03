@@ -910,6 +910,33 @@ G2/G3 证据在**独立实验库**上产出，跑完即删；门证据 = `artifa
   G3 主体为 RAG 相关能力（非 "Agent Memory"）；A 臂笔记为受控构造（已标注）；
   `M4-b.1` 生成器接线与 M3 两个开放项保持推迟登记。
 
+### M5 边界冻结与关键设计约束（2026-10-03，用户确认）
+
+**范围冻结（做）**：`g_tasks` 契约 / `g_task_submissions` / 状态机 / gap → task generator /
+**LLM proposal + deterministic gate** / submission → evidence / claim binding / reassessment / G4 / G5。
+
+**不做（冻结）**：UI → M8；Memory → M6；主动 Agent → M6/M7；任务排序 / 学习路径 / 多任务 DAG /
+任务质量评分 → 后续；evkg 修改 → **不做**。
+
+**四条关键设计约束（新增冻结原则）**：
+
+1. **Task 不是能力判断** —— 任务只负责 `gap → evidence opportunity`，
+   **绝不产出 `task → skill score`**（`g_tasks` 不含等级/分值字段）；
+2. **完成任务 ≠ 自动提升** —— 提升必须经 `submission → evidence → claim → binding gate → assessment`；
+   任务完成只是产生**候选证据**；
+3. **新证据必须保持 provenance** —— 可反向查询链
+   `task_id → submission → source_id → claim_id → assessment_id → level change`，**G5 必须能反查**；
+4. **M4 rating contract 不修改** —— 只复用已冻结阶梯（`practice 3 → task_submission → 4`；
+   `understanding 2 → probe_result → 3`），M5 不重新定义星级。
+
+**其余随 `docs/M5-PLAN.md` v1.0 冻结的口径**（提议值，可修订）：`deliverable_type` 四枚举与证据类型映射
+（`markdown/code/archive → task_submission`；`probe_answer → probe_result`）；`acceptance_type` 三枚举；
+`est_minutes` 10–600；状态机 `proposed/active/blocked/done/abandoned` 且 **`done` 唯一入口 = `complete_task`**
+（转移写 `g_events`，`kind=task_status_changed`）；理解缺口只允许 `probe_answer`（probe 评分不进等级）；
+G4/G5 在独立实验库运行、真实库继续零写入；真实运行预算 ≤4（G4）+ ≤3（G5）、合计 ≤7。
+
+冻结记录：EV-072。开局步骤 **M5-a：数据契约 + 状态机 + 工具注册**。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

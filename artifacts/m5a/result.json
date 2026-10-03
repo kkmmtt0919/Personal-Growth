@@ -1,0 +1,139 @@
+{
+  "mode": "m5a-offline",
+  "checks": {
+    "tools_registered": true,
+    "list_gaps_returns_open_gaps": true,
+    "task_created_as_proposed": true,
+    "task_maps_to_gap_and_capability": true,
+    "all_contract_violations_rejected": true,
+    "unknown_source_rejected": true,
+    "state_machine_path": true,
+    "illegal_transitions_rejected": true,
+    "submission_recorded": true,
+    "events_recorded_in_order": true,
+    "done_single_entry_ast": true,
+    "completion_does_not_create_or_change_assessments": true,
+    "capability_levels_untouched_by_task": true,
+    "frozen_vocabularies": true,
+    "frozen_transitions": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 17,
+  "checks_total": 17,
+  "all_checks_passed": true,
+  "detail": {
+    "scenario": {
+      "capability": "cap_033b89454533d7c112da",
+      "levels": {
+        "understanding": 2,
+        "practice": 3,
+        "status": "assessed"
+      },
+      "gaps": {
+        "practice": [
+          "level_gap_1",
+          3
+        ],
+        "understanding": [
+          "level_gap_2plus",
+          2
+        ]
+      },
+      "practice_gap": "gap_cap_033b89454533d7c112da_practice",
+      "understanding_gap": "gap_cap_033b89454533d7c112da_understanding"
+    },
+    "open_gaps": [
+      "gap_cap_033b89454533d7c112da_practice",
+      "gap_cap_033b89454533d7c112da_understanding"
+    ],
+    "rejections": {
+      "literal_anti_pattern": "不可验收的表述（命中反例 '去学习'）：任务必须定义产出物与验收方式，而不是'去学习 X'（PRD §12）",
+      "dimension_mismatch": "practice 缺口的交付物只允许 ('markdown', 'code', 'archive')：收到 'probe_answer'",
+      "duplicate_open_task": "该缺口已有未关闭任务（task_f403b573630bf3415472，proposed）—— 不重复生成",
+      "est_minutes_range": "est_minutes 必须是 10..600 的整数: 5",
+      "unknown_gap": "未知缺口: gap_not_exists"
+    },
+    "transitions": [
+      "proposed",
+      "active",
+      "blocked",
+      "active",
+      "done"
+    ],
+    "illegal_transitions": {
+      "activate_when_active": "非法状态转移: active → active（允许 ('blocked', 'abandoned', 'done')）",
+      "empty_source": "complete_task 需要 source_id（提交必须产生证据来源）",
+      "activate_after_done": "非法状态转移: done → active（允许 ()）",
+      "abandon_after_done": "非法状态转移: done → abandoned（允许 ()）",
+      "complete_again": "只有 active 任务可以完成（当前 done）—— 先 activate"
+    },
+    "event_chain": [
+      [
+        null,
+        "proposed",
+        null
+      ],
+      [
+        "proposed",
+        "active",
+        null
+      ],
+      [
+        "active",
+        "blocked",
+        "等用户时间"
+      ],
+      [
+        "blocked",
+        "active",
+        null
+      ],
+      [
+        "active",
+        "done",
+        null
+      ]
+    ],
+    "assessments_before_after": {
+      "before": [
+        [
+          "asm_ad086c0a098f1f322b1c",
+          "practice",
+          "rated",
+          3
+        ],
+        [
+          "asm_d4722df0aba8d47f6f47",
+          "understanding",
+          "rated",
+          2
+        ]
+      ],
+      "after": [
+        [
+          "asm_ad086c0a098f1f322b1c",
+          "practice",
+          "rated",
+          3
+        ],
+        [
+          "asm_d4722df0aba8d47f6f47",
+          "understanding",
+          "rated",
+          2
+        ]
+      ]
+    },
+    "capability_levels": {
+      "understanding": 2,
+      "practice": 3
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "g_tables_in_real_db": []
+    }
+  },
+  "temp_db_deleted": true
+}

@@ -9,8 +9,10 @@ from .runtime import (
     ToolRegistry,
     ToolSpec,
 )
+from .tools import GROWTH_TOOL_NAMES, register_growth_tools
 
 __all__ = [
+    "GROWTH_TOOL_NAMES",
     "AgentContext",
     "AgentRuntime",
     "FakeGateway",
@@ -20,4 +22,5 @@ __all__ = [
     "ToolNotFound",
     "ToolRegistry",
     "ToolSpec",
+    "register_growth_tools",
 ]

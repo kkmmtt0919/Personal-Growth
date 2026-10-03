@@ -17,7 +17,8 @@
 | [`M1-SPIKE-CONCLUSION.md`](M1-SPIKE-CONCLUSION.md) | M1 技术 spike 收口：R1–R4 与 D1 逐项结论及证据、依赖策略判定（有条件依赖 C1–C5）、已知缺陷与绕行代价、上游改进清单（9 条）、阻塞/延后决策 | 决定 evkg 依赖怎么用、哪些问题必须先修时读；M2 开工前读；后续遇到 evkg 相关判断时回查 |
 | [`M2-PLAN.md`](M2-PLAN.md) | M2 目标与范围草案：目标、做/不做、文件级交付物、验收标准（G1 + 质量门）、5 项待确认决策、工作分解与风险 | **M2 开工前必读**；确认后转为 M2 执行基线；范围争议以它为准 |
 | [`M3-PLAN.md`](M3-PLAN.md) | M3 目标与范围（**v1.0 执行基线**）：一句话定义、硬规则"存在证据 ≠ 证明能力"、6 项定案决策（含 OAuth 不作为前置）、归属层、步骤结构 M3-a…e + B-g2 + M3 Gate、验收标准 | M3 开工前必读；含数据边界判据与 M3-b 实现约束（§5.1） |
-| [`M4-PLAN.md`](M4-PLAN.md) | M4 目标与范围（**v1.0 执行基线**）：G2/G3 判定（可追溯性门 + 声明 vs 证据四类矩阵）、归属三层模型（source attribution / claim scope / capability ownership）、再生成语义（history + current view）、C5 上游最小修、mapping 闸门、G3 实验设计、步骤 M4-a…e + Gate | **M4 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
+| [`M4-PLAN.md`](M4-PLAN.md) | M4 目标与范围（**v1.0 执行基线 · 已完成并封板**）：G2/G3 判定（可追溯性门 + 声明 vs 证据四类矩阵）、归属三层模型（source attribution / claim scope / capability ownership）、再生成语义（history + current view）、C5 上游最小修、mapping 闸门、G3 实验设计、步骤 M4-a…e + Gate | **M4 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
+| [`M5-PLAN.md`](M5-PLAN.md) | M5 目标与范围（**v1.0 执行基线**）：四条关键设计约束（task ≠ 能力判断、完成 ≠ 自动提升、provenance 可反查、M4 rating contract 不变）、`g_tasks`/`g_task_submissions`/`g_events` 契约、gap → task 映射边界、LLM 提议 + 七步闸门、任务状态机、submission → evidence → reassessment 闭环、G4/G5 验收条件、步骤 M5-a…d + Gate | **M5 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
 
 ## 其他位置
 

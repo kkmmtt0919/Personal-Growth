@@ -88,6 +88,53 @@ GAP_SEVERITIES = ("evidence_gap", "level_gap_1", "level_gap_2plus")
 GAP_STATUSES = ("open", "closed")
 """缺口状态：M4-e 只产生 `open`；重算后不再成立 → `closed`（保留行，不删除历史）。"""
 
+TASK_STATUSES = ("proposed", "active", "blocked", "done", "abandoned")
+"""任务状态（M5-PLAN v1.0 §5，用户冻结）。
+
+`done` 是**终态**且唯一入口 = `complete_task`（提交即完成）；非法转移直接报错。
+"""
+
+TASK_TRANSITIONS: dict[str, tuple[str, ...]] = {
+    "proposed": ("active", "abandoned"),
+    "active": ("blocked", "abandoned", "done"),
+    "blocked": ("active", "abandoned"),
+    "done": (),
+    "abandoned": (),
+}
+"""合法状态转移表（写死；非法转移报错，不静默兜底）。"""
+
+TASK_DELIVERABLE_TYPES = ("markdown", "code", "archive", "probe_answer")
+"""交付物类型（用户冻结四枚举）。**决定入库证据类型**（不由 LLM 决定）。"""
+
+DIMENSION_DELIVERABLE_TYPES: dict[str, tuple[str, ...]] = {
+    "understanding": ("probe_answer",),
+    "practice": ("markdown", "code", "archive"),
+}
+"""维度 ↔ 交付物（用户冻结）：理解缺口只允许 `probe_answer`（probe_result 才能升理解）；
+实践缺口只允许产出型交付物。"""
+
+DELIVERABLE_EVIDENCE_TYPE: dict[str, str] = {
+    "markdown": "task_submission",
+    "code": "task_submission",
+    "archive": "task_submission",
+    "probe_answer": "probe_result",
+}
+"""交付物 → 证据类型（用户冻结映射）：markdown/code/archive → `task_submission`（实践 4）；
+`probe_answer` → `probe_result`（理解 2→3）。**不因"看起来像笔记"降级为 uploaded_doc。**"""
+
+TASK_ACCEPTANCE_TYPES = ("artifact_check", "test_run", "probe_rubric")
+"""验收方式三枚举（用户冻结）。"""
+
+TASK_EST_MINUTES_RANGE = (10, 600)
+"""预计时长区间（分钟）：只做区间校验，不评准确性（M5 无 UI 计时）。"""
+
+TASK_ACCEPTANCE_ANTI_PATTERNS = ("去学习", "学习一下", "了解一下", "熟悉一下", "复习一下", "随便看看")
+"""不可验收表述（PRD §12）：任务不是学习提醒 —— 契约层挡"显然不可验收"的输入，
+更细的可验收性判定与"改造"在 M5-b 生成器闸门里做。"""
+
+TASK_EVENT_KINDS = ("task_status_changed",)
+"""M5 冻结的 `g_events.kind`（M7 起追加自己的 kind，不复用本表语义做别的事）。"""
+
 GOAL_ELEMENTS = ("direction", "purpose", "horizon", "measurable_result")
 """confirmed goal 必须齐全的四要素：方向 / 目的 / 时间周期 / 可衡量结果。"""
 
@@ -104,6 +151,22 @@ def normalize_name(value: str) -> str:
 def gap_id(capability_id_: str, dimension: str) -> str:
     """缺口的稳定逻辑标识：一个（能力点 × 维度）最多一条当前缺口（幂等重算）。"""
     return f"gap_{capability_id_}_{dimension}"
+
+
+def task_id(gap_id_: str, deliverable_type: str, run_id: str, seq: int) -> str:
+    """任务的稳定逻辑标识：由「缺口 + 交付物类型 + 生成运行 + 序号」派生。
+
+    与能力点不同，**任务可以累积**（同一缺口在不同时间会有多个任务）—— 因此 id 含生成批次
+    与序号：同一次生成幂等，跨生成是新任务。
+    """
+    seed = f"{gap_id_}|{deliverable_type}|{run_id}|{seq}"
+    return "task_" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20]
+
+
+def submission_id(task_id_: str, source_id: str) -> str:
+    """提交记录的稳定逻辑标识：同一（任务 × 来源）重复提交命中同一行（幂等）。"""
+    seed = f"{task_id_}|{source_id}"
+    return "sub_" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
 
 
 def capability_id(goal_id: str, path: str, name: str) -> str:
@@ -293,6 +356,42 @@ class GrowthStore:
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(capability_id, dimension)
+            );
+            CREATE TABLE IF NOT EXISTS g_tasks (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                goal_id TEXT NOT NULL,
+                capability_id TEXT NOT NULL,
+                gap_id TEXT NOT NULL,
+                title TEXT NOT NULL,
+                objective TEXT NOT NULL,
+                deliverable_type TEXT NOT NULL,
+                est_minutes INTEGER NOT NULL,
+                acceptance_type TEXT NOT NULL,
+                acceptance TEXT NOT NULL,
+                origin TEXT NOT NULL DEFAULT 'generated',
+                generated_by_run_id TEXT,
+                status TEXT NOT NULL DEFAULT 'proposed',
+                blocked_reason TEXT,
+                abandoned_reason TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS g_task_submissions (
+                id TEXT PRIMARY KEY,
+                task_id TEXT NOT NULL,
+                source_id TEXT NOT NULL,
+                note TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(task_id, source_id)
+            );
+            CREATE TABLE IF NOT EXISTS g_events (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                kind TEXT NOT NULL,
+                severity TEXT NOT NULL DEFAULT 'info',
+                payload_json TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """
         )
@@ -1033,6 +1132,259 @@ class GrowthStore:
             sql += " AND status=?"
             params.append(status)
         sql += " ORDER BY capability_id, dimension"
+        return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    # -- g_tasks / g_task_submissions / g_events（M5-a 契约与状态机）--------
+
+    def create_task(self, payload: dict) -> str:
+        """创建一个任务（`status='proposed'`）。
+
+        契约（`M5-PLAN.md` §2.1/§3，用户冻结）：
+
+        * **主缺口必填**且必须是 `open`；能力点必须 `active`（无缺口不生成任务）；
+        * **维度 ↔ 交付物**：`understanding` 缺口只允许 `probe_answer`；
+          `practice` 缺口只允许 `markdown/code/archive`；
+        * `acceptance` 非空且不得命中不可验收反例模式（"去学习 X" 式）；
+        * `est_minutes` 为 10–600 的整数；
+        * **去重**：同一缺口已有未关闭任务（`proposed/active/blocked`）→ 拒绝；
+        * **任务不含等级/分值字段**（Task 不是能力判断，用户约束 ①）。
+        """
+        gap_id_ = str(payload.get("gap_id") or "")
+        _require(bool(gap_id_), "task 需要 gap_id（主缺口，不得无缺口生成）")
+        gap = self.db.execute("SELECT * FROM g_gaps WHERE id=?", (gap_id_,)).fetchone()
+        _require(gap is not None, f"未知缺口: {gap_id_}")
+        _require(
+            gap["status"] == "open",
+            f"只对 open 缺口生成任务（当前 {gap['status']}）",
+        )
+        capability = self.get_capability(gap["capability_id"])
+        _require(capability is not None, f"缺口引用的能力点不存在: {gap['capability_id']}")
+        _require(
+            capability["status"] == "active",
+            f"只对 active 能力点生成任务（当前 {capability['status']}）",
+        )
+        deliverable_type = str(payload.get("deliverable_type") or "")
+        _require(
+            deliverable_type in TASK_DELIVERABLE_TYPES,
+            f"未知交付物类型: {deliverable_type!r}（只允许 {TASK_DELIVERABLE_TYPES}）",
+        )
+        allowed = DIMENSION_DELIVERABLE_TYPES[gap["dimension"]]
+        _require(
+            deliverable_type in allowed,
+            f"{gap['dimension']} 缺口的交付物只允许 {allowed}：收到 {deliverable_type!r}",
+        )
+        title = str(payload.get("title") or "").strip()
+        objective = str(payload.get("objective") or "").strip()
+        _require(bool(title), "task 需要 title")
+        _require(bool(objective), "task 需要 objective（必须表述'产出什么'）")
+        acceptance_type = str(payload.get("acceptance_type") or "")
+        _require(
+            acceptance_type in TASK_ACCEPTANCE_TYPES,
+            f"未知验收方式: {acceptance_type!r}（只允许 {TASK_ACCEPTANCE_TYPES}）",
+        )
+        acceptance = str(payload.get("acceptance") or "").strip()
+        _require(len(acceptance) >= 8, "acceptance 必须写明可操作的验收方式（≥8 字符）")
+        for text, label in ((title, "title"), (objective, "objective"), (acceptance, "acceptance")):
+            hit = next((marker for marker in TASK_ACCEPTANCE_ANTI_PATTERNS if marker in text), None)
+            _require(
+                hit is None,
+                f"不可验收的表述（命中反例 {hit!r}）：任务必须定义产出物与验收方式，"
+                "而不是'去学习 X'（PRD §12）",
+            )
+        est_minutes = payload.get("est_minutes")
+        _require(
+            isinstance(est_minutes, int)
+            and not isinstance(est_minutes, bool)
+            and TASK_EST_MINUTES_RANGE[0] <= est_minutes <= TASK_EST_MINUTES_RANGE[1],
+            f"est_minutes 必须是 {TASK_EST_MINUTES_RANGE[0]}..{TASK_EST_MINUTES_RANGE[1]} 的整数: {est_minutes!r}",
+        )
+        origin = payload.get("origin", "generated")
+        _require(origin in CAPABILITY_ORIGINS, f"未知 origin: {origin!r}")
+        run_id = str(payload.get("generated_by_run_id") or "manual")
+
+        existing = self.db.execute(
+            "SELECT id, status FROM g_tasks WHERE gap_id=? AND status IN ('proposed','active','blocked')",
+            (gap_id_,),
+        ).fetchone()
+        if existing is not None:
+            raise GrowthStoreError(
+                f"该缺口已有未关闭任务（{existing['id']}，{existing['status']}）—— 不重复生成"
+            )
+        seq = self.db.execute(
+            "SELECT COUNT(*) FROM g_tasks WHERE gap_id=?", (gap_id_,)
+        ).fetchone()[0]
+        identifier = payload.get("id") or task_id(gap_id_, deliverable_type, run_id, seq)
+
+        self.db.execute(
+            """
+            INSERT INTO g_tasks(id, user_id, goal_id, capability_id, gap_id, title, objective,
+                                deliverable_type, est_minutes, acceptance_type, acceptance,
+                                origin, generated_by_run_id, status)
+            VALUES(:id, :user_id, :goal_id, :capability_id, :gap_id, :title, :objective,
+                   :deliverable_type, :est_minutes, :acceptance_type, :acceptance,
+                   :origin, :generated_by_run_id, 'proposed')
+            """,
+            {
+                "id": identifier,
+                "user_id": gap["user_id"],
+                "goal_id": gap["goal_id"],
+                "capability_id": gap["capability_id"],
+                "gap_id": gap_id_,
+                "title": title,
+                "objective": objective,
+                "deliverable_type": deliverable_type,
+                "est_minutes": est_minutes,
+                "acceptance_type": acceptance_type,
+                "acceptance": acceptance,
+                "origin": origin,
+                "generated_by_run_id": run_id,
+            },
+        )
+        self.db.commit()
+        self._record_task_event(identifier, None, "proposed", None)
+        return identifier
+
+    def _record_task_event(self, task_id_: str, from_status: str | None, to_status: str, reason: str | None) -> str:
+        payload = {"task_id": task_id_, "from": from_status, "to": to_status, "reason": reason}
+        return self.write_event("task_status_changed", payload)
+
+    def _transition(self, task_id_: str, to_status: str, *, reason: str | None = None) -> dict:
+        task = self.get_task(task_id_)
+        _require(task is not None, f"未知任务: {task_id_}")
+        current = task["status"]
+        allowed = TASK_TRANSITIONS.get(current, ())
+        _require(
+            to_status in allowed,
+            f"非法状态转移: {current} → {to_status}（允许 {allowed}）",
+        )
+        if to_status in ("blocked", "abandoned"):
+            _require(bool(str(reason or "").strip()), f"进入 {to_status} 必须给出 reason")
+        column = ""
+        params: list[Any] = [to_status]
+        if to_status == "blocked":
+            column = ", blocked_reason=?"
+            params.append(str(reason).strip())
+        if to_status == "abandoned":
+            column = ", abandoned_reason=?"
+            params.append(str(reason).strip())
+        if to_status == "active":
+            column = ", blocked_reason=NULL"
+        params.append(task_id_)
+        self.db.execute(
+            f"UPDATE g_tasks SET status=?{column}, updated_at=CURRENT_TIMESTAMP WHERE id=?",
+            tuple(params),
+        )
+        self.db.commit()
+        self._record_task_event(task_id_, current, to_status, reason)
+        return self.get_task(task_id_)
+
+    def activate_task(self, task_id_: str) -> dict:
+        """`proposed → active`（M5 无 UI：由调用方显式确认）。"""
+        return self._transition(task_id_, "active")
+
+    def block_task(self, task_id_: str, reason: str) -> dict:
+        """`active → blocked`（reason 必填）。"""
+        return self._transition(task_id_, "blocked", reason=reason)
+
+    def unblock_task(self, task_id_: str) -> dict:
+        """`blocked → active`。"""
+        return self._transition(task_id_, "active")
+
+    def abandon_task(self, task_id_: str, reason: str) -> dict:
+        """`proposed/active/blocked → abandoned`（reason 必填）。"""
+        return self._transition(task_id_, "abandoned", reason=reason)
+
+    def complete_task(self, task_id_: str, *, source_id: str, note: str | None = None) -> dict:
+        """**`done` 的唯一入口**：提交产物（已有 source_id）→ 记录提交 + 置 `done`。
+
+        * `source_id` 必须非空（指向 evkg sources）—— **存在性由调用方在证据层校验**
+          （`GrowthStore` 只碰 `g_` 表，不读证据表族）；
+        * 同一（任务 × 来源）重复提交命中同一行（幂等）；
+        * 任务完成 **不等于** 能力提升：等级只能由 M4 规则引擎在
+          `submission → evidence → claim → binding gate → assessment` 之后给出
+          （用户约束 ②）。
+        """
+        task = self.get_task(task_id_)
+        _require(task is not None, f"未知任务: {task_id_}")
+        source_id_ = str(source_id or "").strip()
+        _require(bool(source_id_), "complete_task 需要 source_id（提交必须产生证据来源）")
+        _require(
+            task["status"] == "active",
+            f"只有 active 任务可以完成（当前 {task['status']}）—— 先 activate",
+        )
+        identifier = submission_id(task_id_, source_id_)
+        self.db.execute(
+            "INSERT INTO g_task_submissions(id, task_id, source_id, note) VALUES(?,?,?,?) "
+            "ON CONFLICT(id) DO UPDATE SET note=excluded.note",
+            (identifier, task_id_, source_id_, note),
+        )
+        self.db.commit()
+        self._transition(task_id_, "done")
+        return {
+            "task_id": task_id_,
+            "submission_id": identifier,
+            "source_id": source_id_,
+            "status": "done",
+        }
+
+    def get_task(self, task_id_: str) -> dict | None:
+        row = self.db.execute("SELECT * FROM g_tasks WHERE id=?", (task_id_,)).fetchone()
+        return dict(row) if row else None
+
+    def list_tasks(
+        self,
+        *,
+        status: str | None = None,
+        gap_id: str | None = None,
+        capability_id: str | None = None,
+    ) -> list[dict]:
+        if status is not None:
+            _require(status in TASK_STATUSES, f"未知任务状态: {status!r}")
+        sql = "SELECT * FROM g_tasks WHERE 1=1"
+        params: list[Any] = []
+        if status:
+            sql += " AND status=?"
+            params.append(status)
+        if gap_id:
+            sql += " AND gap_id=?"
+            params.append(gap_id)
+        if capability_id:
+            sql += " AND capability_id=?"
+            params.append(capability_id)
+        sql += " ORDER BY created_at, id"
+        return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    def list_task_submissions(self, *, task_id: str | None = None) -> list[dict]:
+        sql = "SELECT * FROM g_task_submissions WHERE 1=1"
+        params: list[Any] = []
+        if task_id:
+            sql += " AND task_id=?"
+            params.append(task_id)
+        sql += " ORDER BY rowid"
+        return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    # -- g_events ---------------------------------------------------------
+
+    def write_event(self, kind: str, payload: dict, *, severity: str = "info") -> str:
+        """写一条事件（append-only）。M5 冻结的 kind 见 `TASK_EVENT_KINDS`。"""
+        _require(bool(str(kind or "").strip()), "event 需要 kind")
+        body = dumps(payload or {})
+        count = self.db.execute("SELECT COUNT(*) FROM g_events").fetchone()[0]
+        identifier = "evt_" + hashlib.sha256(f"{kind}|{body}|{count}".encode()).hexdigest()[:20]
+        self.db.execute(
+            "INSERT INTO g_events(id, user_id, kind, severity, payload_json) VALUES(?,?,?,?,?)",
+            (identifier, "local", kind, severity, body),
+        )
+        self.db.commit()
+        return identifier
+
+    def list_events(self, *, kind: str | None = None) -> list[dict]:
+        sql = "SELECT * FROM g_events WHERE 1=1"
+        params: list[Any] = []
+        if kind:
+            sql += " AND kind=?"
+            params.append(kind)
+        sql += " ORDER BY rowid"
         return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
 
     # -- g_agent_runs -----------------------------------------------------

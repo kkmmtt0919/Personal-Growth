@@ -37,8 +37,10 @@
 | M4-b | 证据绑定与分桶（LLM 提议 + 八步确定性闸门 + 映射落库；离线闭环 + 1 次真实模型运行） | **已完成（已验收，用户 2026-10-03 确认）** | ZCode | 离线 9/9 + 真实 8/8：schema 三字段 / 八步闸门逐步对例 / LLM 无直接落库路径 / 真实运行 1 次调用 1 个 HTTP 请求（3 接受 1 拒绝）/ 真实库零写入 / audit_store pass | EV-068 | 2026-10-03 |
 | M4-c | 评级与反向证据（两维度星级规则引擎 + attack 结算 + rated 写入路径；离线，不调用模型） | **已完成（已验收，用户 2026-10-03 确认）** | ZCode | 离线 12/12：弱 → 理解 2/实践不足；强 → 实践 3；refutes ≤2 且不跨维度；broken 剔除；无证据均不足；同输入同输出；分数隔离（含源码静态检查）；history 保留；audit_store pass/0 | EV-069 | 2026-10-03 |
 | M4-d | 可解释输出 + `current_level` 回填（解释报告 + 两维度回填与重建校验；离线，不调用模型） | **已完成（已验收，用户 2026-10-03 确认）** | ZCode | 离线 15/15：报告六项组成 + 逐字引文可回溯 + 无模型分值；反向/已排除分节；回填只经显式方法、legacy 列停用；重建校验（篡改可发现）；无评级 NULL/unassessed；草案不影响当前视图；audit_store pass/0 | EV-070 | 2026-10-03 |
-| M4-e | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP/次） | **已完成（待验收）** | ZCode | 离线 25/25、真实 23/23：编排 fail-stop + 缺口三档派生（唯一写路径 + 重建校验）；真实 attack（verifier 独立复核 6 条 + adversarial 两轮；17/17 HTTP、零重试）；G3 A/B/C 判定通过；G2 7/7 可追溯（5 条抽样 + dossier 6 份）；audit_store pass/0；真实库对锚一致、`g_` 全空 | EV-071 | 2026-10-03 |
-| M5 | 任务闭环与成长循环 | 已规划 | — | 通过验收门 G4、G5 | 无 | 2026-10-01 |
+| M4-e | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP/次） | **已完成（已验收，用户 2026-10-03 确认）** | ZCode | 离线 25/25、真实 23/23：编排 fail-stop + 缺口三档派生（唯一写路径 + 重建校验）；真实 attack（verifier 独立复核 6 条 + adversarial 两轮；17/17 HTTP、零重试）；G3 A/B/C 判定通过；G2 7/7 可追溯（5 条抽样 + dossier 6 份）；audit_store pass/0；真实库对锚一致、`g_` 全空 | EV-071 | 2026-10-03 |
+| M4 Gate | 封板验证（完成条件 1–6 + QG1–QG5 + 数据边界；离线，副本新鲜复核） | **已完成（21/21 通过，用户 2026-10-03 确认）** | ZCode | 3 能力点出星级 / 7-7 可追溯 / PRD §10 分离结论 / 报告七节 / audit pass-0 / G2-G3 通过；QG1–QG5（含 damage caught + 双向测量、200 文件 0 密钥、359 + 111 全绿）；真实库对锚、`g_` 全空 | EV-071 | 2026-10-03 |
+| M5 | 任务闭环与成长循环（`g_tasks` / 生成器 / 状态机 / 提交→重评闭环 / G4-G5） | **进行中（方案已冻结 EV-072；M5-a 已完成待验收 EV-073）** | ZCode | M5-a 通过（任务三表 / 状态机 / 模式 A 四工具；离线 17/17）；M5-b 生成器、M5-c 闭环、M5-d G4-G5 + M5 Gate 待推进；四条关键设计约束已冻结（task ≠ 能力判断 / 完成 ≠ 自动提升 / provenance 可反查 / M4 rating contract 不变） | EV-072 EV-073 | 2026-10-03 |
+| M5-a | 数据契约 + 状态机 + 工具注册（`g_tasks`/`g_task_submissions`/`g_events`；模式 A 四工具） | **已完成（待验收）** | ZCode | 离线 17/17：冻结词表与转移表 / `g_tasks` 无等级字段（AST）/ 维度↔交付物 / 反例被拒（含字面"去学习 X"）/ 主缺口 open + 去重 / `done` 唯一入口（AST 守卫）/ 事件链有序 / 跨表族 source 校验 / **完成 ≠ 提升**（评定零变化）/ 真实库对锚一致 | EV-073 | 2026-10-03 |
 | M6 | Memory 三层 | 已规划 | — | 见 `docs/ROADMAP.md` M6 | 无 | 2026-10-01 |
 | M7 | 主动 Agent | 已规划 | — | 见 `docs/ROADMAP.md` M7 | 无 | 2026-10-01 |
 | M8 | UI 三页与端到端验收 | 已规划 | — | G1–G6 + QG1–QG5 全通过 | 无 | 2026-10-01 |
@@ -67,8 +69,13 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
    `artifacts/gates/M4/README.md`）。M4-a…M4-e 全部验收：契约与 provenance、绑定与分桶、两维度评级、
    解释与回填、统一编排与缺口 + 真实 attack + G2/G3 门证据。**保留边界**：评估在独立实验库产出、
    真实库不含 `g_` 表；G3 主体为 RAG 相关能力、A 臂笔记为受控构造；`M4-b.1` 生成器接线保持推迟登记。
-3. **下一步：M5 任务闭环与成长循环（gap → task → 提交 → 新证据 → 重评，对应验收门 G4/G5）待你发话**；
-   按协议先提交 M5 方案边界（提议 → 确认 → 实施）。
+3. **M5 任务闭环与成长循环：方案已冻结（用户 2026-10-03 确认，EV-072；执行基线 `docs/M5-PLAN.md` v1.0），
+   M5-a 已完成待验收**（任务契约 + 状态机 + 工具注册，离线 17/17，EV-073）。四条关键设计约束：任务不是能力判断
+   （`gap → evidence opportunity`，不产出 `task → skill score`）；完成任务 ≠ 自动提升
+   （必须经 `submission → evidence → claim → binding gate → assessment`）；
+   新证据 provenance 可反查（`task_id → submission → source_id → claim_id → assessment_id → level change`）；
+   **M4 rating contract 不修改**（复用 `practice 3 → task_submission → 4`、`understanding 2 → probe_result → 3`）。
+   步骤：~~M5-a 契约与状态机~~（已完成待验收）→ **M5-b 生成器（LLM 提议 + 七步闸门）待发话** → M5-c 提交→重评闭环 → M5-d G4/G5 + M5 Gate。
 4. **C5 已解决**（evkg `9a21552`，本地未推送）：抽取 provenance（provider/model/prompt 哈希/领域包）写入 claim metadata 与批账本，
    档案渲染器优先显示；发布/CI 前 pin `git + rev` 时须包含该提交。
 5. **M3 两个开放项保持开放、不阻塞 M5**：① PDF 适配层 V1 入口（产品上传链路未完成）；
@@ -85,6 +92,8 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 
 ## 进度历史
 
+> 历史归档：[2026-10](archive/progress/2026-10.md)
+
 | 日期 | 会话或任务 ID | 工作内容摘要 | 关键确认或纠正 | 证据 ID | 遗留问题 | 下一步 |
 |---|---|---|---|---|---|---|
 | 2026-10-01 | M0–M1（概要） | 治理账本建立；evkg 适配层与证据底座打通（领域包、双轨标签、四个上游提交、源码/文本/审计/故障注入、抽取与攻击、证据档案）；M1-g 收口：依赖策略判定为**有条件依赖 C1–C5**，交付形式 = 本地 bundle 归档（方案 A，不推送上游） | 详细过程与逐项证据见 `PROJECT_ACCEPTANCE.md` 的 EV-001…EV-049 与 `docs/M1-SPIKE-CONCLUSION.md`（本表只留近期节点，按治理约定压缩历史） | EV-001…EV-049 | — | M2 开工 |
@@ -97,12 +106,3 @@ M1 技术 spike 已结束并**正式归档**（用户 2026-10-02 确认）。B-g
 | 2026-10-02 | M3-c | GitHub 公共仓库接入：先侦察（API 配额耗尽 → 改 git 浅克隆；用户仓库为公共）→ 实现 `evidence/github.py` （材料化/选择/技术栈/单入口）→ 21 项离线测试 → 对 `kkmmtt0919/mytset-rag` 真实冒烟 | ① 真实结果：35 文件→选中 20→**20 ok/0 failed**、179 段、audit pass/0、技术栈 java/python/xml/yaml、同 ref 幂等；② 设计决策：git 浅克隆替代 REST API（无凭据配额已耗尽；git 无该配额且可拿 SHA）；克隆目录按 owner-name-ref 稳定、SHA 写 metadata；③ Windows 坑：git pack 只读 → 加"先去只读位再删"；`audit_store` 不关连接再次锁库（M1-g 上游 §7-10 又一实例，已 gc 重试、无残留）；④ 边界守恒：未接 OAuth/私有仓库/UI/能力评估；claims 与可检索留 M3-e / Gate；⑤ 243 项测试 + ruff + 真实库对基全过 | EV-062 | ≥3 capability claim（M3-e）；归档刷新；页码级 locator（上游 14） | M3-d（待发话） |
 | 2026-10-02 | M3-d | 外部参考通道：`evidence/reference.py`（入口无 channel/evidence_type 参数，通道结构锁定；技术词 + 要求条目抽取，只读且每条带 passage 证据）+ 8 项离线测试 + 合成 JD 冒烟 | ① 三条"不得"由结构保证（API 层不可达 user_evidence；消费侧合取规则否决；抽取不写任何 claim/evidence/entity）；② 冒烟：13 段 / 27 技术词（全带证据）/ 4 条要求条目 / audit pass-0 / 8 项边界检查全过 / 临时库已删；③ 用例覆盖 ASCII 词边界（"go" 不命中 "google"）、多份参考分别列出、非参考来源抽取被拒；④ 素材如实标注：本机无现成真实 JD，用写实合成样本（政策验证不依赖文本真实性）；⑤ 边界守恒：未接 UI/未做匹配评分与差距分析，capability claim 仍留 M3-e；⑥ 251 项 + evkg 107 + ruff + 真实库对基全过 | EV-063 | capability claim（M3-e）；M3 Gate 覆盖 | M3-e（待发话） |
 | 2026-10-02 | M3 Gate | 完成条件 1–5 与质量门在同一临时库端到端验证（PDF/Markdown 可检索、ZIP 技术栈证据、公共仓库清单+5 claim、无授权与密钥、JD 隔离），并记录两条保留边界 | ① 13/13 全过：PDF 40 段/索引 237 段+5 claim/查询命中；ZIP java+python；仓库 20 文件+5 claim；不存在仓库 rc=128 快速失败；119 跟踪文件 0 密钥；JD 不能支撑用户断言；audit pass/0；真实库对基一致；② **修掉两处**：git 子进程非 UTF-8 输出致崩溃（`run_command(errors="replace")` + 回归测试）、密钥扫描误报（范围改跟踪文件 + 正则不跨行）；③ 边界保留：PDF 适配层 V1 入口未建、页码级 locator 仍缺；④ 267 项 + evkg 107 + ruff 全过 | EV-065 | PDF 适配层入口；页码 locator；归档刷新 | M4（待确认） |
-| 2026-10-02 | M3-e | 越权校验接进写入路径（`adapter.create_material_claim`：拒绝越权、未评估置信度、逐字引用、幂等）；由公共仓库证据确定性构造 5 条材料口径 claim；对真实库做只读 dry-run 标记历史主张 | ① 越权即拒且**零写入**（数据表计数不变有断言）；② 5 条 claim 全部 `scope=material`、`score=None`，audit pass/0，provenance（claim→evidence→passage→source）逐跳可走通；③ dry-run（`mode=ro` 零写入）：M1-c 那条"用户/实现过"判越权、那条"用户/计划学习"判干净；④ **发现并修掉校验器假阳性**："不代表已具备"中的「具备」曾被当作命中（否定语境），已加 8 字符窗口否定识别 + 正反测试；⑤ 266 项 + evkg 107 + ruff + 真实库对基全过 | EV-064 | M3 Gate；历史主张标注（待用户决定） | M3 Gate（待发话） |
-| 2026-10-02 | M4-PLAN v0.1（范围冻结草案） | 依据 M3 收口后的输入撰写 `docs/M4-PLAN.md` v0.1：G2/G3 拆问（"证据充分性/可追溯" + "声明 vs 证据"四类矩阵）；assessment 归属模型（source attribution / claim scope / capability ownership 三分离 + 证据准入合取链）；M2 再生成语义三方向对照（推荐 history + current view）；范围、步骤 M4-a…e + Gate、12 项验收映射 | ① 按用户指定**只冻结设计：不写代码、不跑实验**；② C5 抽取模型持久化列为 M4 验收前置；③ 历史越权按独立 artifact 处理、不改真实库；④ 两个 M3 开放项（PDF 入口、页码 locator）保持开放、不阻塞 M4；⑤ 同步修正账本：M3 收口结论、B-06 解除、evkg 领先 5 提交、功能清单状态、验收门状态（G1/QG1/QG2/QG4/QG5） | 无（计划文档待确认；确认后转 v1.0 并赋 EV 号） | 待用户确认三处冻结点与 C5 解法 | M4-a（确认后） |
-| 2026-10-02 | M4-PLAN v1.0 + M4-a | 用户逐项确认七项冻结 → `docs/M4-PLAN.md` 升 v1.0 执行基线（EV-066）；实施 M4-a：`g_` 表族契约（g_capability_claims / g_assessments / 生命周期字段）、确定性准入闸门（四类矩阵 + 越权 + 链完整性/逐字）、AssessmentDrafter 最小闭环、独立 audit artifact（只读）、C5 上游最小修（evkg `9a21552`） | ① 用户指定边界：不做星级算法/LLM/UI/G3；② C5 provenance 取自实际返回值，档案渲染器三态显示（已记录 / 材料口径"不适用" / 修复前"未记录在案"）；③ 历史主张只读扫描分类 overreach/plan，与 M3-e 判定一致、零写入；④ 数据边界：真实库逐表内容哈希 + 计数对 M3-a 锚点一致、真实库无任何 `g_` 表；⑤ 全量 287 项 + evkg 111 + ruff 全绿；冒烟 11/11 通过 | EV-066 EV-067 | M4-a 待用户验收；下一步 M4-b（验收后） | M4-b |
-| 2026-10-02 | M4-a 验收 | 用户确认 M4-a 通过（无附加条件） | 账本同步：M4-a 转"已验收"、Gate/验收记录更新；M4-b 边界提议已提交、待确认后开工 | EV-067 | M4-b（待确认后开工） | M4-b |
-| 2026-10-03 | M4-b（证据绑定与分桶） | 用户确认边界（生成器接线推迟、授权 1 次真实运行）→ 实现 `assessment/buckets.py`（六类型→四桶确定性映射）+ `assessment/binding.py`（ProposalItem extra=forbid / 八步闸门 / ClaimBinder）+ `store.get_capability_by_path` → 20 项契约测试 → 离线冒烟 9/9 → 真实运行 8/8 | ① 闸门固定顺序 schema→claim_exists→capability_exists→capability_active→bucket_allowed→attribution_unchanged→duplicate→persisted，失败零写入且记录五字段；② LLM 无直接落库路径（桥表行数==接受数）；③ 真实运行：glm-5.3、1 次调用/1 个 HTTP 请求、6 候选→4 提议→3 接受 + 1 拒绝（自述，归属不通过）；**如实记录两处提议质量问题**（id/理由错配、漏提议 2 条），治理边界不依赖提议质量；④ 真实库 `mode=ro` 副本运行、逐表哈希 + 计数对锚一致；⑤ 307 + ruff 全绿 | EV-068 | M4-b 待用户验收；生成器接线记 `M4-b.1` | M4-c（待发话） |
-| 2026-10-03 | M4-c（评级与反向证据） | 用户确认口径（两维度、基线表、封顶值、`current_level` 推迟、实践 ≤1 口径、真实 attack 入 M4-e）→ 实现 `assessment/rules.py`（两维度确定性引擎 + 反向证据结算）+ `assessment/rater.py`（rated 写入）+ `g_assessments` dimension/rated 契约 → 18 项 QG3 测试 → 离线冒烟 12/12 | ① 引擎按**能力点级证据集合**聚合（`uploaded_doc`+`probe_result` 可跨主张组合）；② refutes 证据行挂在**被质疑主张**上（不另造支持型主张）；③ 历史语义：草案不覆盖、等级变化 = 新行、`latest_assessment` 查询当前视图；④ 分数隔离由功能对例 + 源码 AST 双重锁定；⑤ 325 + ruff 全绿、真实库对锚一致 | EV-069 | M4-c 待用户验收；`current_level` 回填随 M4-d | M4-d（待发话） |
-| 2026-10-03 | M4-b / M4-c 验收 | 用户确认 M4-b、M4-c 均通过（M4-c 按七项验收序列逐项核对；关键设计结论登记 DECISIONS） | 账本同步：M4-b / M4-c 转"已验收"、Gate 与验收记录更新；四条结论入库（capability 级证据集合 / 证据类型 ≠ 等级 / 反向证据不造新主张 / 评级为可重算派生数据）；M4-d 边界提议随后提交、待确认后开工 | EV-068 EV-069 | M4-d（待确认后开工） | M4-d |
-| 2026-10-03 | M4-d 验收 | 用户确认 M4-d 通过（无附加条件；四条设计结论随后登记 DECISIONS） | 账本同步：M4-d 转"已验收"、Gate 与验收记录更新；M4-e 边界提议随后提交、待确认后开工 | EV-070 | M4-e（确认后开工） | M4-e |
-| 2026-10-03 | M4-e 验收 + M4 Gate 封板 | 用户确认 M4-e 通过（含两项设计记录：单次运行预算口径 ≤17 HTTP + 多次运行成本披露）→ 建立 `artifacts/gates/M4/`（封板运行器：完成条件 1–6 + QG1–QG5 + 数据边界，**21/21**；真实库副本新鲜复核 audit pass/0 与 damage selftest caught/before-after 一致）→ 账本封板：总验收索引、G2/G3 转"用户已确认"、ROADMAP 完成条件勾选、M4-PLAN 状态更新、F-006 完成 | ① 封板为**离线验证与登记**（不重跑真实实验）；② QG4 扫描 200 个被跟踪文件 0 命中；QG5 = 359 + ruff + evkg 111 全绿；③ 真实库对锚一致、`g_` 全空；④ 保留边界登记（真实库不含 `g_` 表、G3 主体 RAG、A 臂笔记构造）；⑤ 下一步 M5 待用户确认 | EV-071 | M4 正式收口；G2 / G3 通过 | M5（待发话） |
