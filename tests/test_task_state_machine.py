@@ -3,7 +3,8 @@
 冻结口径（`M5-PLAN.md` v1.0 §5）：
 
 * 合法转移表写死；非法转移报错（不静默兜底）；
-* **`done` 唯一入口 = `complete_task`**（提交即完成，需 `source_id`）；
+* **`done` 唯一入口 = `complete_task`**（提交即完成）；M5-c 起应用层唯一提交入口是
+  `TaskLoop.complete_task`（收提交物；`source_id` 由证据链内部产生，不属于调用契约）；
 * `blocked` / `abandoned` 必填 reason；`done` / `abandoned` 是终态；
 * 每次转移写 `g_events`（`kind=task_status_changed`，含 from/to/reason）。
 """
@@ -232,7 +233,12 @@ def test_write_event_validates_kind_and_returns_identifier(env):
 # ---------------------------------------------------------------------------
 
 
-def test_tools_do_not_touch_assessments(env):
+def test_store_completion_does_not_touch_assessments(env):
+    """M5-a 原语层：`GrowthStore.complete_task` 不产生/修改任何评定（完成 ≠ 提升）。
+
+    工具层的提交入口自 M5-c 起是 `TaskLoop` 闭环（提交物 → 证据 → claim → 绑定 → 重评，
+    见 `test_task_loop.py`）；本用例锁定**原语层**边界 —— 闭环不得把评定写入下移到这里。
+    """
     registry = register_growth_tools(
         ToolRegistry(), store=env["store"], evidence_store=env["estore"]
     )
@@ -248,12 +254,7 @@ def test_tools_do_not_touch_assessments(env):
         generated_by_run_id="m5a_sm_test",
     )
     env["store"].activate_task(task["id"])
-    target = env["tmp"] / "submit.md"
-    target.write_text("# 评测集\n\n10 条样本\n", encoding="utf-8")
-    ingested = adapter.ingest_document(
-        target, store=env["estore"], evidence_type="task_submission", attribution="user_declared"
-    )
-    registry.call("complete_task", task_id=task["id"], source_id=ingested.source_id)
+    env["store"].complete_task(task["id"], source_id="src_sm", note="原语直接完成（不触发重评）")
 
     assert env["store"].list_assessments() == [], "任务完成不得产生/修改评定（完成 ≠ 提升）"
     capability = env["store"].get_capability(env["capability"])

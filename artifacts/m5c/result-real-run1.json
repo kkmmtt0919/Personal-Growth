@@ -1,0 +1,75 @@
+{
+  "mode": "m5c-real",
+  "checks": {
+    "real_run_completed": true,
+    "real_run_within_budget": true,
+    "real_provider_recorded": true,
+    "real_status_level_changed": true,
+    "real_practice_3_to_4": true,
+    "real_gap_closed": true,
+    "real_guard_all_true": true,
+    "real_trace_complete": true,
+    "real_source_metadata_frozen": true,
+    "real_report_written": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 12,
+  "checks_total": 12,
+  "all_checks_passed": true,
+  "detail": {
+    "task_id": "task_9a277647bad952286b29",
+    "requests": 1,
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "before": {
+      "understanding": {
+        "assessment_id": "asm_3c04fc52e364c2eeddf0",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-03 12:53:32"
+      },
+      "practice": {
+        "assessment_id": "asm_37958faa31745de53b61",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-03 12:53:32"
+      }
+    },
+    "after": {
+      "understanding": {
+        "assessment_id": "asm_3c04fc52e364c2eeddf0",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-03 12:53:32"
+      },
+      "practice": {
+        "assessment_id": "asm_462199007549df0770bb",
+        "level": 4,
+        "status": "rated",
+        "created_at": "2026-10-03 12:53:34"
+      }
+    },
+    "closed_gap_ids": [
+      "gap_cap_8a4d9256c7b8a423475c_practice"
+    ],
+    "claim_id": "clm_321ff1114af70f48164e",
+    "guard": {
+      "new_source_present": true,
+      "new_claim_present": true,
+      "binding_on_task_capability": true,
+      "trace_complete": true,
+      "before_present:practice": true,
+      "after_present:practice": true
+    },
+    "report_paths": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m5c\\tmp\\real\\reports\\loop-task_9a277647bad952286b29.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m5c\\tmp\\real\\reports\\loop-task_9a277647bad952286b29.md"
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "g_tables_in_real_db": []
+    }
+  }
+}

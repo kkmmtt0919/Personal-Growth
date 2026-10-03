@@ -1,0 +1,129 @@
+{
+  "mode": "m5c-offline",
+  "checks": {
+    "happy_status_level_changed": true,
+    "happy_practice_3_to_4": true,
+    "happy_gap_closed": true,
+    "happy_understanding_gap_open": true,
+    "happy_guard_all_true": true,
+    "happy_trace_complete": true,
+    "happy_single_submission_and_claim": true,
+    "happy_source_metadata_frozen": true,
+    "happy_one_binding_call": true,
+    "happy_done_is_terminal": true,
+    "probe_evidence_type_is_probe_result": true,
+    "probe_understanding_2_to_3": true,
+    "probe_gap_stays_open": true,
+    "probe_materialized_source": true,
+    "probe_guard_all_true": true,
+    "archive_two_sources_ingested": true,
+    "archive_primary_is_richest": true,
+    "archive_claim_cites_verbatim": true,
+    "archive_level_changed": true,
+    "missed_status_recorded": true,
+    "missed_no_assessment_written": true,
+    "missed_task_done": true,
+    "missed_levels_unchanged": true,
+    "missed_trace_incomplete": true,
+    "retry_failure_is_fail_stop": true,
+    "retry_failure_leaves_active": true,
+    "retry_succeeds_idempotently": true,
+    "boundaries_no_new_tables": true,
+    "boundaries_frozen_event_kinds": true,
+    "boundaries_no_rating_contract_change": true,
+    "guard_accepts_attributed_change": true,
+    "guard_rejects_missing_before": true,
+    "guard_rejects_missing_provenance": true,
+    "guard_rejects_unbound_change": true,
+    "guard_allows_no_change": true,
+    "guard_rejects_level_drop": true,
+    "real_db_untouched": true,
+    "real_db_has_no_g_tables": true
+  },
+  "checks_passed": 38,
+  "checks_total": 38,
+  "all_checks_passed": true,
+  "detail": {
+    "task_id": "task_9a277647bad952286b29",
+    "gap_id": "gap_cap_8a4d9256c7b8a423475c_practice",
+    "status": "level_changed",
+    "before": {
+      "understanding": {
+        "assessment_id": "asm_588c3cdf8cfe44b3514e",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-03 12:54:07"
+      },
+      "practice": {
+        "assessment_id": "asm_f5ade65dcecc753cd52f",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-03 12:54:07"
+      }
+    },
+    "after": {
+      "understanding": {
+        "assessment_id": "asm_8c9f55402ce951aacc87",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-03 12:54:07"
+      },
+      "practice": {
+        "assessment_id": "asm_f5ade65dcecc753cd52f",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-03 12:54:07"
+      }
+    },
+    "closed_gap_ids": [
+      "gap_cap_8a4d9256c7b8a423475c_practice"
+    ],
+    "binding": "本次提议没有把新 claim 绑定到任务能力点（binding_missed）",
+    "claim_id": "clm_78f1af972c1c7bf138f4",
+    "guard": {
+      "new_source_present": true,
+      "new_claim_present": true,
+      "binding_on_task_capability": false,
+      "trace_complete": false
+    },
+    "report_paths": {
+      "json": "D:\\projects\\Personal Growth\\artifacts\\m5c\\reports\\happy\\loop-task_9a277647bad952286b29.json",
+      "markdown": "D:\\projects\\Personal Growth\\artifacts\\m5c\\reports\\happy\\loop-task_9a277647bad952286b29.md"
+    },
+    "materialized_path": "D:\\projects\\Personal Growth\\artifacts\\m5c\\tmp\\probe\\submissions\\task_1ffb3ea3ae84e43e64f1.probe.md",
+    "archive": {
+      "ok": 2,
+      "skipped": 0,
+      "failed": 0,
+      "primary_entry": "b-big.md"
+    },
+    "source_ids": [
+      "src_9f4a5f46f5e12465",
+      "src_f9577f9326d9e476"
+    ],
+    "primary": "src_f9577f9326d9e476",
+    "failure": "TaskLoopError: 绑定提议调用失败（fail-stop，可重跑）：RuntimeError: 网关不可用（对例）",
+    "status_after_retry": "level_changed",
+    "g_tables": [
+      "g_agent_runs",
+      "g_assessments",
+      "g_capabilities",
+      "g_capability_claims",
+      "g_events",
+      "g_gaps",
+      "g_goal_clarifications",
+      "g_goals",
+      "g_task_submissions",
+      "g_tasks",
+      "g_users"
+    ],
+    "event_kinds": [
+      "task_status_changed"
+    ],
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "g_tables_in_real_db": []
+    }
+  }
+}

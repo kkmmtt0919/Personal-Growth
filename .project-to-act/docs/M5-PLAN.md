@@ -145,25 +145,44 @@ proposed ──activate──▶ active ──complete_task──▶ done（终�
 - 每次转移写 `g_events`（`kind=task_status_changed`，含 from/to/reason）；
 - 缺口在任务进行中被关闭 → 任务不自动改状态（提交仍照常产生证据）。
 
-## 6. 冻结点 E：submission → evidence → reassessment 闭环
+## 6. 冻结点 E：submission → evidence → reassessment 闭环（M5-c 边界已确认，2026-10-03）
 
-`complete_task` 的固定链（**无手工步骤**；M5-c 落 `assessment/task_loop.py`）：
+**唯一入口**：`TaskLoop.complete_task(task_id, submission)`（`assessment/task_loop.py`）——
+complete_task 为任务闭环唯一入口；**`source_id` 不属于调用契约**，由证据链内部产生
+（调用方只能提供提交物：`artifact_path` 或 `probe_answer`）。禁止直接写 `g_task_submissions`、
+禁止注入 `source_id`、禁止绕过 loop。
 
 ```text
 提交物（文件路径 / probe 作答文本）
-  ↓ ① 单入口入库：adapter.ingest_document（channel=user_evidence，attribution=user_declared）
-     证据类型由 deliverable_type 决定：markdown/code/archive → task_submission；
-     probe_answer → probe_result
-  ↓ ② 材料 claim：adapter.create_material_claim（越权前置拒绝；材料口径）
-  ↓ ③ 绑定：ClaimBinder 提议 → 八步闸门 → g_capability_claims（缺口所属能力点）
-  ↓ ④ 重评：assess_capability（M4-e 编排；fail-stop）
-  ↓ ⑤ g_task_submissions + 状态 → done + 归因链
+  ↓ ① 前置校验：task 存在 ∧ active；提交物形态 ↔ deliverable_type 匹配
+  ↓ ② 单入口入库：markdown/code → adapter.ingest_document；archive → evidence.archive.ingest_archive
+     （容器级封装，逐条目仍走 ingest_document）；probe_answer → 物化后走 ingest_document
+     channel=user_evidence、attribution=user_declared 写死；证据类型由 deliverable_type 决定
+  ↓ ③ 材料 claim：确定性模板（零 LLM；subject=提交材料；逐字引文）；越权前置拒绝；一条；幂等
+  ↓ ④ 绑定：ClaimBinder.propose([新 claim])（≤1 HTTP）→ 八步闸门 → g_capability_claims
+     后置条件：任务能力点 ≥1 条 accepted；否则记 binding_missed（不写 assessment、不报提升）
+  ↓ ⑤ 重评：assess_capability(task.capability_id)（M4-e 编排，含缺口重算；fail-stop）
+  ↓ ⑥ 落定：store.complete_task（submission + done + 事件）+ 归因产物 + 守卫
 ```
 
+**done 在链尾落定**（用户 2026-10-03 确认）：失败（②–⑤ 任一步）→ 任务留在 `active`，
+可**幂等重跑**（入库 / claim / 绑定 / 评定均幂等，重跑不产生重复行）；`done` 是闭环结果，
+不是提交动作的结果；一旦 `done` 即终态。
+
+- **archive 的 `submission.source_id` 口径**：主条目来源（ok 条目中 passage 数最多，平局取路径字典序最小）；
+  提交 note 记归档摘要，全部 ok source_ids 进归因产物；
+- **失败语义**：文件不存在 / 格式不支持 / ZIP 无效 → 写库前 fail-closed；archive 有 failed 条目 → fail-stop；
 - **等级预期（复用 M4 阶梯，不新增规则）**：实践侧 `task_submission` → 基线 4（3 → 4）；
   理解侧 `uploaded_doc` 起评、`probe_result` 升 3（2 → 3）；
-- **归因产物**：`{task_id, source_id, 新增 claim_ids, 前后 {assessment_id, level, status}, 支撑集差异}`；
-- **反例守卫**：变化找不到新增 source/claim → 报错；任何一步需手工改库 → G5 判不通过。
+- **归因产物**（`m5c-1`；派生数据，**不新增表、不新增 event kind**）：`{task_id, gap_id, capability_id,
+  dimension, submission{source_id, source_ids, …}, claim{…}, binding{run_id, provider, model,
+  accepted_proposal_ids}, before/after{维度 → assessment_id/level/status}, assessment_changed_dimensions,
+  level_changed_dimensions, level_changed, support{added_claim_ids}, gaps{closed_gap_ids}, guard{…}, status}`；
+  只读反查函数 `trace_task(store, evidence_store, task_id)` 供 G5 反查；
+- **守卫三态**：`level_changed` / `no_level_change` / `guard_error`——"没变化"不是错误；
+  **三联条件**（用户冻结）：等级变化必须同时具备 before assessment + 新证据 provenance
+  （source → claim → binding）+ after assessment，缺一即 `LoopGuardError`（fail-stop）；
+  本链只产生支持性证据，等级下降视为异常。
 
 ## 7. 冻结点 F：G4 / G5 验收条件
 
@@ -222,7 +241,7 @@ M5-d  G5 门证据（独立实验库；真实运行）+ M5 Gate 封板
 | AC5 | 端到端 ≥1 能力等级变化 + 归因链可反查 | `tests/test_growth_loop.py` + G5 运行器 | `artifacts/gates/G5/` |
 | AC6 | 全程无人工干预（单条命令；无手工改库） | 运行器（无 SQL 修改步骤）+ 审计 | `artifacts/gates/G5/` |
 | AC7 | M4 rating contract 未被修改 | AST/常量检查（`RULES_CONTRACT_VERSION = "m4c-1"`；阶梯不变） | 测试输出 |
-| AC8 | 证据层零写入、真实库对锚一致、`g_` 仍空 | 全量测试 + 锚点比对 | 命令输出 |
+| AC8 | 证据层零写入（**口径澄清**：仅适用于 M4 assessment pipeline；M5-c 明确承担用户提交证据进入实验库的闭环职责）、真实库对锚一致、`g_` 仍空 | 全量测试 + 锚点比对 | 命令输出 |
 | AC9 | 全量回归 + ruff + 治理 | 全量测试 + `validate/audit` | 命令输出 |
 
 ## 11. 风险与开放问题
@@ -239,12 +258,14 @@ M5-d  G5 门证据（独立实验库；真实运行）+ M5 Gate 封板
 
 ## 12. 真实运行预算（单次运行上限口径）
 
-| 运行 | 调用 | 上限（M5-b 冻结，收紧） |
+| 运行 | 调用 | 上限（M5-b/M5-c 冻结） |
 |---|---|---|
 | M5-b 生成器（per-gap 1 次 × 前 2 个缺口） | ≤2 | **≤2 HTTP** |
-| M5-c 提交后绑定（1 次/提交） | 1 | ≤1 HTTP（M5-c 冻结时确认） |
+| M5-c 提交后绑定（1 次/提交） | 1 | **≤1 HTTP**（2026-10-03 冻结） |
+| G5（真实一次：生成 ≤2 + 绑定 ≤1） | ≤3 | **≤3 HTTP**（M5-d；零重试） |
 | 离线对例（fake gateway） | 0 | — |
 | **M5-b 本步合计** | | **≤2 HTTP**，零额外重试、fail-stop、允许重跑但每次独立记录 |
+| **M5-c 本步合计** | | **≤1 HTTP**（绑定为真实调用；任务生成用离线对例），同上纪律 |
 
 ## 13. 开工前检查（设计级）
 

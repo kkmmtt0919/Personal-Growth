@@ -3,8 +3,8 @@
 * `gate`：七步确定性闸门（`TaskProposal` / `TaskGate` / 留档）；
 * `generator`：`gap → LLM 提议 → 闸门 → g_tasks(proposed)`（Generator 不直接写库）。
 
-M5-c 的 `submission → evidence → claim → binding → assessment` 闭环将落在 `loop.py`。
-"""
+M5-c 的 `submission → evidence → claim → binding → assessment` 闭环落在
+`assessment/task_loop.py`（`TaskLoop.complete_task`，唯一入口）。"""
 
 from .gate import (
     DECLINED_STAGE,

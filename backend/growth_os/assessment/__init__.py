@@ -11,9 +11,11 @@
 * **M4-d**：可解释输出 —— 能力评估报告（支持 / 不足 / 攻击结果 + 逐字引文）
   + 维度化 `current_level` 回填与重建校验；
 * **M4-e**：统一编排 —— `rate → report → apply_levels → verify → gaps → verify`
-  固定顺序（无 LLM / 无网络 / fail-stop），缺口 `g_gaps` 从评定行派生。
+  固定顺序（无 LLM / 无网络 / fail-stop），缺口 `g_gaps` 从评定行派生；
+* **M5-c**：任务提交闭环 —— `TaskLoop.complete_task`（提交物 → 单入口证据 → 材料 claim →
+  绑定闸门 → 重评 → 归因 + 三联条件守卫）。
 
-**不做**：任务（M5）、Memory（M6）、UI（M8）。
+**不做**：任务（M5-a/b 在 `tasks/`）、Memory（M6）、UI（M8）。
 """
 
 from .audit import build_audit, write_audit
@@ -67,6 +69,16 @@ from .rules import (
     rate_capability,
     rate_contributions,
 )
+from .task_loop import (
+    LOOP_CONTRACT_VERSION,
+    LoopGuardError,
+    TaskLoop,
+    TaskLoopError,
+    build_loop_artifact,
+    trace_task,
+    verify_attribution,
+    write_loop_artifact,
+)
 
 __all__ = [
     "ADMISSIBLE",
@@ -83,6 +95,7 @@ __all__ = [
     "GATE_STAGES",
     "INSUFFICIENT",
     "LEVEL_RANGE",
+    "LOOP_CONTRACT_VERSION",
     "NOT_ADMISSIBLE",
     "OVERREACH",
     "PENDING_DECLARATION",
@@ -107,12 +120,16 @@ __all__ = [
     "ClaimClassification",
     "ClaimContribution",
     "GateDecision",
+    "LoopGuardError",
     "PipelineError",
     "ProposalItem",
+    "TaskLoop",
+    "TaskLoopError",
     "assess_capability",
     "bucket_for",
     "build_audit",
     "build_binding_artifact",
+    "build_loop_artifact",
     "build_report",
     "check_chain",
     "claim_buckets",
@@ -123,7 +140,10 @@ __all__ = [
     "rate_contributions",
     "render_binding_prompt",
     "render_report",
+    "trace_task",
+    "verify_attribution",
     "write_audit",
     "write_binding_artifact",
+    "write_loop_artifact",
     "write_report",
 ]

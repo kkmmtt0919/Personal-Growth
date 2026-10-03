@@ -271,7 +271,8 @@ def test_submission_rows_are_unique_and_events_are_ordered(env):
 # ---------------------------------------------------------------------------
 
 
-def test_growth_tools_registered_and_cross_table_check(env):
+def test_growth_tools_registered_and_complete_task_delegates_to_loop(env):
+    """M5-c 起 `complete_task` 不再接受 `source_id`：只收提交物，且需要网关接线。"""
     registry = register_growth_tools(
         ToolRegistry(), store=env["store"], evidence_store=env["estore"]
     )
@@ -283,14 +284,10 @@ def test_growth_tools_registered_and_cross_table_check(env):
     assert [item["id"] for item in registry.call("list_gaps")] == [gap]
 
     env["store"].activate_task(task["id"])
-    with pytest.raises(ValueError, match="source_id 不在证据库中"):
-        registry.call("complete_task", task_id=task["id"], source_id="src_not_exists")
-
     target = env["tmp"] / "submission.md"
     target.write_text("# 评测集\n\n10 条样本\n", encoding="utf-8")
-    ingested = adapter.ingest_document(
-        target, store=env["estore"], evidence_type="task_submission", attribution="user_declared"
-    )
-    result = registry.call("complete_task", task_id=task["id"], source_id=ingested.source_id)
-    assert result["status"] == "done"
-    assert env["store"].get_task(task["id"])["status"] == "done"
+    with pytest.raises(ValueError, match="gateway"):
+        registry.call("complete_task", task_id=task["id"], artifact_path=str(target))
+    # 未接线时闭环不发生：任务保持 active、零提交、零状态变化
+    assert env["store"].get_task(task["id"])["status"] == "active"
+    assert env["store"].list_task_submissions(task_id=task["id"]) == []

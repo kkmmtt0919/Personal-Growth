@@ -958,6 +958,22 @@ G4/G5 在独立实验库运行、真实库继续零写入；真实运行预算 �
 4. **G4 通过率口径（保留并注明）**：`2/6` 是 gate 覆盖测试统计（分母含注入式失败案例），
    **不是**模型生成成功率 —— 后续引用不得误读。
 
+### M5-c 边界确认（用户 2026-10-03 确认，实施随 M5-c）
+
+1. **Agent 工具 `complete_task` 签名重定向**：`(task_id, source_id, note)` →
+   `(task_id, artifact_path | probe_answer, note)`；`source_id` 属于闭环内部产物，
+   **不属于调用契约**（否则存在"伪造 source_id → 绕过 ingest → 直接完成"的旁路）；
+2. **`done` 在链尾落定**：`active →（ingest → claim → binding → assessment → trace guard）→ done`；
+   任一步失败 → 任务留 `active`，可**幂等重跑**。`done` 是闭环结果，不是提交动作的结果；
+3. **唯一入口**：`g_task_submissions` 只由 `TaskLoop` 链内 `store.complete_task` 写入；
+   禁止直接写提交表 / 注入 source_id / Agent 绕过 loop；绑定唯一写入 = 八步闸门第 8 步；
+   等级唯一写入 = M4-e 编排（`task_loop` 有 AST 禁写检查）；
+4. **归因不新增存储**：`m5c-1` 派生产物 + 只读 `trace_task`；不新增表、不新增 `g_events` kind；
+5. **禁止面**：不改 evkg / M4-b（八步闸门）/ M4-e 评级与编排 / `RULES_CONTRACT_VERSION`；
+   不做 UI、Memory、Agent 主动化；
+6. **预算**：M5-c 绑定 ≤1 HTTP/提交；G5 合计 ≤3 HTTP（生成 ≤2 + 绑定 ≤1）；零重试、fail-stop、
+   允许重跑但每次独立记录。
+
 ### 未决 / 留给后续
 
 - **`purge_passages` 的两种模式（用户已确认方向，M4 之后再实现）**：

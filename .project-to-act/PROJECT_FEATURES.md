@@ -21,7 +21,7 @@
 | F-004 | GitHub 集成（OAuth、选仓库、项目分析） | PRD §7.3 | P0 | 进行中 | 部分（公共仓库已通过；OAuth/私有仓库未做，M3 决策 6） | M1 | 授权后自动产出技术栈清单与 ≥3 条 capability claim；token 不落明文 | ARCHITECTURE §3.4；ROADMAP M3 | EV-062 EV-065 |
 | F-005 | 证据图谱（Claim / Evidence / Source / Provenance / Attack / Confidence） | PRD §5 §6 §7 §8 | P0 | 已完成 | 通过 | M1 | evkg 全流水线可用；audit_store=pass；damage_selftest=caught | ARCHITECTURE §3 §7；ROADMAP M1 | EV-008 EV-037…EV-041（QG2 双向测量口径） |
 | F-006 | 五星能力审计与缺口识别 | PRD §9 §10 | P0 | 已完成 | 通过 | F-002 F-005 | 通过 G3 的 A/B 对照实验；每级可追溯；能解释"为什么三星"（M4 已封板：契约 / 绑定 / 两维度评级 / 解释与回填 / 编排与缺口；产品入口留 M8） | ARCHITECTURE §3；ACCEPTANCE G3；ROADMAP M4 | EV-066 EV-067 EV-068 EV-069 EV-070 EV-071 |
-| F-007 | 任务生成与完成闭环 | PRD §11 §12 | P0 | 进行中 | 部分（M5-a 契约与状态机、M5-b 生成器与 G4 均已验收；提交→重评闭环与 G5 待后续） | F-006 | 通过 G4、G5；任务含可交付物/时长/验收方式；星级变化可归因 | ARCHITECTURE §2；ACCEPTANCE G4 G5；ROADMAP M5 | EV-072 EV-073 EV-074 |
+| F-007 | 任务生成与完成闭环 | PRD §11 §12 | P0 | 进行中 | 部分（M5-a 契约与状态机、M5-b 生成器与 G4 均已验收；M5-c 提交→重评闭环已完成待验收；G5 待 M5-d） | F-006 | 通过 G4、G5；任务含可交付物/时长/验收方式；星级变化可归因 | ARCHITECTURE §2；ACCEPTANCE G4 G5；ROADMAP M5 | EV-072 EV-073 EV-074 EV-075 |
 | F-008 | Memory 三层（Profile / State / Growth History） | PRD §13 | P0 | 已规划 | 待检查 | F-006 | 三层互不覆盖；能展示能力星级时间线 | ROADMAP M6 | 无 |
 | F-009 | 主动 Agent（每日分析、4 类事件、提醒可关闭） | PRD §14 §15 | P0 | 已规划 | 待检查 | F-007 F-008 | 无变化不通知；冷却期生效；用户可关闭 | ARCHITECTURE §5.4；ROADMAP M7 | 无 |
 | F-010 | Agent 运行时与轨迹（Runtime / ToolRegistry / ContextAssembler / Tracer） | PRD §29 §30 | P0 | 进行中 | 部分（最小运行时与轨迹已通过；编排与更多工具随 M4/M5） | M1 | 轨迹落 `g_agent_runs` 可回放；工具调用可审计 | ARCHITECTURE §5；ROADMAP M1 | EV-051 EV-056 |
@@ -49,3 +49,4 @@
 | 2026-10-03 | F-006 | 状态推进为"已完成"：M4 Gate 21/21 通过并封板（G2/G3 通过） | M4 封板验证（完成条件 1–6 + QG1–QG5 + 数据边界） | EV-071 | ZCode（依据 M4 Gate 判定记录） |
 | 2026-10-03 | F-007 | 验收状态更新：M5-b 任务生成器 + 七步闸门 + G4 门证据已通过（真实运行 2/2 HTTP） | M5-b 实施与真实运行 | EV-074 | ZCode（依据已收口证据） |
 | 2026-10-03 | F-007 | 验收确认：M5-b 通过（用户 2026-10-03 确认；G4 判定通过）；M5-c 方案边界已提交、待确认后开工 | M5-b 验收 + `get_gap`/M5-PLAN 两处实现记录确认 + M5-c 前置约束登记 | EV-074 | 用户 |
+| 2026-10-03 | F-007 | 验收状态更新：M5-c 提交→重评闭环已完成（唯一入口 + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫；离线 38/38、真实 12/12、真实 1/1 HTTP） | M5-c 实施与真实运行 + G5 前最后一环落地 | EV-075 | ZCode（依据已收口证据） |

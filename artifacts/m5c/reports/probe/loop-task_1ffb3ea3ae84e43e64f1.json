@@ -1,0 +1,167 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_8a4d9256c7b8a423475c",
+    "goal_id": "goal_m5c",
+    "path": "AI Agent/工具与执行/RAG 系统搭建与调优",
+    "depth": 3,
+    "target_level": 4,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 3,
+    "current_level_practice": 3
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_8c9f55402ce951aacc87",
+      "status": "rated",
+      "level": 3,
+      "base_level": 3,
+      "rationale": "理解：基线 3（2 条已绑定主张）",
+      "why_not_higher": [],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_b668af65eed5bdd758e0",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        },
+        {
+          "buckets": [
+            "behavior"
+          ],
+          "cap": null,
+          "claim_id": "clm_e0b2a61cd7efd816f483",
+          "evidence_types": [
+            "probe_result"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_f5ade65dcecc753cd52f",
+      "status": "rated",
+      "level": 3,
+      "base_level": 3,
+      "rationale": "实践：基线 3（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少任务证据（独立完成完整任务可到 4）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "practice"
+          ],
+          "cap": null,
+          "claim_id": "clm_9a9c614d7dd0ffb916d8",
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_b668af65eed5bdd758e0",
+      "present": true,
+      "subject": "材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "材料中包含相关内容（m5c-notes.md）",
+      "binding_rationale": "M5-c 测试夹具（等价闸门写入）",
+      "quotes": [
+        {
+          "passage_id": "p_4a5cfb321bfe2ea8",
+          "quote": "# 笔记",
+          "quote_verbatim": true,
+          "source_id": "src_f9f85d1374357c91",
+          "source_title": "m5c-notes"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    },
+    {
+      "claim_id": "clm_e0b2a61cd7efd816f483",
+      "present": true,
+      "subject": "提交材料",
+      "predicate": "包含",
+      "object": "任务产出物（probe_answer）",
+      "statement": "提交材料（probe_answer）包含任务「现场作答：RAG 检索流程五问」的产出物：产出一份现场作答记录，覆盖切分、向量化、召回、重排、评测五个环节",
+      "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_4bab0b917c6b4f14｜proposer=fake/fake-deterministic｜理由：提交材料与该能力点直接相关（测试对例）",
+      "quotes": [
+        {
+          "passage_id": "p_a0c9e90f7fe3a30b",
+          "quote": "一、切分：按语义段落切分…… 二、向量化：……",
+          "quote_verbatim": true,
+          "source_id": "src_1f178da60a58f44c",
+          "source_title": "现场作答：RAG 检索流程五问｜现场作答"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "probe_result"
+      ]
+    },
+    {
+      "claim_id": "clm_9a9c614d7dd0ffb916d8",
+      "present": true,
+      "subject": "材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "材料中包含相关内容（m5c-repo.md）",
+      "binding_rationale": "M5-c 测试夹具（等价闸门写入）",
+      "quotes": [
+        {
+          "passage_id": "p_fc23f1e732240743",
+          "quote": "# 项目",
+          "quote_verbatim": true,
+          "source_id": "src_b567d4eafe6f07c1",
+          "source_title": "m5c-repo"
+        }
+      ],
+      "dimension": "practice",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "repo_artifact"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "practice",
+      "text": "缺少任务证据（独立完成完整任务可到 4）"
+    }
+  ],
+  "reverse_evidence": [],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-03T12:54:07+00:00",
+  "generated_by": "run_4bab0b917c6b4f14",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}
