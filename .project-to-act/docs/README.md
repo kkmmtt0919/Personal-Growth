@@ -19,6 +19,7 @@
 | [`M3-PLAN.md`](M3-PLAN.md) | M3 目标与范围（**v1.0 执行基线**）：一句话定义、硬规则"存在证据 ≠ 证明能力"、6 项定案决策（含 OAuth 不作为前置）、归属层、步骤结构 M3-a…e + B-g2 + M3 Gate、验收标准 | M3 开工前必读；含数据边界判据与 M3-b 实现约束（§5.1） |
 | [`M4-PLAN.md`](M4-PLAN.md) | M4 目标与范围（**v1.0 执行基线 · 已完成并封板**）：G2/G3 判定（可追溯性门 + 声明 vs 证据四类矩阵）、归属三层模型（source attribution / claim scope / capability ownership）、再生成语义（history + current view）、C5 上游最小修、mapping 闸门、G3 实验设计、步骤 M4-a…e + Gate | **M4 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
 | [`M5-PLAN.md`](M5-PLAN.md) | M5 目标与范围（**v1.0 执行基线**）：四条关键设计约束（task ≠ 能力判断、完成 ≠ 自动提升、provenance 可反查、M4 rating contract 不变）、`g_tasks`/`g_task_submissions`/`g_events` 契约、gap → task 映射边界、LLM 提议 + 七步闸门、任务状态机、submission → evidence → reassessment 闭环、G4/G5 验收条件、步骤 M5-a…d + Gate | **M5 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
+| [`M6-PLAN.md`](M6-PLAN.md) | M6 边界：可验证记忆、唯一写入入口、来源与回放；步骤 M6-a…c | M6 开工前读；当前只完成 M6-a |
 
 ## 其他位置
 

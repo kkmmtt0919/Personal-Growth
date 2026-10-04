@@ -135,6 +135,11 @@ TASK_ACCEPTANCE_ANTI_PATTERNS = ("去学习", "学习一下", "了解一下", "�
 TASK_EVENT_KINDS = ("task_status_changed",)
 """M5 冻结的 `g_events.kind`（M7 起追加自己的 kind，不复用本表语义做别的事）。"""
 
+MEMORY_EVENT_KINDS = ("memory_changed",)
+"""M6-a 追加的记忆审计事件。"""
+
+EVENT_KINDS = TASK_EVENT_KINDS + MEMORY_EVENT_KINDS
+
 GOAL_ELEMENTS = ("direction", "purpose", "horizon", "measurable_result")
 """confirmed goal 必须齐全的四要素：方向 / 目的 / 时间周期 / 可衡量结果。"""
 
@@ -384,6 +389,19 @@ class GrowthStore:
                 note TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(task_id, source_id)
+            );
+            CREATE TABLE IF NOT EXISTS g_memories (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                layer TEXT NOT NULL,
+                memory_key TEXT NOT NULL,
+                value_json TEXT NOT NULL,
+                status TEXT NOT NULL,
+                source_kind TEXT NOT NULL,
+                source_id TEXT NOT NULL,
+                supersedes_id TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS g_events (
                 id TEXT PRIMARY KEY,
@@ -1370,8 +1388,8 @@ class GrowthStore:
     # -- g_events ---------------------------------------------------------
 
     def write_event(self, kind: str, payload: dict, *, severity: str = "info") -> str:
-        """写一条事件（append-only）。M5 冻结的 kind 见 `TASK_EVENT_KINDS`。"""
-        _require(bool(str(kind or "").strip()), "event 需要 kind")
+        """写一条事件（append-only）。kind 必须属于已冻结集合。"""
+        _require(kind in EVENT_KINDS, f"未知事件 kind: {kind!r}（允许 {EVENT_KINDS}）")
         body = dumps(payload or {})
         count = self.db.execute("SELECT COUNT(*) FROM g_events").fetchone()[0]
         identifier = "evt_" + hashlib.sha256(f"{kind}|{body}|{count}".encode()).hexdigest()[:20]
@@ -1389,6 +1407,59 @@ class GrowthStore:
             sql += " AND kind=?"
             params.append(kind)
         sql += " ORDER BY rowid"
+        return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    # -- g_memories -------------------------------------------------------
+
+    def insert_memory(self, row: dict) -> None:
+        """持久化一条已经由 MemoryService 校验过的记忆。
+
+        本方法不解释业务规则；直接 SQL 插入仍是存储层能力，应用写入只允许经 service。
+        """
+        self.db.execute(
+            """
+            INSERT INTO g_memories(
+                id, user_id, layer, memory_key, value_json, status,
+                source_kind, source_id, supersedes_id
+            ) VALUES(?,?,?,?,?,?,?,?,?)
+            """,
+            (
+                row["id"], row["user_id"], row["layer"], row["memory_key"], row["value_json"],
+                row["status"], row["source_kind"], row["source_id"], row.get("supersedes_id"),
+            ),
+        )
+        self.db.commit()
+
+    def mark_memory_superseded(self, memory_id: str) -> None:
+        self.db.execute(
+            "UPDATE g_memories SET status='superseded', updated_at=CURRENT_TIMESTAMP WHERE id=?",
+            (memory_id,),
+        )
+        self.db.commit()
+
+    def get_memory(self, memory_id: str) -> dict | None:
+        row = self.db.execute("SELECT * FROM g_memories WHERE id=?", (memory_id,)).fetchone()
+        return dict(row) if row else None
+
+    def list_memories(
+        self,
+        *,
+        layer: str | None = None,
+        memory_key: str | None = None,
+        status: str | None = None,
+        source_kind: str | None = None,
+        source_id: str | None = None,
+    ) -> list[dict]:
+        sql = "SELECT * FROM g_memories WHERE 1=1"
+        params: list[Any] = []
+        for column, value in (
+            ("layer", layer), ("memory_key", memory_key), ("status", status),
+            ("source_kind", source_kind), ("source_id", source_id),
+        ):
+            if value is not None:
+                sql += f" AND {column}=?"
+                params.append(value)
+        sql += " ORDER BY created_at, id"
         return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
 
     # -- g_agent_runs -----------------------------------------------------
