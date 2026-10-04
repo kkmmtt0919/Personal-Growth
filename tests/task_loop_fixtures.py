@@ -21,8 +21,19 @@ MATERIALS = {
 """受控材料：理解侧笔记（uploaded_doc）+ 实践侧项目文档（repo_artifact）。"""
 
 
-def seed_scenario(store, estore, workdir: Path, *, second_capability: bool = False) -> dict:
-    """构造目标树 + 受控材料 → M4-e 编排 → 两个 open 缺口（实践 3 / 理解 2，目标 4）。"""
+def seed_scenario(
+    store,
+    estore,
+    workdir: Path,
+    *,
+    second_capability: bool = False,
+    leaf_only: bool = False,
+) -> dict:
+    """构造目标树 + 受控材料 → M4-e 编排 → 两个 open 缺口（实践 3 / 理解 2，目标 4）。
+
+    `leaf_only=True` 只保留一个三层能力点（G5 用）：绑定提示里只有唯一路径，
+    避免模型在领域/分组/叶节点之间选错（M5-c 记录过的 binding_missed 噪声）。
+    """
     store.upsert_user("local", "本地用户")
     store.save_goal(
         {
@@ -37,19 +48,22 @@ def seed_scenario(store, estore, workdir: Path, *, second_capability: bool = Fal
             "source_quote": "我想成为 AI Agent 工程师",
         }
     )
-    domain = store.upsert_capability(
-        {"goal_id": GOAL_ID, "path": "AI Agent", "name": "AI Agent", "depth": 1, "target_level": 3}
-    )
-    group = store.upsert_capability(
-        {
-            "goal_id": GOAL_ID,
-            "path": "AI Agent/工具与执行",
-            "name": "工具与执行",
-            "depth": 2,
-            "parent_id": domain,
-            "target_level": 3,
-        }
-    )
+    domain = None
+    group = None
+    if not leaf_only:
+        domain = store.upsert_capability(
+            {"goal_id": GOAL_ID, "path": "AI Agent", "name": "AI Agent", "depth": 1, "target_level": 3}
+        )
+        group = store.upsert_capability(
+            {
+                "goal_id": GOAL_ID,
+                "path": "AI Agent/工具与执行",
+                "name": "工具与执行",
+                "depth": 2,
+                "parent_id": domain,
+                "target_level": 3,
+            }
+        )
     capability = store.upsert_capability(
         {
             "goal_id": GOAL_ID,

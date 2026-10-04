@@ -1,0 +1,242 @@
+{
+  "mode": "g5-real",
+  "generated_at": "2026-10-04T06:37:08+00:00",
+  "checks": {
+    "generation_accepted": true,
+    "practice_3_to_4": true,
+    "practice_gap_closed": true,
+    "understanding_gap_open": true,
+    "understanding_unchanged": true,
+    "new_source_present": true,
+    "trace_complete": true,
+    "guard_all_true": true,
+    "audit_pass": true,
+    "within_budget": true,
+    "single_capability_tree": true
+  },
+  "checks_passed": 11,
+  "checks_total": 11,
+  "all_checks_passed": true,
+  "detail": {
+    "requests": 2,
+    "cap": 3,
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "task_id": "task_1352c13bd0696ef6e7bf",
+    "task": {
+      "id": "task_1352c13bd0696ef6e7bf",
+      "user_id": "local",
+      "goal_id": "goal_m5c",
+      "capability_id": "cap_8a4d9256c7b8a423475c",
+      "gap_id": "gap_cap_8a4d9256c7b8a423475c_practice",
+      "title": "搭建并调优一个小型 RAG 问答系统",
+      "objective": "基于一份自选文档集（不少于 5 个文件）搭建一个可运行的 RAG 问答系统：包含文档切分、向量化、检索与答案生成四个环节，并对比至少两种检索参数或切分策略的效果差异。",
+      "deliverable_type": "code",
+      "est_minutes": 300,
+      "acceptance_type": "artifact_check",
+      "acceptance": "提交完整代码工程（含 README），验收标准：1) 代码可直接运行，对 3 个指定测试问题能返回基于文档内容的答案并附引用来源；2) README 中包含两种策略的对比记录（如不同 chunk size / top-k），附至少 5 组问答的实测结果；3) 代码中体现检索、切分、生成三环节的模块化结构。",
+      "origin": "generated",
+      "generated_by_run_id": "run_d88529d152954a12",
+      "status": "done",
+      "blocked_reason": null,
+      "abandoned_reason": null,
+      "created_at": "2026-10-04 06:37:05",
+      "updated_at": "2026-10-04 06:37:08"
+    },
+    "before": {
+      "understanding": {
+        "assessment_id": "asm_bb2f6c7552cea32173ca",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      },
+      "practice": {
+        "assessment_id": "asm_4103fb9e8a4427213316",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      }
+    },
+    "after": {
+      "understanding": {
+        "assessment_id": "asm_bb2f6c7552cea32173ca",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      },
+      "practice": {
+        "assessment_id": "asm_4d2b2ecdfeb0bc15b2b5",
+        "level": 4,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:08"
+      }
+    },
+    "submission": {
+      "source_id": "src_d721d9bc44574eb1",
+      "source_ids": [
+        "src_d721d9bc44574eb1"
+      ],
+      "evidence_type": "task_submission",
+      "channel": "user_evidence",
+      "attribution": "user_declared",
+      "archive": null,
+      "materialized_path": null
+    },
+    "claim": {
+      "claim_id": "clm_8b1f11804ec27993d026",
+      "scope": "material",
+      "passage_ids": [
+        "p_e7db392f90de3281",
+        "p_e6948c15eee37f32",
+        "p_4f6d070832087584"
+      ]
+    },
+    "binding": {
+      "mode": "proposed",
+      "bound_on_task_capability": true,
+      "run_id": "run_f8ef2c8c4f6246f7",
+      "provider": "openai_compatible",
+      "model": "glm-5.3",
+      "accepted_proposal_ids": [
+        "prp_498e432cfbf1dd92"
+      ],
+      "decisions": [
+        {
+          "proposal_id": "prp_498e432cfbf1dd92",
+          "accepted": true,
+          "gate_stage": "persisted",
+          "capability_id": "cap_8a4d9256c7b8a423475c",
+          "reject_reason": null
+        }
+      ],
+      "reason": null,
+      "rationale": "材料包含基于不少于5个文件的RAG问答系统产出，覆盖文档切分、向量化、检索与答案生成四环节，并对比不同检索参数或切分策略效果，直接对应RAG系统搭建与调优。"
+    },
+    "gaps": {
+      "before": [
+        {
+          "id": "gap_cap_8a4d9256c7b8a423475c_practice",
+          "dimension": "practice",
+          "severity": "level_gap_1",
+          "status": "open"
+        },
+        {
+          "id": "gap_cap_8a4d9256c7b8a423475c_understanding",
+          "dimension": "understanding",
+          "severity": "level_gap_2plus",
+          "status": "open"
+        }
+      ],
+      "after": [
+        {
+          "id": "gap_cap_8a4d9256c7b8a423475c_practice",
+          "dimension": "practice",
+          "severity": "level_gap_1",
+          "status": "closed"
+        },
+        {
+          "id": "gap_cap_8a4d9256c7b8a423475c_understanding",
+          "dimension": "understanding",
+          "severity": "level_gap_2plus",
+          "status": "open"
+        }
+      ],
+      "closed_gap_ids": [
+        "gap_cap_8a4d9256c7b8a423475c_practice"
+      ]
+    },
+    "guard": {
+      "new_source_present": true,
+      "new_claim_present": true,
+      "binding_on_task_capability": true,
+      "trace_complete": true,
+      "before_present:practice": true,
+      "after_present:practice": true
+    },
+    "trace": {
+      "contract": "m5c-1",
+      "task_id": "task_1352c13bd0696ef6e7bf",
+      "task_status": "done",
+      "gap_id": "gap_cap_8a4d9256c7b8a423475c_practice",
+      "gap": {
+        "id": "gap_cap_8a4d9256c7b8a423475c_practice",
+        "user_id": "local",
+        "goal_id": "goal_m5c",
+        "capability_id": "cap_8a4d9256c7b8a423475c",
+        "dimension": "practice",
+        "current_level": 3,
+        "target_level": 4,
+        "severity": "level_gap_1",
+        "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+        "assessment_id": "asm_4103fb9e8a4427213316",
+        "status": "closed",
+        "created_at": "2026-10-04 06:37:02",
+        "updated_at": "2026-10-04 06:37:08"
+      },
+      "submissions": [
+        {
+          "id": "sub_b3ba87d03df52472",
+          "task_id": "task_1352c13bd0696ef6e7bf",
+          "source_id": "src_d721d9bc44574eb1",
+          "note": "G5 端到端",
+          "created_at": "2026-10-04 06:37:08"
+        }
+      ],
+      "source_ids": [
+        "src_d721d9bc44574eb1"
+      ],
+      "claims": [
+        {
+          "claim_id": "clm_8b1f11804ec27993d026",
+          "statement": "提交材料（code）包含任务「搭建并调优一个小型 RAG 问答系统」的产出物：基于一份自选文档集（不少于 5 个文件）搭建一个可运行的 RAG 问答系统：包含文档切分、向量化、检索与答案生成四个环节，并对比至少两种检索参数或切分策略的效果差异。",
+          "sources": [
+            "src_d721d9bc44574eb1"
+          ]
+        }
+      ],
+      "bindings": [
+        {
+          "capability_id": "cap_8a4d9256c7b8a423475c",
+          "claim_id": "clm_8b1f11804ec27993d026",
+          "role": "supports",
+          "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_f8ef2c8c4f6246f7｜proposer=openai_compatible/glm-5.3｜理由：材料包含基于不少于5个文件的RAG问答系统产出，覆盖文档切分、向量化、检索与答案生成四环节，并对比不同检索参数或切分策略效果，直接对应RAG系统搭建与调优。",
+          "created_at": "2026-10-04 06:37:08"
+        }
+      ],
+      "assessments": [
+        {
+          "id": "asm_4103fb9e8a4427213316",
+          "dimension": "practice",
+          "status": "rated",
+          "level": 3,
+          "created_at": "2026-10-04 06:37:02"
+        },
+        {
+          "id": "asm_bb2f6c7552cea32173ca",
+          "dimension": "understanding",
+          "status": "rated",
+          "level": 2,
+          "created_at": "2026-10-04 06:37:02"
+        },
+        {
+          "id": "asm_4d2b2ecdfeb0bc15b2b5",
+          "dimension": "practice",
+          "status": "rated",
+          "level": 4,
+          "created_at": "2026-10-04 06:37:08"
+        }
+      ],
+      "complete": true
+    },
+    "audit": {
+      "status": "pass",
+      "violations": null
+    },
+    "real_db_anchors": {
+      "content_hashes_match": true,
+      "counts_match": true,
+      "g_tables_in_real_db": []
+    },
+    "constructed_submission": true
+  }
+}

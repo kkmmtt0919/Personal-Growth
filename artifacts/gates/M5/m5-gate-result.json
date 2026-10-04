@@ -1,0 +1,84 @@
+{
+  "gate": "M5 · 任务闭环",
+  "checks": {
+    "cond1_task_maps_to_gap": true,
+    "cond2_anti_pattern_rejected": true,
+    "cond3_level_changed_without_manual_db": true,
+    "cond4_change_attributed": true,
+    "cond5_g4_g5_passed": true,
+    "qg1_fresh_audit_pass": true,
+    "qg2_damage_caught": true,
+    "qg3_rules_tests_present": true,
+    "qg4_no_secrets": true,
+    "qg5_tests_ruff": true,
+    "boundary_real_db": true,
+    "boundary_no_g_tables": true,
+    "steps_all_passed": true
+  },
+  "checks_passed": 13,
+  "checks_total": 13,
+  "all_checks_passed": true,
+  "quality_gates": {
+    "QG1": {
+      "status": "pass",
+      "violations": 0,
+      "cleanup_clean": true
+    },
+    "QG2": {
+      "status": "caught",
+      "injected_claim": "clm_damage_559ebca9",
+      "injected_evidence": "ev_damage_559ebca9",
+      "quote_violations_after_injection": 1,
+      "audit_status_during_injection": "fail",
+      "double_measure": {
+        "before": "pass",
+        "after": "pass"
+      }
+    },
+    "QG4": {
+      "scanned_files": 252,
+      "hits": [],
+      "hit_count": 0
+    },
+    "QG5": {
+      "pytest": null,
+      "ruff": null
+    }
+  },
+  "boundary": {
+    "content_hashes_match": true,
+    "counts_match": true,
+    "g_tables_in_real_db": []
+  },
+  "g5": {
+    "requests": 2,
+    "before": {
+      "understanding": {
+        "assessment_id": "asm_bb2f6c7552cea32173ca",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      },
+      "practice": {
+        "assessment_id": "asm_4103fb9e8a4427213316",
+        "level": 3,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      }
+    },
+    "after": {
+      "understanding": {
+        "assessment_id": "asm_bb2f6c7552cea32173ca",
+        "level": 2,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:02"
+      },
+      "practice": {
+        "assessment_id": "asm_4d2b2ecdfeb0bc15b2b5",
+        "level": 4,
+        "status": "rated",
+        "created_at": "2026-10-04 06:37:08"
+      }
+    }
+  }
+}

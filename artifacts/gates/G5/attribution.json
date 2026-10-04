@@ -1,0 +1,73 @@
+{
+  "task_id": "task_1352c13bd0696ef6e7bf",
+  "submission": {
+    "source_id": "src_d721d9bc44574eb1",
+    "source_ids": [
+      "src_d721d9bc44574eb1"
+    ],
+    "evidence_type": "task_submission",
+    "channel": "user_evidence",
+    "attribution": "user_declared",
+    "archive": null,
+    "materialized_path": null
+  },
+  "claim": {
+    "claim_id": "clm_8b1f11804ec27993d026",
+    "scope": "material",
+    "passage_ids": [
+      "p_e7db392f90de3281",
+      "p_e6948c15eee37f32",
+      "p_4f6d070832087584"
+    ]
+  },
+  "binding": {
+    "provider": "openai_compatible",
+    "model": "glm-5.3",
+    "run_id": "run_f8ef2c8c4f6246f7",
+    "accepted_proposal_ids": [
+      "prp_498e432cfbf1dd92"
+    ]
+  },
+  "gaps": {
+    "before": [
+      {
+        "id": "gap_cap_8a4d9256c7b8a423475c_practice",
+        "dimension": "practice",
+        "severity": "level_gap_1",
+        "status": "open"
+      },
+      {
+        "id": "gap_cap_8a4d9256c7b8a423475c_understanding",
+        "dimension": "understanding",
+        "severity": "level_gap_2plus",
+        "status": "open"
+      }
+    ],
+    "after": [
+      {
+        "id": "gap_cap_8a4d9256c7b8a423475c_practice",
+        "dimension": "practice",
+        "severity": "level_gap_1",
+        "status": "closed"
+      },
+      {
+        "id": "gap_cap_8a4d9256c7b8a423475c_understanding",
+        "dimension": "understanding",
+        "severity": "level_gap_2plus",
+        "status": "open"
+      }
+    ],
+    "closed_gap_ids": [
+      "gap_cap_8a4d9256c7b8a423475c_practice"
+    ]
+  },
+  "guard": {
+    "new_source_present": true,
+    "new_claim_present": true,
+    "binding_on_task_capability": true,
+    "trace_complete": true,
+    "before_present:practice": true,
+    "after_present:practice": true
+  },
+  "trace_complete": true
+}

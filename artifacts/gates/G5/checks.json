@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "generation_accepted": true,
+    "practice_3_to_4": true,
+    "practice_gap_closed": true,
+    "understanding_gap_open": true,
+    "understanding_unchanged": true,
+    "new_source_present": true,
+    "trace_complete": true,
+    "guard_all_true": true,
+    "audit_pass": true,
+    "within_budget": true,
+    "single_capability_tree": true
+  },
+  "requests": 2,
+  "audit": {
+    "status": "pass",
+    "violations": null
+  },
+  "real_db_anchors": {
+    "content_hashes_match": true,
+    "counts_match": true,
+    "g_tables_in_real_db": []
+  },
+  "all_checks_passed": true
+}

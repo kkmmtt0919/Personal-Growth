@@ -4,10 +4,10 @@
 
 ## 当前验收结论
 
-- 结论：**M0–M3 通过并收口；M4 完成并封板；M5 进行中**（2026-10-03）。**M5 方案已冻结**（EV-072）；**M5-a 已验收**（EV-073）；**M5-b 已验收**（EV-074）：gap → task 生成器（LLM 提议 + 七步闸门）+ **G4 通过** —— 离线/真实各 14/14，真实运行 2/2 HTTP；**M5-c 已完成待验收**（EV-075）：任务提交闭环（唯一入口 + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫）—— 离线 38/38、真实 12/12（真实运行 **1/1 HTTP**）。**M4 已封板**（M4 Gate 21/21，EV-071）。详见 `artifacts/m4e/README.md`、`artifacts/gates/M4/README.md`、`artifacts/gates/G4/README.md`、`artifacts/m5c/README.md`
-- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a…M4-e、M4 Gate）** + **M5（方案冻结、M5-a、M5-b + G4、M5-c）**
+- 结论：**M0–M3 通过并收口；M4 完成并封板；M5 进行中**（2026-10-03）。**M5 方案已冻结**（EV-072）；**M5-a 已验收**（EV-073）；**M5-b 已验收**（EV-074）：gap → task 生成器（LLM 提议 + 七步闸门）+ **G4 通过** —— 离线/真实各 14/14，真实运行 2/2 HTTP；**M5-c 已验收**（EV-075）：任务提交闭环（唯一入口 + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫）—— 离线 38/38、真实 12/12（真实运行 **1/1 HTTP**）。**M4 已封板**（M4 Gate 21/21，EV-071）。详见 `artifacts/m4e/README.md`、`artifacts/gates/M4/README.md`、`artifacts/gates/G4/README.md`、`artifacts/m5c/README.md`
+- 验收范围：M0 收口项 + M1-a…M1-g（见下方历史行）+ **M2** + **M3（a/b、B-g2、c/d/e、M3 Gate）** + **M4（基线冻结 v1.0、M4-a…M4-e、M4 Gate）** + **M5（方案冻结、M5-a…M5-c）**
 - 最后检查：2026-10-03
-- 遗留问题：**M5 实施中** —— M5-a 与 **M5-b 已验收（G4 已通过）**；**M5-c 已完成待验收**（提交 → 重评闭环 + 归因；真实 1/1 HTTP）；**M5-d（G5 + M5 Gate）待推进**；**M4 保留边界（M5 沿用）** —— 评估在独立实验库产出、真实库不含 `g_` 表；G3 主体为 RAG 相关能力、A 臂笔记为受控构造（均已标注）；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；**G4 已通过、G5 待 M5-d**（M5 负责）
+- 遗留问题：**M5 实施中** —— M5-a 与 **M5-b 已验收（G4 已通过）**；**M5-c 已验收**；**M5-d（G5 + M5 Gate）进行中**；**M4 保留边界（M5 沿用）** —— 评估在独立实验库产出、真实库不含 `g_` 表；G3 主体为 RAG 相关能力、A 臂笔记为受控构造（均已标注）；**已登记的推迟项** —— M4-b.1（`supersede_missing` 生成器接线）、M3 开放项（PDF 适配层 V1 入口、页码级 locator）；**归档第三副本**（抗物理损坏）待用户另存移动硬盘/云盘；**归档刷新**（bundle 指向 `28afbc0`，本地领先 6 个提交，含 `9a21552`）；**发布/CI 前**将 evkg 依赖切换为 `git + rev` 并复跑测试（须包含 `db2de3a` 与 `9a21552`）；**多领域包或并发 profile 前**必须改上游 profile 作用域；**G4、G5 与 M5 Gate 13/13 已通过**（EV-076）
 
 ## 验收标准
 
@@ -19,7 +19,7 @@
 | G2 | Evidence Traceability：能力判断可追溯 | **通过**（用户 2026-10-03 确认） | 抽 5 条 assessment 逐跳追溯至原文；`audit_store`=pass —— 7/7 评定行可追溯（5 条抽样，引文逐字） | EV-071 |
 | G3 | Capability Audit：识别"自称会但证据不足" | **通过**（用户 2026-10-03 确认） | **A/B 对照实验**：A 弱证据（理解 2 / 实践无 ≥2 等级）vs B 强证据（实践 3）；C（JD）不进 supports | EV-071 |
 | G4 | Task Quality：任务针对缺口且可验收 | **通过**（用户 2026-10-03 确认） | 每个 task 可反向映射到 gap 且含 {可交付物/时长/验收方式}；4 条反例（含字面"去学习 Agent Evaluation"）全部被拒并留档；逐条规则校验通过率 2/6（分母含注入对例，已注明） | EV-074 |
-| G5 | Growth Loop：完成 → 新证据 → 能力变化自动发生 | 待检查（M5-c/M5-d 推进中） | 无人工干预的端到端运行；星级变化可归因到具体新证据（M5-c 方案边界已提交，待确认后开工） | 无 |
+| G5 | Growth Loop：完成 → 新证据 → 能力变化自动发生 | **通过**（2026-10-04） | 单命令端到端：实践 3→4、缺口关闭、归因链可反查；2/3 HTTP | EV-076 |
 | G6 | User Return Value：回来能看到变化与下一步 | 待检查 | snapshot diff + 变化摘要 + 下一步建议 + 引用长期偏好 | 无 |
 
 质量门：
@@ -77,13 +77,16 @@
 | EV-073 | 2026-10-03 | **M5-a 实现与验证**：任务数据契约（`g_tasks` / `g_task_submissions` / `g_events`）+ 状态机 + Growth Agent 模式 A 四工具；离线冒烟 17/17 | 17/17；回归 380 全绿 | 新增 `agent/tools.py`、`growth_store` 任务三表与状态机、`tests/test_task_contract.py`（14 项）+ `tests/test_task_state_machine.py`（7 项）、`artifacts/m5a/`；测试 359→**380** | ① 冻结词表与转移表写死；② **`g_tasks` 无等级/分值字段**（AST 抽取建表语句断言，Task ≠ 能力判断）；③ 维度 ↔ 交付物（understanding 仅 probe_answer）与交付物 → 证据类型映射；④ 不可验收反例必须被拒（含字面"去学习 Agent Evaluation"）；⑤ 主缺口 open + 能力点 active + 同缺口去重；⑥ **`done` 唯一入口 = `complete_task`**（AST 守卫 + 需 active + 需 source）；⑦ 事件链按发生顺序（from/to/reason）；⑧ 工具层跨表族校验 source 存在性；⑨ **完成 ≠ 提升**：提交前后评定行完全一致、能力点等级未被触碰；⑩ 真实库对锚一致、`g_` 全空、实验库即删。细节见 `artifacts/m5a/README.md` | 命令输出；`artifacts/m5a/` | 90d |
 | EV-074 | 2026-10-03 | **M5-b 实现与验证**：gap → task generator（LLM 提议 + 七步闸门 + 反例拒绝 + 全量留档）+ **G4 门证据**；离线 14/14、真实 14/14（真实运行 **2/2 HTTP**，零额外重试） | 离线 14/14；真实 14/14；回归 404 全绿 | 新增 `growth_os/tasks/{gate,generator}.py`、`tests/test_task_generator.py`（24 项）、`artifacts/m5b/`、`artifacts/gates/G4/`；测试 380→**404** | ① 七步闸门固定顺序（缺口存在/open/active 合并为 `gap_taskable`，并强制 `assessment_id` 保证 provenance）；② proposal schema 七字段 `extra=forbid`，能力判断与排序字段结构性拒绝（静态检查只允许出现在 `FORBIDDEN_TASK_FIELDS`）；③ `est_minutes` 只做形式夹取、闸门不改写文本；④ `declined` 是运行结果不落库；⑤ Generator 不直接写库（唯一写库在闸门第 7 步；行数==accepted 数）；⑥ duplicate 谓词（done/abandoned 可再来）；⑦ 真实提议：理解缺口→probe 现场问答、实践缺口→可运行最小 RAG 系统（两条全过闸门）；⑧ G4：映射完整 / 四要素齐备 / 4 条反例（含字面"去学习 Agent Evaluation"）全部被拒 / provenance 可反查 / 禁止字段零命中；⑨ 真实库对锚一致、`g_` 全空、实验库即删。细节见 `artifacts/m5b/README.md` | 命令输出；`artifacts/m5b/`、`artifacts/gates/G4/` | 90d |
 | EV-075 | 2026-10-03 | **M5-c 实现与验证**：任务提交闭环 —— 唯一入口 `TaskLoop.complete_task` + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫；离线 38/38、真实 12/12（真实运行 **1/1 HTTP**，零额外重试） | 离线 38/38；真实 12/12；回归 416 全绿 | 新增 `growth_os/assessment/task_loop.py`、`tests/test_task_loop.py`（11 项）+ `tests/test_growth_loop.py`、`artifacts/m5c/`；测试 404→**416** | 唯一入口 `TaskLoop.complete_task`（`source_id` 不入调用契约）；done 在链尾、失败留 active 可幂等重跑；单入口入库四类交付物（归属/通道写死；archive 主条目确定性选取）；材料 claim 确定性（零 LLM、越权前置、一条、幂等）；绑定 ≤1 HTTP + 后置条件（`binding_missed` 不写 assessment、不报提升）；重评只经 M4-e 编排；三态 + 三联条件守卫（缺一即 `LoopGuardError`）+ 下降守卫 + AST 禁写；归因 `m5c-1`（不新增表/事件）+ 只读 `trace_task`；真实 `glm-5.3` 1/1 HTTP：实践 **3 → 4**、`level_gap_1` 关闭、理解保持、guard 全 true、全链可反查；真实库对锚、`g_` 全空。细节见 `artifacts/m5c/README.md` | 命令输出；`artifacts/m5c/` | 90d |
+| EV-076 | 2026-10-04 | **M5-d：G5 真实成长闭环 + M5 Gate 封板** | G5 11/11；M5 Gate 13/13；pytest 416；ruff 通过 | `artifacts/g5/`、`artifacts/gates/G5/`、`artifacts/gates/M5/` | 单命令完成 gap → 真实任务生成 → 提交 → 新证据 → 重评：实践 **3 → 4**，实践缺口关闭，理解缺口保持 open；2/3 HTTP、零重试；归因与 `trace_task` 全链可反查；`audit_store=pass/0`；真实库对锚、`g_` 全空。M5 Gate：完成条件 1–5 + QG1–QG5 + 数据边界 13/13。提交物与种子材料为受控构造并标注。 | 命令输出；`artifacts/gates/G5/`、`artifacts/gates/M5/` | 90d |
 
 ## Gate 记录
 
 | Gate ID | 日期 | Gate | 对象 | 结果 | 证据 ID | 豁免与确认人 |
 | M5（方案冻结） | 2026-10-03 | M5 边界冻结（四条关键设计约束 + 做/不做 + 步骤 M5-a…d + Gate + G4/G5 判定口径 + 运行预算） | `docs/M5-PLAN.md` v1.0 | 通过（用户已确认） | EV-072 | 用户 |
 | M5-a | 2026-10-03 | 任务数据契约 + 状态机 + 工具注册（三表 / 冻结词表 / `done` 唯一入口 / 模式 A 四工具；离线，不调用模型） | `backend/growth_os/agent/tools.py`、`growth_store` 任务三表、`tests/test_task_{contract,state_machine}.py`、`artifacts/m5a/` | 通过（用户已确认） | EV-073 | 用户 |
-| M5-c | 2026-10-03 | 任务提交闭环（唯一入口 `TaskLoop` + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫；离线 38/38 + 真实 12/12） | `growth_os/assessment/task_loop.py`、`growth_os/agent/tools.py`、`tests/test_task_loop.py`、`tests/test_growth_loop.py`、`artifacts/m5c/` | 通过（待用户验收） | EV-075 | 真实运行批准（≤1 HTTP） |
+| G5 | 2026-10-04 | **成长闭环门**：gap → 任务 → 提交 → 新证据 → 重评 → 实践 3→4（单命令，2/3 HTTP） | `artifacts/gates/G5/` | 通过 | EV-076 | — |
+| M5 Gate | 2026-10-04 | **任务闭环完成条件 + QG1–QG5 + 数据边界**（13/13；离线，不调用模型） | `artifacts/gates/M5/` | 通过 | EV-076 | — |
+| M5-c | 2026-10-03 | 任务提交闭环（唯一入口 `TaskLoop` + 单入口证据 + 材料 claim + 绑定闸门 + M4-e 重评 + 归因/三联条件守卫；离线 38/38 + 真实 12/12） | `growth_os/assessment/task_loop.py`、`growth_os/agent/tools.py`、`tests/test_task_loop.py`、`tests/test_growth_loop.py`、`artifacts/m5c/` | 通过（用户已确认） | EV-075 | 用户 |
 | M5-b | 2026-10-03 | gap → task generator（LLM 提议 + 七步闸门 + 反例拒绝 + 全量留档）+ G4 门证据（真实运行 ≤2 HTTP） | `growth_os/tasks/{gate,generator}.py`、`tests/test_task_generator.py`、`artifacts/m5b/`、`artifacts/gates/G4/` | 通过（用户已确认；G4 判定通过） | EV-074 | 用户（批准真实运行 ≤2 HTTP） |
 | M4 Gate | 2026-10-03 | **能力审计完成条件 1–6 + 质量门 QG1–QG5 + 数据边界**（21/21；离线，不调用模型；真实库副本新鲜复核） | `artifacts/gates/M4/` | 通过 | EV-071 | 用户（M4 封板确认） |
 | M4-e | 2026-10-03 | 统一编排 + 缺口 `g_gaps` + 真实 attack 运行 + G2/G3 门证据（独立实验库；真实运行 ≤17 HTTP） | `growth_os/assessment/pipeline.py`、`g_gaps`、`tests/test_{gaps,assessment_pipeline,traceability}.py`、`artifacts/m4e/`、`artifacts/gates/G2|G3/` | 通过（用户已确认） | EV-071 | 用户（含预算口径与成本披露确认） |
@@ -181,7 +184,8 @@
 | 日期 | 检查范围 | 证据 ID | 结果 | 遗留问题 | 结论 |
 | 2026-10-03 | M5 方案边界冻结（范围 + 四条设计约束 + 执行基线 v1.0） | EV-072 | 通过（用户已确认） | M5-a（数据契约 + 状态机 + 工具注册）开工；M5-b…d + M5 Gate 待推进 | **M5 开工条件成立，`M5-PLAN.md` v1.0 生效** |
 | 2026-10-03 | M5-a（数据契约 + 状态机 + 工具注册） | EV-073 | 通过（用户已确认） | M5-b 边界提议提交中；生成器 / 闭环 / G4-G5 未开始；两项 M5-b 约束已登记（生成器不得引入能力判断字段；任务质量 ≠ 学习价值） | **M5-a 验收通过** |
-| 2026-10-03 | M5-c（提交 → 重评闭环 + 归因） | EV-075 | 通过（待用户验收） | 真实运行 1/1 HTTP：实践 3→4、`level_gap_1` 关闭、guard 全 true、全链可反查；M5-d（G5 + M5 Gate）待推进 | **M5-c 阶段检查通过** |
+| 2026-10-04 | G5 + M5 Gate（任务闭环封板） | EV-076 | 通过 | 实践 3→4；归因可反查；M5 Gate 13/13；真实库对锚、`g_` 全空 | **M5 完成条件与 G4/G5 通过** |
+| 2026-10-03 | M5-c（提交 → 重评闭环 + 归因） | EV-075 | 通过（用户已确认） | 真实运行 1/1 HTTP：实践 3→4、`level_gap_1` 关闭、guard 全 true、全链可反查；允许进入 M5-d（G5 + M5 Gate） | **M5-c 验收通过** |
 | 2026-10-03 | M5-b（gap → task generator + G4） | EV-074 | 通过（用户已确认） | 真实运行 2/2 HTTP；G4 判定通过；确认两处实现记录（`get_gap` 只读 getter 保留；`M5-PLAN` §4/§9/§12 已同步）；登记 M5-c 前置约束（完成 ≠ 直接升星；能力变化须同时具备 before assessment + 新证据 provenance + after assessment）；M5-c 方案边界已提交、待确认后开工；M5-d（G5 + M5 Gate）待推进 | **M5-b 验收通过；G4 通过** |
 | 2026-10-03 | M4-e 验收 + **M4 Gate 封板**（完成条件 1–6 + QG1–QG5 + 数据边界，21/21） | EV-071 | 通过 | 两项设计记录确认（单次运行预算口径、多次运行成本披露）；M4 保留边界：真实库不含 `g_` 表、G3 主体为 RAG 能力、A 臂笔记受控构造；下一步 M5 待用户确认 | **M4 正式收口；G2 / G3 通过** |
 | 2026-10-03 | M4-d（可解释输出 + `current_level` 回填与重建校验） | EV-070 | 通过（用户已确认） | 缺口表（`g_gaps`）、真实 attack 运行与 G2/G3（M4-e）未开始；统一编排（回填自动化）留 M4-e | **M4-d 阶段检查通过** |

@@ -1,0 +1,8 @@
+{
+  "mode": "real",
+  "goal_id": "goal_m5c",
+  "materials": "受控构造（growth_constructed=true，如实标注）",
+  "submission": "artifacts\\g5\\submission\\rag-eval-set.md",
+  "tree": "单能力点（避免多层绑定选错）",
+  "budget_cap": 3
+}

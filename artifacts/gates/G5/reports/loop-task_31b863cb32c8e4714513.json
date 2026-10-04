@@ -1,0 +1,187 @@
+{
+  "artifact": "m4d-assessment-report",
+  "capability": {
+    "id": "cap_8a4d9256c7b8a423475c",
+    "goal_id": "goal_m5c",
+    "path": "AI Agent/工具与执行/RAG 系统搭建与调优",
+    "depth": 3,
+    "target_level": 4,
+    "status": "active",
+    "current_level_status": "assessed",
+    "current_level_understanding": 2,
+    "current_level_practice": 4
+  },
+  "dimensions": {
+    "understanding": {
+      "assessment_id": "asm_e16db5c58231ed1afee2",
+      "status": "rated",
+      "level": 2,
+      "base_level": 2,
+      "rationale": "理解：基线 2（1 条已绑定主张）",
+      "why_not_higher": [
+        "缺少行为证据（现场作答可通过 probe 补足到 3）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "knowledge"
+          ],
+          "cap": null,
+          "claim_id": "clm_7c55ceceab6821a73a1d",
+          "evidence_types": [
+            "uploaded_doc"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    },
+    "practice": {
+      "assessment_id": "asm_05ddda2cefeae363be94",
+      "status": "rated",
+      "level": 4,
+      "base_level": 4,
+      "rationale": "实践：基线 4（2 条已绑定主张）",
+      "why_not_higher": [
+        "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+      ],
+      "supports": [
+        {
+          "buckets": [
+            "practice"
+          ],
+          "cap": null,
+          "claim_id": "clm_52325d94deadf1fbffcd",
+          "evidence_types": [
+            "repo_artifact"
+          ],
+          "signals": []
+        },
+        {
+          "buckets": [
+            "task"
+          ],
+          "cap": null,
+          "claim_id": "clm_9f95b1a427704c42601d",
+          "evidence_types": [
+            "task_submission"
+          ],
+          "signals": []
+        }
+      ],
+      "reverse_evidence": [],
+      "excluded": []
+    }
+  },
+  "supports": [
+    {
+      "claim_id": "clm_7c55ceceab6821a73a1d",
+      "present": true,
+      "subject": "材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "材料中包含相关内容（m5c-notes.md）",
+      "binding_rationale": "M5-c 测试夹具（等价闸门写入）",
+      "quotes": [
+        {
+          "passage_id": "p_81b3c4baa522f9c0",
+          "quote": "# 笔记",
+          "quote_verbatim": true,
+          "source_id": "src_8f5ad2d67feda88c",
+          "source_title": "m5c-notes"
+        }
+      ],
+      "dimension": "understanding",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "uploaded_doc"
+      ]
+    },
+    {
+      "claim_id": "clm_52325d94deadf1fbffcd",
+      "present": true,
+      "subject": "材料",
+      "predicate": "包含",
+      "object": "相关内容",
+      "statement": "材料中包含相关内容（m5c-repo.md）",
+      "binding_rationale": "M5-c 测试夹具（等价闸门写入）",
+      "quotes": [
+        {
+          "passage_id": "p_fb7cfcc1cc142c67",
+          "quote": "# 项目",
+          "quote_verbatim": true,
+          "source_id": "src_a86507e46ec7c6e0",
+          "source_title": "m5c-repo"
+        }
+      ],
+      "dimension": "practice",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "repo_artifact"
+      ]
+    },
+    {
+      "claim_id": "clm_9f95b1a427704c42601d",
+      "present": true,
+      "subject": "提交材料",
+      "predicate": "包含",
+      "object": "任务产出物（markdown）",
+      "statement": "提交材料（markdown）包含任务「写一个 10 条样本的检索评测集」的产出物：产出一份 Markdown 评测集，覆盖 10 条检索样本与判定标准",
+      "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_d3c6186b187e4a85｜proposer=fake/fake-deterministic｜理由：提交材料与该能力点直接相关（测试对例）",
+      "quotes": [
+        {
+          "passage_id": "p_e7db392f90de3281",
+          "quote": "# 检索评测集（10 条样本与判定标准）",
+          "quote_verbatim": true,
+          "source_id": "src_d721d9bc44574eb1",
+          "source_title": "写一个 10 条样本的检索评测集｜提交"
+        },
+        {
+          "passage_id": "p_e6948c15eee37f32",
+          "quote": "> 受控构造的提交样例（`growth_constructed=true`，如实标注）：用于 M5-c 真实运行验证 > 「提交 → 单入口证据 → 材料 claim → 绑定 → 重评 → 归因」闭环；不代表用户本人的真实产出。",
+          "quote_verbatim": true,
+          "source_id": "src_d721d9bc44574eb1",
+          "source_title": "写一个 10 条样本的检索评测集｜提交"
+        },
+        {
+          "passage_id": "p_4f6d070832087584",
+          "quote": "## 判定标准",
+          "quote_verbatim": true,
+          "source_id": "src_d721d9bc44574eb1",
+          "source_title": "写一个 10 条样本的检索评测集｜提交"
+        }
+      ],
+      "dimension": "practice",
+      "cap": null,
+      "signals": [],
+      "evidence_types": [
+        "task_submission"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "dimension": "understanding",
+      "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+    },
+    {
+      "dimension": "practice",
+      "text": "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+    }
+  ],
+  "reverse_evidence": [],
+  "excluded": [],
+  "rule_version": "m4c-1",
+  "generated_at": "2026-10-04T06:36:52+00:00",
+  "generated_by": "run_d3c6186b187e4a85",
+  "limitations": [
+    "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+    "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+    "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+    "报告不构成对系统整体评估可靠性的结论。"
+  ],
+  "read_only": true
+}

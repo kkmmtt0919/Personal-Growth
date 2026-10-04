@@ -238,7 +238,7 @@ D:\projects\
 
 ### M5 · 任务闭环与成长循环
 
-> 状态：**方案已冻结，M5-a、M5-b 已验收（G4 通过）；M5-c 提交→重评闭环已完成待验收；M5-d（G5 + M5 Gate）待推进**（2026-10-03，EV-072…EV-075；执行基线 `docs/M5-PLAN.md` v1.0）。
+> 状态：**方案已冻结，M5-a、M5-b 已验收（G4 通过）；M5-a…M5-d 已完成；G4/G5 通过；M5 Gate 13/13**（2026-10-03，EV-072…EV-075；执行基线 `docs/M5-PLAN.md` v1.0）。
 > 四条关键设计约束：task ≠ 能力判断；完成 ≠ 自动提升（须经 evidence → claim → binding → assessment）；
 > provenance 可反查（`task_id → submission → source_id → claim_id → assessment_id → level change`）；
 > **M4 rating contract 不修改**。
@@ -258,11 +258,10 @@ D:\projects\
 - [x] 每个 task 可反向映射到 ≥1 个 gap —— G4 通过（2026-10-03，EV-074）
 - [x] **反例必须被拒**："去学习 Agent Evaluation"这类不可验收的任务不得生成（PRD §12）——
       G4：4 条注入式反例（含字面反例）全部被拒并留档（EV-074）
-- [ ] 端到端跑通一次：gap → 生成任务 → 提交产物 → 新证据 → **至少一个能力星级发生变化**，且全程无人工干预
-      —— 离线端到端已通过（实践 3→4、缺口关闭，EV-075）；**G5 真实运行待 M5-d**
-- [ ] 星级变化能说明是哪条新证据导致的 —— 归因链（`m5c-1`）+ 只读反查 `trace_task` 已实现（EV-075）；
-      G5 门证据待 M5-d
-- [ ] 对应验收门 **G4、G5** 通过（G4 已通过 EV-074；G5 待 M5-d）
+- [x] 端到端跑通一次：gap → 生成任务 → 提交产物 → 新证据 → **至少一个能力星级发生变化**，且全程无人工干预
+      —— G5：实践 3→4，单命令，2/3 HTTP（EV-076）
+- [x] 星级变化能说明是哪条新证据导致的 —— G5 归因链与 `trace_task` 全链可反查（EV-076）
+- [x] 对应验收门 **G4、G5** 通过（G4 EV-074；G5 EV-076；M5 Gate 13/13）
 
 **PRD 依据**：§11、§12、§26
 
@@ -340,7 +339,7 @@ D:\projects\
 | GitHub（OAuth/选仓库/分析） | M3 | 待办 |
 | Evidence（Claim/Evidence/Source/Provenance/Attack/Confidence） | M1 M4 | 部分（内核完成：M1 证据图谱 + M4 attack 结算与 provenance；UI/产品入口待 M8） |
 | Capability（动态模型/五星/差距） | M2 M4 | 部分（内核完成：M2 能力模型 + M4 两维度星级与 `g_gaps`；UI 待 M8） |
-| Task（生成/状态/完成/重评） | M5 | 部分（生成器 + 状态机 + G4 已验收；提交→重评闭环与 G5 待后续） |
+| Task（生成/状态/完成/重评） | M5 | 部分（内核完成：生成/状态/提交→重评 + G4/G5；UI 待 M8） |
 | Memory（Profile/State/History） | M6 | 待办 |
 | Proactive（每日分析/事件/可关闭） | M7 | 待办 |
 | UI（三页） | M8 | 待办 |
