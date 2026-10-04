@@ -393,7 +393,8 @@ def test_no_new_tables_and_frozen_event_kinds(env):
         "g_task_submissions",
         "g_events",
         "g_memories",
-    }, "M5-c 之后仅允许 M6 的 g_memories"
+        "g_growth_snapshots",
+    }, "M5-c 之后仅允许 M6 的记忆表"
     artifact = write_artifact(env["tmp"] / "eval-set.md")
     run_loop(env, artifact_path=artifact)
     assert {event["kind"] for event in env["store"].list_events()} == {"task_status_changed"}

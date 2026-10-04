@@ -403,6 +403,13 @@ class GrowthStore:
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS g_growth_snapshots (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                taken_on TEXT NOT NULL,
+                scores_json TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE TABLE IF NOT EXISTS g_events (
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
@@ -1461,6 +1468,29 @@ class GrowthStore:
                 params.append(value)
         sql += " ORDER BY created_at, id"
         return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
+
+    def insert_snapshot(self, row: dict) -> None:
+        self.db.execute(
+            "INSERT OR IGNORE INTO g_growth_snapshots(id, user_id, taken_on, scores_json) VALUES(?,?,?,?)",
+            (row["id"], row["user_id"], row["taken_on"], row["scores_json"]),
+        )
+        self.db.commit()
+
+    def list_snapshots(self) -> list[dict]:
+        return [
+            dict(row)
+            for row in self.db.execute("SELECT * FROM g_growth_snapshots ORDER BY taken_on, id").fetchall()
+        ]
+
+    def clear_projected_memory(self) -> None:
+        """删除可重建的 state/history 投影；profile 保留。"""
+        self.db.execute("DELETE FROM g_memories WHERE layer IN ('state', 'history')")
+        self.db.execute("DELETE FROM g_growth_snapshots")
+        self.db.commit()
+
+    def get_snapshot(self, snapshot_id: str) -> dict | None:
+        row = self.db.execute("SELECT * FROM g_growth_snapshots WHERE id=?", (snapshot_id,)).fetchone()
+        return dict(row) if row else None
 
     # -- g_agent_runs -----------------------------------------------------
 

@@ -48,8 +48,8 @@ def test_missing_or_invalid_source_is_rejected(env):
         service.remember(layer="state", key="current_task", value={"task_id": "task_x"}, source_kind="task", source_id="task_x")
     with pytest.raises(MemoryError, match="能力成就"):
         service.remember(layer="profile", key="claim", value={"text": "用户掌握 RAG"}, source_kind="user_statement", source_id="statement_bad")
-    with pytest.raises(MemoryError, match="不允许写入层"):
-        service.remember(layer="history", key="scores", value={"level": 4}, source_kind="assessment", source_id="asm_x")
+    with pytest.raises(MemoryError, match="history 只能由 assessment"):
+        service.remember(layer="history", key="scores", value={"level": 4}, source_kind="user_statement", source_id="statement_x")
 
 
 def test_memory_change_is_audited(env):

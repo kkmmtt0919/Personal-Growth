@@ -15,7 +15,7 @@ import json
 
 from ..store import GrowthStoreError
 
-MEMORY_LAYERS = ("profile", "state")
+MEMORY_LAYERS = ("profile", "state", "history")
 MEMORY_SOURCE_KINDS = ("user_statement", "task", "gap", "assessment")
 MEMORY_STATUSES = ("active", "superseded")
 ACHIEVEMENT_MARKERS = ("掌握", "具备", "精通", "完成了", "会了")
@@ -95,7 +95,9 @@ class MemoryService:
 
     def _validate(self, layer: str, key: str, value: dict, source_kind: str, source_id: str) -> None:
         if layer not in MEMORY_LAYERS:
-            raise MemoryError(f"M6-a 不允许写入层：{layer}")
+            raise MemoryError(f"未知记忆层：{layer}")
+        if layer == "history" and source_kind != "assessment":
+            raise MemoryError("history 只能由 assessment 投影")
         if source_kind not in MEMORY_SOURCE_KINDS:
             raise MemoryError(f"未知记忆来源：{source_kind}")
         if not key.strip() or not source_id.strip() or not isinstance(value, dict) or not value:

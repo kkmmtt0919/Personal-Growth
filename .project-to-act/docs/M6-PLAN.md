@@ -18,4 +18,4 @@ M6-a 已实现：
 * 更新保留旧行并写 `memory_changed`；
 * history 与能力成就表述在本步拒绝。
 
-M6-b 将删除 state/history 后，由同一来源重建出同一当前视图。
+M6-b 已实现：state 从 active task 与 open gap 投影，history 从 assessment 投影；删除后可由同一来源重建同一视图。M6-c 才把 memory 注入任务上下文。
