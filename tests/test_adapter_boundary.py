@@ -291,5 +291,5 @@ def test_m2_flow_does_not_write_evkg_tables(tmp_path):
     assert foreign == [], f"M2 流程写入了非 g_ 表（证据层被触碰）：{foreign}"
     # M2 的 5 张表 + M4-a 的 assessment 契约 2 张表（g_capability_claims / g_assessments）
     # + M4-e 的 g_gaps + M5-a 的任务三表 + M6 的两张记忆表 + M7 的通知和设置表。
-    assert len([name for name in tables if name.startswith("g_")]) == 15
+    assert len([name for name in tables if name.startswith("g_")]) == 16
 

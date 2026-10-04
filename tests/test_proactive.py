@@ -3,7 +3,7 @@
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from growth_os.proactive import ProactiveAnalyzer
+from growth_os.proactive import ProactiveAnalyzer, ProactiveScheduler
 from growth_os.store import GrowthStore
 
 
@@ -52,4 +52,45 @@ def test_no_change_and_disabled_do_not_notify(tmp_path: Path):
         assert result["notifications"] == []
         build_gap.close()
     finally:
+        store.close()
+
+
+class FrozenClock:
+    def __init__(self, moment: datetime) -> None:
+        self.moment = moment
+
+    def now(self) -> datetime:
+        return self.moment
+
+
+def test_scheduler_is_idempotent_per_day_and_stops_on_error(tmp_path: Path):
+    store = GrowthStore(str(tmp_path / "schedule.db"))
+    try:
+        build(store, understanding=True)
+        moment = datetime.now(UTC)
+        scheduler = ProactiveScheduler(store, clock=FrozenClock(moment))
+        first = scheduler.trigger()
+        second = scheduler.trigger()
+        assert first["reused"] is False and second["reused"] is True
+        assert len(store.list_notifications()) == 1
+
+        class BrokenAnalyzer(ProactiveAnalyzer):
+            def run_daily(self) -> dict:
+                raise RuntimeError("检测失败")
+
+        next_day = moment.replace(day=moment.day + 1)
+        original = ProactiveAnalyzer.run_daily
+        ProactiveAnalyzer.run_daily = BrokenAnalyzer.run_daily
+        try:
+            try:
+                ProactiveScheduler(store, clock=FrozenClock(next_day)).trigger()
+            except RuntimeError:
+                pass
+            else:
+                raise AssertionError("失败必须抛出")
+        finally:
+            ProactiveAnalyzer.run_daily = original
+        assert any(event["kind"] == "proactive_run_failed" for event in store.list_events())
+    finally:
+        store.close()
         store.close()

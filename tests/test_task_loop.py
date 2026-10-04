@@ -395,6 +395,7 @@ def test_no_new_tables_and_frozen_event_kinds(env):
         "g_memories",
         "g_growth_snapshots",
         "g_notifications",
+        "g_proactive_runs",
         "g_proactive_settings",
     }, "M5-c 之后仅允许 M6/M7 的表"
     artifact = write_artifact(env["tmp"] / "eval-set.md")

@@ -138,7 +138,7 @@ TASK_EVENT_KINDS = ("task_status_changed",)
 MEMORY_EVENT_KINDS = ("memory_changed",)
 """M6-a 追加的记忆审计事件。"""
 
-PROACTIVE_EVENT_KINDS = ("capability_evidence", "practice_stalled", "gap_without_task", "goal_changed")
+PROACTIVE_EVENT_KINDS = ("capability_evidence", "practice_stalled", "gap_without_task", "goal_changed", "proactive_run_failed")
 """M7 四类主动事件。"""
 
 EVENT_KINDS = TASK_EVENT_KINDS + MEMORY_EVENT_KINDS + PROACTIVE_EVENT_KINDS
@@ -420,6 +420,16 @@ class GrowthStore:
                 read_at TEXT,
                 dismissed_at TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS g_proactive_runs (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                analysis_date TEXT NOT NULL,
+                status TEXT NOT NULL,
+                result_json TEXT,
+                error TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, analysis_date)
             );
             CREATE TABLE IF NOT EXISTS g_proactive_settings (
                 user_id TEXT PRIMARY KEY,
@@ -1436,6 +1446,17 @@ class GrowthStore:
     def proactive_enabled(self, user_id: str = "local") -> bool:
         row = self.db.execute("SELECT enabled FROM g_proactive_settings WHERE user_id=?", (user_id,)).fetchone()
         return True if row is None else bool(row["enabled"])
+
+    def get_proactive_run(self, analysis_date: str, user_id: str = "local") -> dict | None:
+        row = self.db.execute("SELECT * FROM g_proactive_runs WHERE user_id=? AND analysis_date=?", (user_id, analysis_date)).fetchone()
+        return dict(row) if row else None
+
+    def insert_proactive_run(self, row: dict) -> None:
+        self.db.execute(
+            "INSERT INTO g_proactive_runs(id,user_id,analysis_date,status,result_json,error) VALUES(?,?,?,?,?,?)",
+            (row["id"], row["user_id"], row["analysis_date"], row["status"], row.get("result_json"), row.get("error")),
+        )
+        self.db.commit()
 
     def set_proactive_enabled(self, enabled: bool, user_id: str = "local") -> None:
         self.db.execute(
