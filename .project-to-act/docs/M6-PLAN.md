@@ -21,3 +21,5 @@ M6-a 已实现：
 M6-b 已实现：state 从 active task 与 open gap 投影，history 从 assessment 投影；删除后可由同一来源重建同一视图。
 
 M6-c 已实现：confirmed profile memory 注入任务生成提示并携带 provenance；无记忆与有记忆的 objective 差异可解释；M5 七步闸门保持不变。不排序、不推荐、不主动提醒。
+
+M6 封板范围仅限以上三项。自动更新、冲突处理、遗忘、权重和长期演化若要做，必须另开阶段，不得扩展 M6。G6 的隔天 Agent 回答依赖 M7/M8。

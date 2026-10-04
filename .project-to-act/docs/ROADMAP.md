@@ -278,11 +278,11 @@ D:\projects\
 
 **完成条件**
 
-- [ ] Long-term Profile：能记住并正确引用长期偏好（如"喜欢代码实践，倾向先看架构再看源码"）
-- [ ] Short-term State：能回答"当前在学什么、已理解什么、未理解什么"
-- [ ] Growth History：能展示 `RAG ⭐⭐☆ → ⭐⭐⭐☆ → ⭐⭐⭐⭐☆` 的时间线
-- [ ] 三层互不覆盖（PRD §13 结尾硬约束）
-- [ ] 隔天返回时，Agent 的回答包含长期偏好（对应 G6 的一半）
+- [x] Long-term Profile：能记住并正确引用长期偏好（如"喜欢代码实践，倾向先看架构再看源码"）——M6-a/c
+- [x] Short-term State：能回答"当前在学什么、已理解什么、未理解什么"——由 task/gap 投影，M6-b
+- [x] Growth History：能展示由 assessment 派生的等级时间线——M6-b
+- [x] 三层互不覆盖（PRD §13 结尾硬约束）——profile 不被 state/history 重建覆盖
+- [ ] 隔天返回时，Agent 的回答包含长期偏好（对应 G6 的一半）——依赖 M7/M8，不纳入 M6
 
 **PRD 依据**：§13、§21
 
