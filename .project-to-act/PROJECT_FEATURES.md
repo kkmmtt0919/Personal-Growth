@@ -23,7 +23,7 @@
 | F-006 | 五星能力审计与缺口识别 | PRD §9 §10 | P0 | 已完成 | 通过 | F-002 F-005 | 通过 G3 的 A/B 对照实验；每级可追溯；能解释"为什么三星"（M4 已封板：契约 / 绑定 / 两维度评级 / 解释与回填 / 编排与缺口；产品入口留 M8） | ARCHITECTURE §3；ACCEPTANCE G3；ROADMAP M4 | EV-066 EV-067 EV-068 EV-069 EV-070 EV-071 |
 | F-007 | 任务生成与完成闭环 | PRD §11 §12 | P0 | 进行中 | 部分（M5-a 契约与状态机、M5-b 生成器与 G4 均已验收；M5-a…M5-d 已完成；G4/G5 与 M5 Gate 通过） | F-006 | 通过 G4、G5；任务含可交付物/时长/验收方式；星级变化可归因 | ARCHITECTURE §2；ACCEPTANCE G4 G5；ROADMAP M5 | EV-072 EV-073 EV-074 EV-075 EV-076 |
 | F-008 | Memory 三层（Profile / State / Growth History） | PRD §13 | P0 | 已完成 | 通过 | F-006 | 三层互不覆盖；能展示能力星级时间线；G6 的隔天 Agent 回答留 M7/M8 | ROADMAP M6 | EV-077 |
-| F-009 | 主动 Agent（每日分析、4 类事件、提醒可关闭） | PRD §14 §15 | P0 | 已规划 | 待检查 | F-007 F-008 | 无变化不通知；冷却期生效；用户可关闭 | ARCHITECTURE §5.4；ROADMAP M7 | 无 |
+| F-009 | 主动 Agent（每日分析、4 类事件、提醒可关闭） | PRD §14 §15 | P0 | 进行中 | 部分（M7-a 检测、冷却和关闭开关通过；调度未做） | F-007 F-008 | 无变化不通知；冷却期生效；用户可关闭 | ARCHITECTURE §5.4；ROADMAP M7 | EV-078 |
 | F-010 | Agent 运行时与轨迹（Runtime / ToolRegistry / ContextAssembler / Tracer） | PRD §29 §30 | P0 | 进行中 | 部分（最小运行时与轨迹已通过；编排与更多工具随 M4/M5） | M1 | 轨迹落 `g_agent_runs` 可回放；工具调用可审计 | ARCHITECTURE §5；ROADMAP M1 | EV-051 EV-056 |
 | F-011 | UI · Growth Dashboard | PRD §19 | P0 | 已规划 | 待检查 | F-006 | 首页只回答目标/状态/缺口/下一步 | ROADMAP M8 | 无 |
 | F-012 | UI · Knowledge / Evidence Space | PRD §20 | P0 | 已规划 | 待检查 | F-005 | 可回答"为什么我只有三星"，含支持证据/不足/攻击结果 | ROADMAP M8 | 无 |
