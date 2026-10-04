@@ -32,7 +32,7 @@ TASK_GENERATION_SYSTEM = """你是 Growth OS 的任务设计器。你只做一�
 deliverable_type 与 acceptance_type 只能从给定枚举中选择。"""
 
 
-def render_task_prompt(gap: dict, capability: dict) -> str:
+def render_task_prompt(gap: dict, capability: dict, *, memories: list[dict] | None = None) -> str:
     """把缺口上下文渲染成生成提示（只含事实：缺口、能力点、允许的枚举与维度约束）。"""
     import json
 
@@ -54,6 +54,10 @@ def render_task_prompt(gap: dict, capability: dict) -> str:
         "deliverable_type_required": list(DIMENSION_DELIVERABLE_TYPES[gap["dimension"]]),
         "acceptance_type_options": ["artifact_check", "test_run", "probe_rubric"],
         "est_minutes_range": [10, 600],
+        "confirmed_memories": [
+            {"id": item["id"], "key": item["memory_key"], "value": item["value"], "source_kind": item["source_kind"], "source_id": item["source_id"]}
+            for item in memories or []
+        ],
     }
     return json.dumps(payload, ensure_ascii=False, indent=1) + (
         "\n请为该缺口设计一个任务：给出 title / objective / deliverable_type（必须取 "
@@ -88,10 +92,13 @@ class TaskGenerator:
         capability = self.store.get_capability(gap["capability_id"])
         if capability is None:
             raise TaskGenerationError(f"缺口引用的能力点不存在: {gap['capability_id']}")
+        from ..memory import MemoryService
+
+        memories = [item for item in MemoryService(self.store).active_view(layer="profile")]
 
         outcome = await self.runtime.call_model_with_run(
             system=TASK_GENERATION_SYSTEM,
-            user=render_task_prompt(gap, capability),
+            user=render_task_prompt(gap, capability, memories=memories),
             schema=TaskProposal,
             task=TASK_GENERATION_TASK,
             context=AgentContext(
