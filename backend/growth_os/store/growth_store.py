@@ -138,7 +138,10 @@ TASK_EVENT_KINDS = ("task_status_changed",)
 MEMORY_EVENT_KINDS = ("memory_changed",)
 """M6-a 追加的记忆审计事件。"""
 
-EVENT_KINDS = TASK_EVENT_KINDS + MEMORY_EVENT_KINDS
+PROACTIVE_EVENT_KINDS = ("capability_evidence", "practice_stalled", "gap_without_task", "goal_changed")
+"""M7 四类主动事件。"""
+
+EVENT_KINDS = TASK_EVENT_KINDS + MEMORY_EVENT_KINDS + PROACTIVE_EVENT_KINDS
 
 GOAL_ELEMENTS = ("direction", "purpose", "horizon", "measurable_result")
 """confirmed goal 必须齐全的四要素：方向 / 目的 / 时间周期 / 可衡量结果。"""
@@ -409,6 +412,19 @@ class GrowthStore:
                 taken_on TEXT NOT NULL,
                 scores_json TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS g_notifications (
+                id TEXT PRIMARY KEY,
+                event_id TEXT NOT NULL,
+                channel TEXT NOT NULL,
+                read_at TEXT,
+                dismissed_at TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS g_proactive_settings (
+                user_id TEXT PRIMARY KEY,
+                enabled INTEGER NOT NULL DEFAULT 1,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS g_events (
                 id TEXT PRIMARY KEY,
@@ -1406,6 +1422,27 @@ class GrowthStore:
         )
         self.db.commit()
         return identifier
+
+    def insert_notification(self, row: dict) -> None:
+        self.db.execute(
+            "INSERT INTO g_notifications(id, event_id, channel) VALUES(?,?,?)",
+            (row["id"], row["event_id"], row["channel"]),
+        )
+        self.db.commit()
+
+    def list_notifications(self) -> list[dict]:
+        return [dict(row) for row in self.db.execute("SELECT * FROM g_notifications ORDER BY created_at, id").fetchall()]
+
+    def proactive_enabled(self, user_id: str = "local") -> bool:
+        row = self.db.execute("SELECT enabled FROM g_proactive_settings WHERE user_id=?", (user_id,)).fetchone()
+        return True if row is None else bool(row["enabled"])
+
+    def set_proactive_enabled(self, enabled: bool, user_id: str = "local") -> None:
+        self.db.execute(
+            "INSERT INTO g_proactive_settings(user_id, enabled) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET enabled=excluded.enabled, updated_at=CURRENT_TIMESTAMP",
+            (user_id, 1 if enabled else 0),
+        )
+        self.db.commit()
 
     def list_events(self, *, kind: str | None = None) -> list[dict]:
         sql = "SELECT * FROM g_events WHERE 1=1"
