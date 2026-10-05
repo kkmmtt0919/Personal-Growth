@@ -1,0 +1,9 @@
+:root { color: #3f3a34; background: #faf7f2; font-family: Inter, "Noto Sans SC", sans-serif; }
+body { margin: 0; }
+header, main, section { max-width: 820px; margin: auto; }
+header { display: flex; justify-content: space-between; padding: 24px; }
+nav { display: flex; gap: 16px; }
+a { color: #c56a2d; text-decoration: none; }
+article, blockquote { background: white; border: 1px solid #eadfd2; border-radius: 8px; padding: 16px; margin: 16px 0; }
+blockquote { border-left: 4px solid #d9822b; }
+h1, h2 { font-weight: 620; }
