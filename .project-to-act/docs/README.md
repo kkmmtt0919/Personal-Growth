@@ -21,6 +21,7 @@
 | [`M5-PLAN.md`](M5-PLAN.md) | M5 目标与范围（**v1.0 执行基线**）：四条关键设计约束（task ≠ 能力判断、完成 ≠ 自动提升、provenance 可反查、M4 rating contract 不变）、`g_tasks`/`g_task_submissions`/`g_events` 契约、gap → task 映射边界、LLM 提议 + 七步闸门、任务状态机、submission → evidence → reassessment 闭环、G4/G5 验收条件、步骤 M5-a…d + Gate | **M5 开工前必读**；范围争议以它为准；实施按步骤结构逐项汇报 |
 | [`M6-PLAN.md`](M6-PLAN.md) | M6 边界：可验证记忆、唯一写入入口、来源与回放；步骤 M6-a…c | M6 开工前读；当前已按冻结范围封板 |
 | [`M7-PLAN.md`](M7-PLAN.md) | M7 边界草案：四类确定性事件、冷却、关闭开关；不做持续学习或导师人格 | M7 开工前确认 |
+| [`M8-PLAN.md`](M8-PLAN.md) | M8 产品化边界草案：三个只读页面、固定 Demo、只读 API；前端选型待确认 | M8 开工前确认 |
 
 ## 其他位置
 
