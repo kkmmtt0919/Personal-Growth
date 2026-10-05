@@ -1,0 +1,9 @@
+{
+  "constructed": true,
+  "note": "受控 Demo，不代表真实用户成果",
+  "goal": "AI Agent Engineer",
+  "before": {"capability": "RAG系统搭建", "practice": 3},
+  "gap": "缺少Agent Evaluation实践",
+  "task": "实现Agent评测实验",
+  "after": {"practice": 4}
+}

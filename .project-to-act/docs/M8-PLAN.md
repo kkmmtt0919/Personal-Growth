@@ -22,8 +22,19 @@ M8 把已经验证的成长闭环变成一次可演示的产品体验。它不�
 
 不实现 Mentor Chat、自动学习规划、社区、外部通知、目标变化后的自动重建、Memory 演化或主动 Agent 扩展。
 
-## 待确认
+## 已确认（2026-10-04）
 
-1. 前端继续使用已冻结的 React + Vite + TypeScript，不改成 Next.js。
-2. M8-a 先固化 Demo 数据和只读 API 契约，M8-b 再做页面。
-3. 部署先用本地 `uvicorn + vite preview`，不在 M8-a 引入容器或云部署。
+1. 前端继续使用 React + Vite + TypeScript，不迁移 Next.js。
+2. M8-a 只做 Demo fixture、只读 API 和契约测试；M8-b 再做三个页面。
+3. 部署留到 M8-c，使用本地 `uvicorn + vite preview`。
+
+只读 API：
+
+```text
+GET /api/goals/{goal_id}
+GET /api/capabilities/{capability_id}
+GET /api/evidence/{capability_id}
+GET /api/growth-loop/{goal_id}
+```
+
+API 不提供创建目标、上传材料、修改等级、创建任务或提交证据。写操作继续只走 Goal、TaskLoop、AssessmentPipeline 和 ClaimBinder。
