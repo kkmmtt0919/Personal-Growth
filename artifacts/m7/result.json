@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "practice_stall_notifies": true,
+    "no_change_no_notification": true,
+    "cooldown_suppresses_repeat": true,
+    "disabled_detects_without_notification": true,
+    "goal_regeneration_not_implemented": true
+  },
+  "checks_passed": 5,
+  "checks_total": 5,
+  "all_checks_passed": true
+}

@@ -72,6 +72,9 @@ def test_scheduler_is_idempotent_per_day_and_stops_on_error(tmp_path: Path):
         first = scheduler.trigger()
         second = scheduler.trigger()
         assert first["reused"] is False and second["reused"] is True
+        assert first["run"]["analysis_date"] == second["run"]["analysis_date"]
+        assert first["run"]["notification_ids"]
+        assert first["run"]["goal_regeneration"] == "not_implemented"
         assert len(store.list_notifications()) == 1
 
         class BrokenAnalyzer(ProactiveAnalyzer):
