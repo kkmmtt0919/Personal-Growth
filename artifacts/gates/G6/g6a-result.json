@@ -1,0 +1,94 @@
+{
+  "stage": "G6-a",
+  "constructed": true,
+  "model_requests": 0,
+  "method": "现有受控任务闭环；次日时钟注入；本阶段未关闭后重新打开连接",
+  "full_g6_accepted": false,
+  "checks": {
+    "practice_3_to_4": true,
+    "understanding_unchanged": true,
+    "next_step_cites_open_gap": true,
+    "preference_cites_memory": true,
+    "response_has_no_writes": true,
+    "loop_guard_all_true": true
+  },
+  "all_checks_passed": true,
+  "response": {
+    "contract": "g6-return-1",
+    "mode": "deterministic_read_only",
+    "user_id": "local",
+    "goal_id": "goal_m5c",
+    "goal_title": "成为 AI Agent 工程师",
+    "returned_at": "2026-10-06T06:07:45.451585+00:00",
+    "baseline_snapshot_id": "snap_e9c9ccc0710a3b0ea9e3",
+    "current_snapshot_id": "snap_c20b6067b02a82473ea2",
+    "summary": {
+      "status": "changed",
+      "text": "RAG 系统搭建与调优：实践 3 → 4",
+      "changes": [
+        {
+          "capability_id": "cap_8a4d9256c7b8a423475c",
+          "dimension": "practice",
+          "before_level": 3,
+          "after_level": 4,
+          "status": "level_increased",
+          "text": "RAG 系统搭建与调优：实践 3 → 4",
+          "before_assessment_id": "asm_4ff6ba1eb269986bb62e",
+          "after_assessment_id": "asm_daca95c48c06624160f6",
+          "baseline_snapshot_id": "snap_e9c9ccc0710a3b0ea9e3",
+          "current_snapshot_id": "snap_c20b6067b02a82473ea2"
+        }
+      ]
+    },
+    "current_state": [
+      {
+        "capability_id": "cap_8a4d9256c7b8a423475c",
+        "name": "RAG 系统搭建与调优",
+        "target_level": 4,
+        "understanding": 2,
+        "practice": 4
+      }
+    ],
+    "next_steps": [
+      {
+        "kind": "evidence_gap",
+        "gap_id": "gap_cap_8a4d9256c7b8a423475c_understanding",
+        "task_id": null,
+        "assessment_id": "asm_40ccb62b66eda56450f2",
+        "text": "下一步补充理解证据：理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）"
+      }
+    ],
+    "next_step_text": "下一步补充理解证据：理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+    "preferences": [
+      {
+        "memory_id": "mem_d0610112e46453cdabf5",
+        "key": "learning_style",
+        "text": "喜欢代码实践，先看架构再看源码",
+        "source_kind": "user_statement",
+        "source_id": "statement_g6a_constructed_preference"
+      }
+    ],
+    "preference_text": "喜欢代码实践，先看架构再看源码"
+  },
+  "snapshots": [
+    {
+      "id": "snap_e9c9ccc0710a3b0ea9e3",
+      "user_id": "local",
+      "taken_on": "2026-10-05 06:07:45",
+      "scores_json": "[{\"assessment_id\": \"asm_40ccb62b66eda56450f2\", \"capability_id\": \"cap_8a4d9256c7b8a423475c\", \"created_at\": \"2026-10-05 06:07:45\", \"dimension\": \"understanding\", \"level\": 2, \"status\": \"rated\"}, {\"assessment_id\": \"asm_4ff6ba1eb269986bb62e\", \"capability_id\": \"cap_8a4d9256c7b8a423475c\", \"created_at\": \"2026-10-05 06:07:45\", \"dimension\": \"practice\", \"level\": 3, \"status\": \"rated\"}]",
+      "created_at": "2026-10-05 06:07:45"
+    },
+    {
+      "id": "snap_c20b6067b02a82473ea2",
+      "user_id": "local",
+      "taken_on": "2026-10-05 06:07:45",
+      "scores_json": "[{\"assessment_id\": \"asm_40ccb62b66eda56450f2\", \"capability_id\": \"cap_8a4d9256c7b8a423475c\", \"created_at\": \"2026-10-05 06:07:45\", \"dimension\": \"understanding\", \"level\": 2, \"status\": \"rated\"}, {\"assessment_id\": \"asm_4ff6ba1eb269986bb62e\", \"capability_id\": \"cap_8a4d9256c7b8a423475c\", \"created_at\": \"2026-10-05 06:07:45\", \"dimension\": \"practice\", \"level\": 3, \"status\": \"rated\"}, {\"assessment_id\": \"asm_daca95c48c06624160f6\", \"capability_id\": \"cap_8a4d9256c7b8a423475c\", \"created_at\": \"2026-10-05 06:07:45\", \"dimension\": \"practice\", \"level\": 4, \"status\": \"rated\"}]",
+      "created_at": "2026-10-05 06:07:45"
+    }
+  ],
+  "source_code": {
+    "backend/growth_os/agent/return_summary.py": "f8a68ae932386fb21239b0f187e5670957feea548399276052260615aae25872",
+    "backend/growth_os/store/growth_store.py": "81ab531717bc9fe81fbf4a9240d6acea32b7c7f96b21d1840fe9a1feb9c5cdce",
+    "artifacts/gates/G6/run_g6a.py": "f31df7f0b3d1f96836ecacd9339c5be2e052181c97d034b7898d878a014bd059"
+  }
+}

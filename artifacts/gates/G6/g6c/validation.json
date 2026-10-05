@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-05",
+  "backend_ruff": {"command": ".venv/Scripts/python.exe -m ruff check backend tests scripts/verify_g6_final.py artifacts/gates/G6/run_g6a.py artifacts/gates/G6/run_g6b.py", "exit_code": 0},
+  "frontend_build": {"command": "npm.cmd --prefix frontend run build", "exit_code": 0},
+  "frontend_lint": {"command": "npm.cmd --prefix frontend run lint", "exit_code": 0},
+  "growth_pytest": {"exit_code": 0, "passed": 452, "junit": "growth-regression.xml"},
+  "upstream_pytest": {"exit_code": 0, "passed": 111, "workdir": "D:/projects/evkg", "command": "D:/projects/Personal Growth/.venv/Scripts/python.exe -m pytest tests -p no:cacheprovider -o addopts='' --basetemp=D:/projects/Personal Growth/tmp/g6c-upstream-tests --junitxml=D:/projects/Personal Growth/artifacts/gates/G6/g6c/evkg-regression.xml -q", "junit": "evkg-regression.xml"},
+  "warnings": ["Starlette TestClient 与当前 httpx 集成有上游弃用提示，测试均通过；本阶段未升级依赖。"],
+  "model_requests": 0,
+  "published": false
+}

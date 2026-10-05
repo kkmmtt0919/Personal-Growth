@@ -52,6 +52,8 @@
 
 ## 截图豁免（用户 2026-10-02 确认）
 
+2026-10-05 补充：`session-replay.html` 与 `session-replay.png` 按原始 `session-real.json` 生成，完整展示四轮澄清、用户确认与目标四要素。页面明确标注历史会话、用户侧测试脚本与源文件哈希。此为历史回放可视证据，不是实时交互界面；原截图豁免与实时界面边界保持在案。复现：运行 `scripts/audit_mvp_acceptance.py` 后用浏览器打开回放 HTML。
+
 - **原因**：M2 无 UI（M8 才做界面）。
 - **替代形式**：完整会话轨迹导出 —— `artifacts/m2/session-real.json` 含
   `g_goal_clarifications` 全部轮次、`g_agent_runs` 每条运行记录（含实际 provider/model）、

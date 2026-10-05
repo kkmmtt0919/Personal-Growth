@@ -1,0 +1,37 @@
+{
+  "stage": "M8-c",
+  "date": "2026-10-05",
+  "constructed": true,
+  "real_model_requests": 0,
+  "goal_id": "goal_demo",
+  "capability_id": "cap_14c033670415a3323449",
+  "before_practice": 3,
+  "after_practice": 4,
+  "attribution_guard": {
+    "new_source_present": true,
+    "new_claim_present": true,
+    "binding_on_task_capability": true,
+    "trace_complete": true,
+    "before_present:practice": true,
+    "after_present:practice": true
+  },
+  "validation": {
+    "full_regression_passed": true,
+    "collected_tests": 429,
+    "environment": "PYTHONUTF8=1",
+    "final_demo_api_tests_passed": 3,
+    "backend_ruff": "pass",
+    "frontend_build": "pass",
+    "frontend_lint": "pass"
+  },
+  "screenshots": {
+    "dashboard.png": "657529233e2580e372d16568e454983d8ee416265a271934ee888acaf0f7aa58",
+    "evidence.png": "0cff97d1882231867f25da2a04853119c13424a8ee4305019e573153f2171609",
+    "growth-loop.png": "4cf048957c46255381cfd45e281d1b44c8b9829e65e782448db6e57220e1a62d"
+  },
+  "open_items": [
+    "G6 隔天 Agent 回答",
+    "G1 交互澄清截图",
+    "完整 MVP 总验收"
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "checks": [
+    {
+      "name": "real data only at 1440",
+      "passed": true
+    },
+    {
+      "name": "return summary at 1440",
+      "passed": true
+    },
+    {
+      "name": "dashboard-1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "source trace preserved",
+      "passed": true
+    },
+    {
+      "name": "evidence route at 1440",
+      "passed": true
+    },
+    {
+      "name": "evidence-1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "task anchor and focus at 1440",
+      "passed": true
+    },
+    {
+      "name": "tasks-1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "real data only at 1024",
+      "passed": true
+    },
+    {
+      "name": "return summary at 1024",
+      "passed": true
+    },
+    {
+      "name": "dashboard-1024: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "source trace preserved",
+      "passed": true
+    },
+    {
+      "name": "evidence route at 1024",
+      "passed": true
+    },
+    {
+      "name": "evidence-1024: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "task anchor and focus at 1024",
+      "passed": true
+    },
+    {
+      "name": "tasks-1024: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "real data only at 390",
+      "passed": true
+    },
+    {
+      "name": "return summary at 390",
+      "passed": true
+    },
+    {
+      "name": "dashboard-390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "source trace preserved",
+      "passed": true
+    },
+    {
+      "name": "evidence route at 390",
+      "passed": true
+    },
+    {
+      "name": "evidence-390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "task anchor and focus at 390",
+      "passed": true
+    },
+    {
+      "name": "tasks-390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "base Demo without return data",
+      "passed": true
+    },
+    {
+      "name": "base-dashboard: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "default selects first gap",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus reaches capability",
+      "passed": true
+    },
+    {
+      "name": "keyboard selection preserves scroll",
+      "passed": true
+    },
+    {
+      "name": "selection stays on same route",
+      "passed": true
+    },
+    {
+      "name": "unassessed values and no task",
+      "passed": true
+    },
+    {
+      "name": "unknown is not displayed as zero meter",
+      "passed": true
+    },
+    {
+      "name": "next step without task focuses detail",
+      "passed": true
+    },
+    {
+      "name": "achieved skill status",
+      "passed": true
+    },
+    {
+      "name": "multiple-capabilities: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "recommended task wins over completed fallback",
+      "passed": true
+    },
+    {
+      "name": "selected capability active task fallback",
+      "passed": true
+    },
+    {
+      "name": "no submission or reassessment handled",
+      "passed": true
+    },
+    {
+      "name": "without gaps first capability is selected",
+      "passed": true
+    },
+    {
+      "name": "empty capability and summary handled",
+      "passed": true
+    },
+    {
+      "name": "empty tasks handled",
+      "passed": true
+    },
+    {
+      "name": "empty evidence handled",
+      "passed": true
+    },
+    {
+      "name": "many skills no overflow at 1440",
+      "passed": true
+    },
+    {
+      "name": "many skills no overflow at 1024",
+      "passed": true
+    },
+    {
+      "name": "many skills no overflow at 390",
+      "passed": true
+    },
+    {
+      "name": "error state /",
+      "passed": true
+    },
+    {
+      "name": "error state /growth/goal_demo",
+      "passed": true
+    },
+    {
+      "name": "error state /evidence/cap_14c033670415a3323449",
+      "passed": true
+    },
+    {
+      "name": "reduced motion respected",
+      "passed": true
+    },
+    {
+      "name": "document language is Chinese",
+      "passed": true
+    },
+    {
+      "name": "loading state is visible",
+      "passed": true
+    },
+    {
+      "name": "retry recovers after service becomes available",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "dashboard-1440",
+      "width": 1440,
+      "scrollWidth": 1425,
+      "height": 1100
+    },
+    {
+      "name": "evidence-1440",
+      "width": 1440,
+      "scrollWidth": 1425,
+      "height": 1100
+    },
+    {
+      "name": "tasks-1440",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1100
+    },
+    {
+      "name": "dashboard-1024",
+      "width": 1024,
+      "scrollWidth": 1009,
+      "height": 1100
+    },
+    {
+      "name": "evidence-1024",
+      "width": 1024,
+      "scrollWidth": 1009,
+      "height": 1100
+    },
+    {
+      "name": "tasks-1024",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "height": 1100
+    },
+    {
+      "name": "dashboard-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 2100
+    },
+    {
+      "name": "evidence-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 2100
+    },
+    {
+      "name": "tasks-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 2100
+    },
+    {
+      "name": "base-dashboard",
+      "width": 1440,
+      "scrollWidth": 1425,
+      "height": 1100
+    },
+    {
+      "name": "multiple-capabilities",
+      "width": 1440,
+      "scrollWidth": 1425,
+      "height": 1100
+    }
+  ],
+  "browserErrors": [],
+  "fixtureNote": "Only real Demo data in dashboard/evidence/tasks/base screenshots. Multi/empty/many/error/recommended/active checks use response fixtures."
+}

@@ -1,0 +1,33 @@
+{
+  "stage": "G6-b",
+  "date": "2026-10-05",
+  "engineering_checks_passed": true,
+  "full_g6_accepted": false,
+  "targeted_regression": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_regression": {
+    "tests": 452,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "viewport_checks_passed": true,
+  "frontend_build": "pass",
+  "frontend_lint": "pass",
+  "backend_ruff": "pass",
+  "visual_qa": "三张实际页面截图逐张查看；三项输出与来源可见",
+  "artifacts": {
+    "g6b-result.json": "e5b60735245c1274a512fdcd16d3e65e097c04fa3e347f5624fbacb050163db8",
+    "g6b-regression.xml": "be8c6992f02600174a1089f3b377e254323b8a042864e167d4f19b678868d92c",
+    "g6b-full-regression.xml": "422e84c733dc8dacc20aaaf0d99f9ed35550baba3f1e2365cd688dd83d8c0ed8",
+    "screenshots/return-desktop.png": "d576cc2c8ebf8064e73bde0cde424599923e4db527caab92cb600e648aa0fb62",
+    "screenshots/return-mobile.png": "a54e9cc158182a114c2dbd774717bc6d8840fcb5e18cc8ef00c1ca5b4d625b11",
+    "screenshots/return-sources.png": "e551b358947b97676291f27282875d0bcf20114345c81df34799bcc7580d304b",
+    "screenshots/viewport-checks.json": "bfc2e0c4f87832a21d169e86279126b9ee8a3d6827b8233ebf1dc9b14dd7ea73"
+  },
+  "capture_script_sha256": "41b107c880099e6f7e525946297f75ed515f233314badec04bf11f6e4ac19eee"
+}

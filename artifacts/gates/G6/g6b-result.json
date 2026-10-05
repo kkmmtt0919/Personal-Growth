@@ -1,0 +1,120 @@
+{
+  "stage": "G6-b",
+  "constructed": true,
+  "model_requests": 0,
+  "full_g6_accepted": false,
+  "seed_process_id": 27464,
+  "return_process_id": 37704,
+  "directory": "D:\\projects\\Personal Growth\\data\\demo-return",
+  "checks": {
+    "new_process_reads_persistent_state": true,
+    "both_snapshots_persisted": true,
+    "practice_3_to_4": true,
+    "understanding_stays_2": true,
+    "next_step_cites_open_understanding_gap": true,
+    "preference_persisted_and_cited": true,
+    "before_after_assessment_sources_exist": true,
+    "read_api_has_no_writes": true,
+    "post_rejected": true,
+    "simulation_explicit": true
+  },
+  "all_checks_passed": true,
+  "response": {
+    "constructed": true,
+    "simulated_return": true,
+    "report": {
+      "contract": "g6-return-1",
+      "mode": "deterministic_read_only",
+      "user_id": "local",
+      "goal_id": "goal_demo",
+      "goal_title": "成为 AI Agent 工程师",
+      "returned_at": "2026-10-06T07:04:26.845537+00:00",
+      "baseline_snapshot_id": "snap_34fe6fe6d243417a6fa7",
+      "current_snapshot_id": "snap_84f139105fd6a915d8b3",
+      "summary": {
+        "status": "changed",
+        "text": "RAG 系统搭建与调优：实践 3 → 4",
+        "changes": [
+          {
+            "capability_id": "cap_14c033670415a3323449",
+            "dimension": "practice",
+            "before_level": 3,
+            "after_level": 4,
+            "status": "level_increased",
+            "text": "RAG 系统搭建与调优：实践 3 → 4",
+            "before_assessment_id": "asm_9f1664a42fd4d4f53e65",
+            "after_assessment_id": "asm_e610d0e650aa9f892a09",
+            "baseline_snapshot_id": "snap_34fe6fe6d243417a6fa7",
+            "current_snapshot_id": "snap_84f139105fd6a915d8b3"
+          }
+        ]
+      },
+      "current_state": [
+        {
+          "capability_id": "cap_14c033670415a3323449",
+          "name": "RAG 系统搭建与调优",
+          "target_level": 4,
+          "understanding": 2,
+          "practice": 4
+        }
+      ],
+      "next_steps": [
+        {
+          "kind": "evidence_gap",
+          "gap_id": "gap_cap_14c033670415a3323449_understanding",
+          "task_id": null,
+          "assessment_id": "asm_f58df3fb4fea4e5450a6",
+          "text": "下一步补充理解证据：理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）"
+        }
+      ],
+      "next_step_text": "下一步补充理解证据：理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+      "preferences": [
+        {
+          "memory_id": "mem_2dc101ec9f811c6bc0ac",
+          "key": "learning_style",
+          "text": "喜欢代码实践，先看架构再看源码",
+          "source_kind": "user_statement",
+          "source_id": "statement_demo_constructed_preference"
+        }
+      ],
+      "preference_text": "喜欢代码实践，先看架构再看源码"
+    }
+  },
+  "snapshots": [
+    {
+      "id": "snap_34fe6fe6d243417a6fa7",
+      "user_id": "local",
+      "taken_on": "2026-10-05 07:04:26",
+      "scores_json": "[{\"assessment_id\": \"asm_9f1664a42fd4d4f53e65\", \"capability_id\": \"cap_14c033670415a3323449\", \"created_at\": \"2026-10-05 07:04:26\", \"dimension\": \"practice\", \"level\": 3, \"status\": \"rated\"}, {\"assessment_id\": \"asm_f58df3fb4fea4e5450a6\", \"capability_id\": \"cap_14c033670415a3323449\", \"created_at\": \"2026-10-05 07:04:26\", \"dimension\": \"understanding\", \"level\": 2, \"status\": \"rated\"}]",
+      "created_at": "2026-10-05 07:04:26"
+    },
+    {
+      "id": "snap_84f139105fd6a915d8b3",
+      "user_id": "local",
+      "taken_on": "2026-10-05 07:04:26",
+      "scores_json": "[{\"assessment_id\": \"asm_9f1664a42fd4d4f53e65\", \"capability_id\": \"cap_14c033670415a3323449\", \"created_at\": \"2026-10-05 07:04:26\", \"dimension\": \"practice\", \"level\": 3, \"status\": \"rated\"}, {\"assessment_id\": \"asm_e610d0e650aa9f892a09\", \"capability_id\": \"cap_14c033670415a3323449\", \"created_at\": \"2026-10-05 07:04:26\", \"dimension\": \"practice\", \"level\": 4, \"status\": \"rated\"}, {\"assessment_id\": \"asm_f58df3fb4fea4e5450a6\", \"capability_id\": \"cap_14c033670415a3323449\", \"created_at\": \"2026-10-05 07:04:26\", \"dimension\": \"understanding\", \"level\": 2, \"status\": \"rated\"}]",
+      "created_at": "2026-10-05 07:04:26"
+    }
+  ],
+  "snapshot_diff": [
+    {
+      "capability_id": "cap_14c033670415a3323449",
+      "dimension": "practice",
+      "before_level": 3,
+      "after_level": 4,
+      "status": "level_increased",
+      "text": "RAG 系统搭建与调优：实践 3 → 4",
+      "before_assessment_id": "asm_9f1664a42fd4d4f53e65",
+      "after_assessment_id": "asm_e610d0e650aa9f892a09",
+      "baseline_snapshot_id": "snap_34fe6fe6d243417a6fa7",
+      "current_snapshot_id": "snap_84f139105fd6a915d8b3"
+    }
+  ],
+  "source_code": {
+    "backend/growth_os/demo.py": "f47c2bf8241042160d7c9541a00a565acad575a079d5008bc94308d5e4380756",
+    "backend/growth_os/api/local.py": "6da47756e3a8a3785daffbfa715fb1a133af0575b0911be4da9382a698ffa129",
+    "backend/growth_os/agent/return_summary.py": "f8a68ae932386fb21239b0f187e5670957feea548399276052260615aae25872",
+    "artifacts/gates/G6/run_g6b.py": "ccde428ef9952ad15a60864cab9e1d461b0d3f8be0ac04bf18e8a89000c54d41",
+    "frontend/src/components/ReturnSummary.tsx": "3d517b0196def5315bf171b5fa607b9ef48c7ed890bb039c5c68135bb638c301"
+  }
+}

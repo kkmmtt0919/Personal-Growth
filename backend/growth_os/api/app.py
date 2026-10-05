@@ -2,14 +2,44 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from fastapi import FastAPI, HTTPException
 
+from ..agent.return_summary import GrowthReturnAgent, ReturnSummaryError
 from ..evidence import adapter
 from ..store import GrowthStore
 
 
-def create_app(store: GrowthStore, evidence_store=None) -> FastAPI:
+def create_app(store: GrowthStore, evidence_store=None, *, loop_reports=None, return_context=None) -> FastAPI:
     app = FastAPI(title="Growth OS Read API")
+
+    @app.get("/api/return-demo/{goal_id}")
+    def return_demo(goal_id: str) -> dict:
+        if not return_context or return_context.get("goal_id") != goal_id:
+            raise HTTPException(404, "该目标没有受控隔天返回场景")
+        try:
+            report = GrowthReturnAgent(store).summarize(
+                goal_id=goal_id,
+                current_snapshot_id=return_context["current_snapshot_id"],
+                baseline_snapshot_id=return_context["baseline_snapshot_id"],
+                returned_at=datetime.fromisoformat(return_context["returned_at"]),
+            )
+        except (ReturnSummaryError, KeyError, ValueError) as error:
+            raise HTTPException(422, "返回场景无法核验") from error
+        return {"constructed": True, "simulated_return": True, "report": report}
+
+    @app.get("/api/return/{goal_id}")
+    def return_summary(
+        goal_id: str, current_snapshot_id: str, baseline_snapshot_id: str | None = None
+    ) -> dict:
+        try:
+            return GrowthReturnAgent(store).summarize(
+                goal_id=goal_id, current_snapshot_id=current_snapshot_id,
+                baseline_snapshot_id=baseline_snapshot_id,
+            )
+        except ReturnSummaryError as error:
+            raise HTTPException(422, str(error)) from error
 
     @app.get("/api/goals/{goal_id}")
     def goal(goal_id: str) -> dict:
@@ -60,7 +90,8 @@ def create_app(store: GrowthStore, evidence_store=None) -> FastAPI:
         supports = []
         for link in links:
             dossier = dossiers.get(link["claim_id"], {})
-            first = (dossier.get("evidence") or [{}])[0]
+            first = max(dossier.get("evidence") or [{}],
+                        key=lambda item: len(item.get("quote") or ""))
             source = first.get("source") or {}
             passage = first.get("passage") or {}
             supports.append({
@@ -87,6 +118,11 @@ def create_app(store: GrowthStore, evidence_store=None) -> FastAPI:
                     "id": task["id"],
                     "title": task["title"],
                     "status": task["status"],
+                    "gap": store.get_gap(task["gap_id"]),
+                    "objective": task["objective"],
+                    "acceptance": task["acceptance"],
+                    "capability_id": task["capability_id"],
+                    "attribution": (loop_reports or {}).get(task["id"]),
                     "submissions": store.list_task_submissions(task_id=task["id"]),
                 }
                 for task in tasks

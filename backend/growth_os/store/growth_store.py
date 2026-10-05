@@ -971,18 +971,28 @@ class GrowthStore:
         sql += " ORDER BY capability_id, created_at, id"
         return [dict(row) for row in self.db.execute(sql, tuple(params)).fetchall()]
 
-    def latest_assessment(self, capability_id: str, dimension: str) -> dict | None:
+    def latest_assessment(
+        self, capability_id: str, dimension: str, *, assessment_ids: list[str] | None = None
+    ) -> dict | None:
         """当前视图：某（能力点 × 维度）最近一次**评定结果**。
 
         `draft` 不算当前视图（草案不是评定结果）；历史用 `list_assessments` 查
         —— 「draft → rated → history preserved」由查询规则解决，不靠覆盖写入。
+        可选 `assessment_ids` 将同一顺序限制在已验证快照的评定集合内；空集合无结果。
         """
         _require(dimension in ASSESSMENT_DIMENSIONS, f"未知维度: {dimension!r}")
+        if assessment_ids == []:
+            return None
+        restriction = ""
+        params: list[Any] = [capability_id, dimension]
+        if assessment_ids is not None:
+            restriction = " AND id IN (" + ",".join("?" for _ in assessment_ids) + ")"
+            params.extend(assessment_ids)
         row = self.db.execute(
             "SELECT * FROM g_assessments WHERE capability_id=? AND dimension=? "
-            "AND status IN ('rated','insufficient_evidence') "
+            "AND status IN ('rated','insufficient_evidence')" + restriction + " "
             "ORDER BY created_at DESC, rowid DESC LIMIT 1",
-            (capability_id, dimension),
+            tuple(params),
         ).fetchone()
         return dict(row) if row else None
 

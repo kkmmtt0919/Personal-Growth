@@ -1,0 +1,147 @@
+{
+  "audit_date": "2026-10-05",
+  "head": "3f98e2c2b0ae762b8eaa9a58fabbe3471b0efdc4",
+  "working_tree_modified": true,
+  "audit_completed": true,
+  "full_mvp_accepted": false,
+  "gates": {
+    "G1": {
+      "status": "recorded_pass",
+      "reexecuted_this_audit": false,
+      "evidence": [
+        {
+          "path": "artifacts/m2/session-real.json",
+          "sha256": "97285458841e6dcf528772b4ca18f53f6fefe1c4bd56d12b3feac96cac569902"
+        },
+        {
+          "path": "artifacts/gates/G1/README.md",
+          "sha256": "418a58a13186b8507c64529972abe1c59f0618a2b140d046cbbfb1c662ed2507"
+        }
+      ],
+      "note": "真实模型历史会话；本轮生成明确标注的历史回放，非实时交互截图。"
+    },
+    "G2": {
+      "status": "recorded_pass",
+      "reexecuted_this_audit": false,
+      "evidence": [
+        {
+          "path": "artifacts/gates/G2/traceability.json",
+          "sha256": "ef8edac519ecd63d6bbbd131847c2d2eb460ff6371cecb6381f9e9a6d04e6fa6"
+        },
+        {
+          "path": "artifacts/gates/G2/audit.json",
+          "sha256": "abb12023f527274768103069ba9e9ee8a970a5681f5721c23105d1034cf7c1d9"
+        }
+      ],
+      "note": "历史记录为全量七条追溯、确定性取五条；不是原文所称随机抽样。"
+    },
+    "G3": {
+      "status": "recorded_pass",
+      "reexecuted_this_audit": false,
+      "evidence": [
+        {
+          "path": "artifacts/gates/G3/comparison.json",
+          "sha256": "1cb97970fe9dc2e4a48b495b0036a6213e93e61039063fbf760c0678bd41f38b"
+        },
+        {
+          "path": "artifacts/gates/M4/m4-gate-result.json",
+          "sha256": "d31db07ace5f9fbe7ffd224e752f84de1753231eaa2b35cdf4c62801ac0fbf81"
+        }
+      ],
+      "note": "执行基线允许实践无证据为 NULL；材料主体为 RAG。原始示例与执行口径不同。"
+    },
+    "G4": {
+      "status": "recorded_pass",
+      "reexecuted_this_audit": false,
+      "evidence": [
+        {
+          "path": "artifacts/gates/G4/checks.json",
+          "sha256": "a237ac934c5aaf80ebe05da29b78040bd86ba9775be281e053aacd6d09c5306b"
+        }
+      ],
+      "note": "两条接受、四条反例拒绝；任务质量不等于学习价值。"
+    },
+    "G5": {
+      "status": "recorded_pass",
+      "reexecuted_this_audit": false,
+      "evidence": [
+        {
+          "path": "artifacts/gates/G5/checks.json",
+          "sha256": "f2c461f1bc1a5a31d36bb086c6c5d376eccd5500d3da35b11543aaca7a5f4b2a"
+        },
+        {
+          "path": "artifacts/gates/M5/m5-gate-result.json",
+          "sha256": "71f13778074d81d547ff44a30e9554cc09f6f5da6d020cdcbe9a596c7ad7b818"
+        }
+      ],
+      "note": "历史真实生成/绑定闭环；本轮 M8 受控预设任务不能代替该门。"
+    },
+    "G6": {
+      "status": "not_verified",
+      "reexecuted_this_audit": false,
+      "evidence": [],
+      "missing": [
+        "持久化的前后快照差异",
+        "隔天重新打开后的 Growth Agent 输出",
+        "下一步建议与 open gap/task 的来源",
+        "长期偏好来源引用",
+        "会话截图"
+      ],
+      "note": "Memory/Proactive 测试通过不能替代隔天返回验收。"
+    }
+  },
+  "quality_gates": {
+    "QG1_QG2_QG3_QG4": "M4/M5 历史封板记录通过；本轮未重新执行生产质量门",
+    "QG5": {
+      "growth_os": {
+        "full_regression_passed": true,
+        "collected_tests": 429,
+        "environment": "PYTHONUTF8=1",
+        "final_demo_api_tests_passed": 3,
+        "backend_ruff": "pass",
+        "frontend_build": "pass",
+        "frontend_lint": "pass"
+      },
+      "evkg": "本阶段未重新运行上游测试，完整封板前需核对/重跑"
+    }
+  },
+  "open_product_scope": [
+    "实时目标澄清界面",
+    "产品上传与 PDF 页码定位",
+    "GitHub OAuth/私有仓库",
+    "Evidence 攻击详情展示",
+    "AI Mentor",
+    "外部通知与目标自动重建"
+  ],
+  "source_code": [
+    {
+      "path": "scripts/audit_mvp_acceptance.py",
+      "sha256": "a294a9b49f53ec108dbc2c3cd669332f2a3a7b237043aa690e5e4e811e160349"
+    },
+    {
+      "path": "backend/growth_os/memory/projection.py",
+      "sha256": "1241e03b65657670a574e01bb2b552043dc6a46f370ef4cbb88a7a916ababa5b"
+    },
+    {
+      "path": "backend/growth_os/proactive/analyzer.py",
+      "sha256": "6a916900e93f3780082a5b5675bd06c16f9791c17b7b3d6f00718e8a4a4acac3"
+    }
+  ],
+  "boundary_regression": {
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 39,
+    "evidence": {
+      "path": "artifacts/m8/acceptance-audit/boundary-regression.xml",
+      "sha256": "e6e520096891d631bcd7383e3c48409095294e12d2943a142d96b04af08ef453"
+    }
+  },
+  "visual_supplement": [
+    {
+      "path": "artifacts/gates/G1/session-replay.png",
+      "sha256": "b40f62fa8d3adb94ad39602214486670821c4fcecb68ec316a7b73c84349fde7"
+    }
+  ]
+}
