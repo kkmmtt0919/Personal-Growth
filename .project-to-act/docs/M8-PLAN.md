@@ -38,3 +38,22 @@ GET /api/growth-loop/{goal_id}
 ```
 
 API 不提供创建目标、上传材料、修改等级、创建任务或提交证据。写操作继续只走 Goal、TaskLoop、AssessmentPipeline 和 ClaimBinder。
+
+## M8-b 页面边界（待确认，不开工）
+
+三个只读页面依次回答：我处于什么成长状态、为什么是这个等级、基于证据缺口下一步做什么。文案使用“基于当前证据缺口生成任务”，不使用“AI 推荐任务”。
+
+| 页面 | 展示 | 数据 |
+|---|---|---|
+| Dashboard | 目标、能力卡片、理解/实践等级、当前缺口 | goal 与 capability |
+| Evidence Explorer | 等级、支持证据、来源、引用、绑定理由、不足 | evidence |
+| Growth Loop | 缺口、任务、提交、重评前后等级 | growth loop |
+
+前端目录限于 `src/api`、`src/pages`、`src/components`、`src/types`。视觉保持暖白、少量橙色强调和 Notion/Linear 式留白，不做驾驶舱或渐变后台。
+
+开工前需要补两个只读字段，仍不增加写入口：
+
+1. 一个目标下的能力列表。当前只能按 capability id 单查。
+2. Evidence 响应中的 source 与 quote。当前只有 claim id 和绑定理由。
+
+验收看 Demo 流程是否完整、字段是否来自 API、是否没有前端业务 mock、是否没有写请求，以及证据链是否可见。登录、编辑、上传、创建任务和 AI 对话继续不做。
