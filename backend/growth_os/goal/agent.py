@@ -194,6 +194,15 @@ class GoalAgent:
         self.store.save_goal({**goal, "status": "confirmed", "source_quote": quote.strip()})
         return self._require_goal(goal_id)
 
+    async def resume(self, goal_id: str) -> GoalTurnResult:
+        """显式重试失败的提问；不得重复处理尚未作答的问题。"""
+        goal = self._require_goal(goal_id)
+        if goal["status"] not in ("draft", "clarifying"):
+            raise GoalStateError("当前状态不允许恢复提问")
+        if any(not item["answer"] for item in self.store.list_clarifications(goal_id)):
+            raise GoalStateError("已有待回答的问题，请先作答")
+        return await self._advance(goal_id)
+
     # -- 内部 -------------------------------------------------------------
 
     def _require_goal(self, goal_id: str) -> dict:

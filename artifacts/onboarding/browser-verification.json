@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": [
+    "空目标禁止提交",
+    "创建目标并提问",
+    "保存第1轮回答",
+    "保存第2轮回答",
+    "中途刷新恢复会话",
+    "保存第3轮回答",
+    "保存第4轮回答",
+    "不自动确认",
+    "proposed: 1440px无溢出",
+    "proposed: 390px无溢出",
+    "显式确认并保留原话",
+    "确认结果刷新后仍可读",
+    "confirmed: 1440px无溢出",
+    "confirmed: 390px无溢出"
+  ],
+  "mode": "fixed_questions",
+  "real_model_calls": 0
+}

@@ -274,6 +274,46 @@ def test_excluded_and_reverse_evidence_rendered(env):
     assert "逐字=True" in markdown
 
 
+def test_evidence_api_reports_attacks_and_reverse_evidence_without_writes(env):
+    from fastapi.testclient import TestClient
+    from growth_os.api import create_app
+
+    cap = env["add_capability"]("只读攻击详情")
+    keep = add_claim(env, filename="api-keep.md", content="# 项目\n\n实现检索。\n", evidence_type="repo_artifact")
+    broken = add_claim(env, filename="api-broken.md", content="# 项目\n\n实现重排。\n", evidence_type="repo_artifact")
+    bind(env, cap, keep)
+    bind(env, cap, broken)
+    add_refuting_evidence(env, keep)
+    inject_attack(env, broken, "broken")
+    rate(env, cap)
+    before = list(env["store"].db.iterdump())
+    env["store"].db.execute("PRAGMA query_only=ON")
+    env["estore"].db.execute("PRAGMA query_only=ON")
+    response = TestClient(create_app(env["store"], env["estore"])).get(f"/api/evidence/{cap}")
+    assert response.status_code == 200
+    report = response.json()["report"]
+    assert broken not in {item["claim_id"] for item in response.json()["supports"]}
+    assert report["read_only"] is True
+    assert any(item["claim_id"] == keep and item["refuting_evidence"] for item in report["reverse_evidence"])
+    assert any(item["claim_id"] == broken for item in report["excluded"])
+    review = next(item for item in report["attack_reviews"] if item["claim_id"] == broken)
+    assert review["attacks"][0]["verdict"] == "broken"
+    assert review["attacks"][0]["reasoning"]
+    assert report["limitations"]
+    assert list(env["store"].db.iterdump()) == before
+
+
+def test_sustained_attack_stays_visible_without_reverse_evidence(env):
+    cap = env["add_capability"]("维持裁决")
+    claim = add_claim(env, filename="sustained.md", content="# 项目\n\n实现检索。\n", evidence_type="repo_artifact")
+    bind(env, cap, claim)
+    inject_attack(env, claim, "sustained")
+    rate(env, cap)
+    report = build_report(env["store"], env["estore"], capability_id=cap)
+    assert report["reverse_evidence"] == []
+    assert report["attack_reviews"][0]["attacks"][0]["verdict"] == "sustained"
+
+
 # ---------------------------------------------------------------------------
 # 5. current_level rebuild 一致
 # ---------------------------------------------------------------------------

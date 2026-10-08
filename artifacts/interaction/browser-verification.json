@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": [
+    "activate",
+    "required_reason",
+    "block",
+    "resume",
+    "submit",
+    "understanding_2_to_3",
+    "reload_persistence",
+    "hide_completed_form",
+    "desktop_no_overflow",
+    "mobile_no_overflow",
+    "desktop_form_no_overflow",
+    "mobile_form_no_overflow"
+  ],
+  "constructed": true,
+  "real_model_calls": 0
+}

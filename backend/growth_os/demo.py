@@ -19,7 +19,10 @@ from .store import GrowthStore
 DEMO_DIRECTORY = Path(__file__).resolve().parents[2] / "data" / "demo"
 
 
-async def seed_demo(directory: Path = DEMO_DIRECTORY, *, include_return: bool = False) -> dict:
+async def seed_demo(directory: Path = DEMO_DIRECTORY, *, include_return: bool = False,
+                    stop_before_submission: bool = False) -> dict:
+    if include_return and stop_before_submission:
+        raise ValueError("隔天返回场景需要已完成的提交")
     directory = directory.resolve()
     directory.mkdir(parents=True, exist_ok=True)
     database = directory / "demo.db"
@@ -88,6 +91,13 @@ async def seed_demo(directory: Path = DEMO_DIRECTORY, *, include_return: bool = 
             "acceptance_type": "artifact_check", "acceptance": "提交十条样本与判定标准",
             "generated_by_run_id": "m8_constructed_demo",
         })
+        if stop_before_submission:
+            manifest = {"constructed": True, "note": "受控交互实验，不代表真实用户成果",
+                        "goal_id": "goal_demo", "capability_id": capability,
+                        "task_id": task, "loop_reports": {}}
+            (directory / "manifest.json").write_text(
+                json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+            return manifest
         store.activate_task(task)
         submission = directory / "evaluation.md"
         submission.write_text(

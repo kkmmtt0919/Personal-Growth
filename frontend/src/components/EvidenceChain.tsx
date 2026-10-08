@@ -1,11 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { Evidence } from '../types/growth'
+import { AssessmentDetails } from './AssessmentDetails'
 
 const sourceTypes: Record<string, string> = { repo_artifact: '项目材料', uploaded_doc: '上传文档', task_submission: '任务提交', probe_result: '现场作答' }
 
 export function EvidenceChain({ evidence }: { evidence: Evidence }) {
+  const goal = new URLSearchParams(useLocation().search).get('goal')
   return <main>
-    <section className="page-hero detail-hero"><div><p className="eyebrow">01 / EVIDENCE EXPLORER</p><h1>{evidence.capability}</h1><p className="lead">为什么是这个等级？从原始证据，读懂评定依据。</p></div><Link className="button outline" to="/#capability-map">返回能力地图 ↗</Link></section>
+    <section className="page-hero detail-hero"><div><p className="eyebrow">01 / EVIDENCE EXPLORER</p><h1>{evidence.capability}</h1><p className="lead">为什么是这个等级？从原始证据，读懂评定依据。</p></div><Link className="button outline" to={goal ? `/start?goal=${goal}` : '/#capability-map'}>返回能力地图 ↗</Link></section>
     <div className="assessment-strip"><span>当前评估</span><div><span className="muted">理解</span><strong>{evidence.assessment.understanding ?? '未评估'}</strong></div><div><span className="muted">实践</span><strong>{evidence.assessment.practice ?? '未评估'}</strong></div></div>
     <section className="evidence-section"><div className="section-heading"><h2><span className="section-number">02 /</span> 等级的证据依据</h2><span className="muted small">{evidence.supports.length} 条支持记录</span></div>
       {evidence.supports.length ? evidence.supports.map((item, index) => <article className="evidence-row" key={item.claim_id}>
@@ -14,5 +16,6 @@ export function EvidenceChain({ evidence }: { evidence: Evidence }) {
       </article>) : <div className="empty-state"><h3>尚无支持证据</h3><p>新的证据记录会显示在这里。</p></div>}
     </section>
     <section className="evidence-gaps"><div className="section-heading"><h2><span className="section-number">03 /</span> 尚待补齐</h2></div>{evidence.gaps.length ? evidence.gaps.map(gap => <p key={gap}><i className="status-dot gap" />{gap}</p>) : <p className="muted">暂无已记录的证据缺口。</p>}</section>
+    {evidence.report && <AssessmentDetails report={evidence.report} />}
   </main>
 }

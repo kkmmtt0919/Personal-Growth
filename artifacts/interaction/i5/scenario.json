@@ -1,0 +1,1997 @@
+{
+  "date": "2026-10-06",
+  "scope": "受控本地交互，固定绑定规则，非真实模型验收",
+  "real_model_calls": 0,
+  "checks": {
+    "practice_activated": true,
+    "practice_done": true,
+    "practice_guards": true,
+    "understanding_activated": true,
+    "understanding_done": true,
+    "understanding_guards": true,
+    "practice_3_to_4_understanding_unchanged": true,
+    "understanding_2_to_3_practice_unchanged": true,
+    "practice_persistent_attribution": true,
+    "practice_replay": true,
+    "practice_single_submission": true,
+    "understanding_persistent_attribution": true,
+    "understanding_replay": true,
+    "understanding_single_submission": true,
+    "both_traces_complete": true,
+    "readonly_write_routes_absent": true,
+    "new_process_reopen": true,
+    "replay_does_not_change_domain_database": true,
+    "QG1_audits_pass": true,
+    "QG2_damage_caught_and_restored": true,
+    "original_databases_unchanged": true
+  },
+  "journey": {
+    "practice": {
+      "task_id": "task_6ca38fded73baf8376b1",
+      "url": "/api/tasks/task_6ca38fded73baf8376b1/files",
+      "payload": {
+        "request_id": "i5_practice_request",
+        "filename": "evaluation.md",
+        "content_base64": "IyDlj5fmjqfor4TmtYsKCuWNgeadoVJBR+agt+acrO+8jOW8leeUqOWvueW6lOadpea6kO+8m+aXoOWMuemFjeW6lOaKpeWRiuS4jei2s+OAgg=="
+      },
+      "result": {
+        "contract": "m5c-1",
+        "status": "level_changed",
+        "task": {
+          "task_id": "task_6ca38fded73baf8376b1",
+          "submission_id": "sub_8339289433e93e75",
+          "source_id": "src_bcfe2c2faaad1600",
+          "status": "done"
+        },
+        "attribution": {
+          "contract": "m5c-1",
+          "generated_at": "2026-10-06T06:40:51+00:00",
+          "task_id": "task_6ca38fded73baf8376b1",
+          "gap_id": "gap_cap_14c033670415a3323449_practice",
+          "capability_id": "cap_14c033670415a3323449",
+          "dimension": "practice",
+          "submission": {
+            "source_id": "src_bcfe2c2faaad1600",
+            "source_ids": [
+              "src_bcfe2c2faaad1600"
+            ],
+            "evidence_type": "task_submission",
+            "channel": "user_evidence",
+            "attribution": "user_declared",
+            "archive": null,
+            "materialized_path": null
+          },
+          "claim": {
+            "claim_id": "clm_1b7d8d9e61380511f35c",
+            "scope": "material",
+            "passage_ids": [
+              "p_47871759e812d1c5",
+              "p_95784e947468db66"
+            ]
+          },
+          "binding": {
+            "mode": "proposed",
+            "bound_on_task_capability": true,
+            "run_id": "run_2f7f792c789f45e9",
+            "provider": "fake",
+            "model": "fake-deterministic",
+            "accepted_proposal_ids": [
+              "prp_1a0f1683d0b8ba5e"
+            ],
+            "decisions": [
+              {
+                "proposal_id": "prp_1a0f1683d0b8ba5e",
+                "accepted": true,
+                "gate_stage": "persisted",
+                "capability_id": "cap_14c033670415a3323449",
+                "reject_reason": null
+              }
+            ],
+            "reason": null,
+            "rationale": "受控交互实验：固定能力路径，不代表模型判断"
+          },
+          "before": {
+            "understanding": {
+              "assessment_id": "asm_30c07597961ff6f2dd3c",
+              "level": 2,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            },
+            "practice": {
+              "assessment_id": "asm_59e482e08dc96d5ab3b0",
+              "level": 3,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            }
+          },
+          "after": {
+            "understanding": {
+              "assessment_id": "asm_30c07597961ff6f2dd3c",
+              "level": 2,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            },
+            "practice": {
+              "assessment_id": "asm_fa80776e7240d30f4eab",
+              "level": 4,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            }
+          },
+          "assessment_changed_dimensions": [
+            "practice"
+          ],
+          "level_changed_dimensions": [
+            "practice"
+          ],
+          "level_changed": true,
+          "support": {
+            "before_claim_ids": [
+              "clm_0a552be01bce1b68ec32",
+              "clm_12d8cac0daff99f724f8"
+            ],
+            "after_claim_ids": [
+              "clm_0a552be01bce1b68ec32",
+              "clm_12d8cac0daff99f724f8",
+              "clm_1b7d8d9e61380511f35c"
+            ],
+            "added_claim_ids": [
+              "clm_1b7d8d9e61380511f35c"
+            ]
+          },
+          "gaps": {
+            "before": [
+              {
+                "id": "gap_cap_14c033670415a3323449_practice",
+                "dimension": "practice",
+                "severity": "level_gap_1",
+                "status": "open"
+              },
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "severity": "level_gap_2plus",
+                "status": "open"
+              }
+            ],
+            "after": [
+              {
+                "id": "gap_cap_14c033670415a3323449_practice",
+                "dimension": "practice",
+                "severity": "level_gap_1",
+                "status": "closed"
+              },
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "severity": "level_gap_2plus",
+                "status": "open"
+              }
+            ],
+            "closed_gap_ids": [
+              "gap_cap_14c033670415a3323449_practice"
+            ]
+          },
+          "assessment": {
+            "contract": "m4e-1",
+            "assessment_ids": [
+              "asm_30c07597961ff6f2dd3c",
+              "asm_fa80776e7240d30f4eab"
+            ],
+            "report_paths": {
+              "json": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_6ca38fded73baf8376b1.json",
+              "markdown": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_6ca38fded73baf8376b1.md"
+            }
+          },
+          "trace": {
+            "contract": "m5c-1",
+            "task_id": "task_6ca38fded73baf8376b1",
+            "task_status": "done",
+            "gap_id": "gap_cap_14c033670415a3323449_practice",
+            "gap": {
+              "id": "gap_cap_14c033670415a3323449_practice",
+              "user_id": "local",
+              "goal_id": "goal_demo",
+              "capability_id": "cap_14c033670415a3323449",
+              "dimension": "practice",
+              "current_level": 3,
+              "target_level": 4,
+              "severity": "level_gap_1",
+              "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+              "assessment_id": "asm_59e482e08dc96d5ab3b0",
+              "status": "closed",
+              "created_at": "2026-10-06 06:40:51",
+              "updated_at": "2026-10-06 06:40:51"
+            },
+            "submissions": [
+              {
+                "id": "sub_8339289433e93e75",
+                "task_id": "task_6ca38fded73baf8376b1",
+                "source_id": "src_bcfe2c2faaad1600",
+                "note": null,
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "source_ids": [
+              "src_bcfe2c2faaad1600"
+            ],
+            "claims": [
+              {
+                "claim_id": "clm_1b7d8d9e61380511f35c",
+                "statement": "提交材料（markdown）包含任务「实现 Agent Evaluation 评测实验」的产出物：产出包含十条 RAG 检索样本与判定标准的评测报告",
+                "sources": [
+                  "src_bcfe2c2faaad1600"
+                ]
+              }
+            ],
+            "bindings": [
+              {
+                "capability_id": "cap_14c033670415a3323449",
+                "claim_id": "clm_1b7d8d9e61380511f35c",
+                "role": "supports",
+                "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_2f7f792c789f45e9｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "assessments": [
+              {
+                "id": "asm_30c07597961ff6f2dd3c",
+                "dimension": "understanding",
+                "status": "rated",
+                "level": 2,
+                "created_at": "2026-10-06 06:40:51"
+              },
+              {
+                "id": "asm_59e482e08dc96d5ab3b0",
+                "dimension": "practice",
+                "status": "rated",
+                "level": 3,
+                "created_at": "2026-10-06 06:40:51"
+              },
+              {
+                "id": "asm_fa80776e7240d30f4eab",
+                "dimension": "practice",
+                "status": "rated",
+                "level": 4,
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "complete": true
+          },
+          "guard": {
+            "new_source_present": true,
+            "new_claim_present": true,
+            "binding_on_task_capability": true,
+            "trace_complete": true,
+            "before_present:practice": true,
+            "after_present:practice": true
+          },
+          "status": "level_changed"
+        },
+        "binding": {
+          "mode": "proposed",
+          "bound_on_task_capability": true,
+          "run_id": "run_2f7f792c789f45e9",
+          "provider": "fake",
+          "model": "fake-deterministic",
+          "accepted_proposal_ids": [
+            "prp_1a0f1683d0b8ba5e"
+          ],
+          "decisions": [
+            {
+              "proposal_id": "prp_1a0f1683d0b8ba5e",
+              "accepted": true,
+              "gate_stage": "persisted",
+              "capability_id": "cap_14c033670415a3323449",
+              "reject_reason": null
+            }
+          ],
+          "reason": null,
+          "rationale": "受控交互实验：固定能力路径，不代表模型判断"
+        },
+        "assessment": {
+          "contract": "m4e-1",
+          "goal_id": "goal_demo",
+          "capability_id": "cap_14c033670415a3323449",
+          "assessment_ids": [
+            "asm_30c07597961ff6f2dd3c",
+            "asm_fa80776e7240d30f4eab"
+          ],
+          "dimensions": {
+            "understanding": {
+              "status": "rated",
+              "level": 2,
+              "assessment_id": "asm_30c07597961ff6f2dd3c"
+            },
+            "practice": {
+              "status": "rated",
+              "level": 4,
+              "assessment_id": "asm_fa80776e7240d30f4eab"
+            }
+          },
+          "levels": {
+            "understanding": 2,
+            "practice": 4,
+            "status": "assessed"
+          },
+          "level_verification": {
+            "consistent": true,
+            "expected": {
+              "understanding": 2,
+              "practice": 4,
+              "status": "assessed"
+            },
+            "stored": {
+              "understanding": 2,
+              "practice": 4,
+              "status": "assessed"
+            }
+          },
+          "gaps": [
+            {
+              "id": "gap_cap_14c033670415a3323449_understanding",
+              "user_id": "local",
+              "goal_id": "goal_demo",
+              "capability_id": "cap_14c033670415a3323449",
+              "dimension": "understanding",
+              "current_level": 2,
+              "target_level": 4,
+              "severity": "level_gap_2plus",
+              "rationale": "理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+              "assessment_id": "asm_30c07597961ff6f2dd3c",
+              "status": "open"
+            }
+          ],
+          "closed_gaps": [
+            "gap_cap_14c033670415a3323449_practice"
+          ],
+          "gap_verification": {
+            "consistent": true,
+            "expected": [
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "current_level": 2,
+                "target_level": 4,
+                "severity": "level_gap_2plus",
+                "rationale": "理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+                "assessment_id": "asm_30c07597961ff6f2dd3c",
+                "status": "open"
+              }
+            ],
+            "stored": [
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "current_level": 2,
+                "target_level": 4,
+                "severity": "level_gap_2plus",
+                "rationale": "理解 2 级，目标 4 级（差 2 级）；缺口：缺少行为证据（现场作答可通过 probe 补足到 3）",
+                "assessment_id": "asm_30c07597961ff6f2dd3c",
+                "status": "open"
+              }
+            ]
+          },
+          "report": {
+            "artifact": "m4d-assessment-report",
+            "capability": {
+              "id": "cap_14c033670415a3323449",
+              "goal_id": "goal_demo",
+              "path": "AI Agent/工具与执行/RAG 系统搭建与调优",
+              "depth": 3,
+              "target_level": 4,
+              "status": "active",
+              "current_level_status": "assessed",
+              "current_level_understanding": 2,
+              "current_level_practice": 4
+            },
+            "dimensions": {
+              "understanding": {
+                "assessment_id": "asm_30c07597961ff6f2dd3c",
+                "status": "rated",
+                "level": 2,
+                "base_level": 2,
+                "rationale": "理解：基线 2（1 条已绑定主张）",
+                "why_not_higher": [
+                  "缺少行为证据（现场作答可通过 probe 补足到 3）"
+                ],
+                "supports": [
+                  {
+                    "buckets": [
+                      "knowledge"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_12d8cac0daff99f724f8",
+                    "evidence_types": [
+                      "uploaded_doc"
+                    ],
+                    "signals": []
+                  }
+                ],
+                "reverse_evidence": [],
+                "excluded": []
+              },
+              "practice": {
+                "assessment_id": "asm_fa80776e7240d30f4eab",
+                "status": "rated",
+                "level": 4,
+                "base_level": 4,
+                "rationale": "实践：基线 4（2 条已绑定主张）",
+                "why_not_higher": [
+                  "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+                ],
+                "supports": [
+                  {
+                    "buckets": [
+                      "practice"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_0a552be01bce1b68ec32",
+                    "evidence_types": [
+                      "repo_artifact"
+                    ],
+                    "signals": []
+                  },
+                  {
+                    "buckets": [
+                      "task"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_1b7d8d9e61380511f35c",
+                    "evidence_types": [
+                      "task_submission"
+                    ],
+                    "signals": []
+                  }
+                ],
+                "reverse_evidence": [],
+                "excluded": []
+              }
+            },
+            "supports": [
+              {
+                "claim_id": "clm_12d8cac0daff99f724f8",
+                "present": true,
+                "subject": "材料",
+                "predicate": "包含",
+                "object": "RAG 内容",
+                "statement": "受控材料包含 RAG 内容（notes.md）",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_7825f9c78dd24bf8｜proposer=fake/fake-deterministic｜理由：受控 Demo：材料直接对应 RAG 实践",
+                "quotes": [
+                  {
+                    "passage_id": "p_333a7046ac33ac53",
+                    "quote": "# 受控 Demo 笔记",
+                    "quote_verbatim": true,
+                    "source_id": "src_1200a8773aaf81db",
+                    "source_title": "notes"
+                  }
+                ],
+                "dimension": "understanding",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "uploaded_doc"
+                ]
+              },
+              {
+                "claim_id": "clm_0a552be01bce1b68ec32",
+                "present": true,
+                "subject": "材料",
+                "predicate": "包含",
+                "object": "RAG 内容",
+                "statement": "受控材料包含 RAG 内容（project.md）",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_90e4704b2f7141f7｜proposer=fake/fake-deterministic｜理由：受控 Demo：材料直接对应 RAG 实践",
+                "quotes": [
+                  {
+                    "passage_id": "p_af4da51a9c909f21",
+                    "quote": "# 受控 Demo 项目",
+                    "quote_verbatim": true,
+                    "source_id": "src_c1ba3f6fb8590fe4",
+                    "source_title": "project"
+                  }
+                ],
+                "dimension": "practice",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "repo_artifact"
+                ]
+              },
+              {
+                "claim_id": "clm_1b7d8d9e61380511f35c",
+                "present": true,
+                "subject": "提交材料",
+                "predicate": "包含",
+                "object": "任务产出物（markdown）",
+                "statement": "提交材料（markdown）包含任务「实现 Agent Evaluation 评测实验」的产出物：产出包含十条 RAG 检索样本与判定标准的评测报告",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_2f7f792c789f45e9｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+                "quotes": [
+                  {
+                    "passage_id": "p_95784e947468db66",
+                    "quote": "十条RAG样本，引用对应来源；无匹配应报告不足。",
+                    "quote_verbatim": true,
+                    "source_id": "src_bcfe2c2faaad1600",
+                    "source_title": "实现 Agent Evaluation 评测实验｜提交"
+                  },
+                  {
+                    "passage_id": "p_47871759e812d1c5",
+                    "quote": "# 受控评测",
+                    "quote_verbatim": true,
+                    "source_id": "src_bcfe2c2faaad1600",
+                    "source_title": "实现 Agent Evaluation 评测实验｜提交"
+                  }
+                ],
+                "dimension": "practice",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "task_submission"
+                ]
+              }
+            ],
+            "gaps": [
+              {
+                "dimension": "understanding",
+                "text": "缺少行为证据（现场作答可通过 probe 补足到 3）"
+              },
+              {
+                "dimension": "practice",
+                "text": "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": [],
+            "rule_version": "m4c-1",
+            "generated_at": "2026-10-06T06:40:51+00:00",
+            "generated_by": "run_2f7f792c789f45e9",
+            "limitations": [
+              "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+              "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+              "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+              "报告不构成对系统整体评估可靠性的结论。"
+            ],
+            "read_only": true
+          },
+          "report_paths": {
+            "json": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_6ca38fded73baf8376b1.json",
+            "markdown": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_6ca38fded73baf8376b1.md"
+          }
+        }
+      }
+    },
+    "understanding": {
+      "task_id": "task_c3aa17d46afbb24da1e7",
+      "url": "/api/tasks/task_c3aa17d46afbb24da1e7/submissions",
+      "payload": {
+        "request_id": "i5_understanding_request",
+        "probe_answer": "受控理解回答：检索减少无来源生成，重排提高相关性；无匹配报告不足。"
+      },
+      "result": {
+        "contract": "m5c-1",
+        "status": "level_changed",
+        "task": {
+          "task_id": "task_c3aa17d46afbb24da1e7",
+          "submission_id": "sub_3f67fe781c1da743",
+          "source_id": "src_acd276755834da75",
+          "status": "done"
+        },
+        "attribution": {
+          "contract": "m5c-1",
+          "generated_at": "2026-10-06T06:40:51+00:00",
+          "task_id": "task_c3aa17d46afbb24da1e7",
+          "gap_id": "gap_cap_14c033670415a3323449_understanding",
+          "capability_id": "cap_14c033670415a3323449",
+          "dimension": "understanding",
+          "submission": {
+            "source_id": "src_acd276755834da75",
+            "source_ids": [
+              "src_acd276755834da75"
+            ],
+            "evidence_type": "probe_result",
+            "channel": "user_evidence",
+            "attribution": "user_declared",
+            "archive": null,
+            "materialized_path": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\submissions\\task_c3aa17d46afbb24da1e7.probe.md"
+          },
+          "claim": {
+            "claim_id": "clm_41b4897c891284101c84",
+            "scope": "material",
+            "passage_ids": [
+              "p_e91011f4851e4796"
+            ]
+          },
+          "binding": {
+            "mode": "proposed",
+            "bound_on_task_capability": true,
+            "run_id": "run_87ac68c212ce4056",
+            "provider": "fake",
+            "model": "fake-deterministic",
+            "accepted_proposal_ids": [
+              "prp_2ae37708a59f8d50"
+            ],
+            "decisions": [
+              {
+                "proposal_id": "prp_2ae37708a59f8d50",
+                "accepted": true,
+                "gate_stage": "persisted",
+                "capability_id": "cap_14c033670415a3323449",
+                "reject_reason": null
+              }
+            ],
+            "reason": null,
+            "rationale": "受控交互实验：固定能力路径，不代表模型判断"
+          },
+          "before": {
+            "understanding": {
+              "assessment_id": "asm_30c07597961ff6f2dd3c",
+              "level": 2,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            },
+            "practice": {
+              "assessment_id": "asm_fa80776e7240d30f4eab",
+              "level": 4,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            }
+          },
+          "after": {
+            "understanding": {
+              "assessment_id": "asm_4a859bb64fc24f5336ad",
+              "level": 3,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            },
+            "practice": {
+              "assessment_id": "asm_fa80776e7240d30f4eab",
+              "level": 4,
+              "status": "rated",
+              "created_at": "2026-10-06 06:40:51"
+            }
+          },
+          "assessment_changed_dimensions": [
+            "understanding"
+          ],
+          "level_changed_dimensions": [
+            "understanding"
+          ],
+          "level_changed": true,
+          "support": {
+            "before_claim_ids": [
+              "clm_0a552be01bce1b68ec32",
+              "clm_12d8cac0daff99f724f8",
+              "clm_1b7d8d9e61380511f35c"
+            ],
+            "after_claim_ids": [
+              "clm_0a552be01bce1b68ec32",
+              "clm_12d8cac0daff99f724f8",
+              "clm_1b7d8d9e61380511f35c",
+              "clm_41b4897c891284101c84"
+            ],
+            "added_claim_ids": [
+              "clm_41b4897c891284101c84"
+            ]
+          },
+          "gaps": {
+            "before": [
+              {
+                "id": "gap_cap_14c033670415a3323449_practice",
+                "dimension": "practice",
+                "severity": "level_gap_1",
+                "status": "closed"
+              },
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "severity": "level_gap_2plus",
+                "status": "open"
+              }
+            ],
+            "after": [
+              {
+                "id": "gap_cap_14c033670415a3323449_practice",
+                "dimension": "practice",
+                "severity": "level_gap_1",
+                "status": "closed"
+              },
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "severity": "level_gap_1",
+                "status": "open"
+              }
+            ],
+            "closed_gap_ids": []
+          },
+          "assessment": {
+            "contract": "m4e-1",
+            "assessment_ids": [
+              "asm_4a859bb64fc24f5336ad",
+              "asm_fa80776e7240d30f4eab"
+            ],
+            "report_paths": {
+              "json": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_c3aa17d46afbb24da1e7.json",
+              "markdown": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_c3aa17d46afbb24da1e7.md"
+            }
+          },
+          "trace": {
+            "contract": "m5c-1",
+            "task_id": "task_c3aa17d46afbb24da1e7",
+            "task_status": "done",
+            "gap_id": "gap_cap_14c033670415a3323449_understanding",
+            "gap": {
+              "id": "gap_cap_14c033670415a3323449_understanding",
+              "user_id": "local",
+              "goal_id": "goal_demo",
+              "capability_id": "cap_14c033670415a3323449",
+              "dimension": "understanding",
+              "current_level": 3,
+              "target_level": 4,
+              "severity": "level_gap_1",
+              "rationale": "理解 3 级，目标 4 级（差 1 级）",
+              "assessment_id": "asm_4a859bb64fc24f5336ad",
+              "status": "open",
+              "created_at": "2026-10-06 06:40:51",
+              "updated_at": "2026-10-06 06:40:51"
+            },
+            "submissions": [
+              {
+                "id": "sub_3f67fe781c1da743",
+                "task_id": "task_c3aa17d46afbb24da1e7",
+                "source_id": "src_acd276755834da75",
+                "note": "probe 物化=D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\submissions\\task_c3aa17d46afbb24da1e7.probe.md",
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "source_ids": [
+              "src_acd276755834da75"
+            ],
+            "claims": [
+              {
+                "claim_id": "clm_41b4897c891284101c84",
+                "statement": "提交材料（probe_answer）包含任务「解释 RAG 检索与评测的设计选择」的产出物：产出说明检索、重排、引用与失败案例的理解回答",
+                "sources": [
+                  "src_acd276755834da75"
+                ]
+              }
+            ],
+            "bindings": [
+              {
+                "capability_id": "cap_14c033670415a3323449",
+                "claim_id": "clm_41b4897c891284101c84",
+                "role": "supports",
+                "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_87ac68c212ce4056｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "assessments": [
+              {
+                "id": "asm_30c07597961ff6f2dd3c",
+                "dimension": "understanding",
+                "status": "rated",
+                "level": 2,
+                "created_at": "2026-10-06 06:40:51"
+              },
+              {
+                "id": "asm_4a859bb64fc24f5336ad",
+                "dimension": "understanding",
+                "status": "rated",
+                "level": 3,
+                "created_at": "2026-10-06 06:40:51"
+              },
+              {
+                "id": "asm_59e482e08dc96d5ab3b0",
+                "dimension": "practice",
+                "status": "rated",
+                "level": 3,
+                "created_at": "2026-10-06 06:40:51"
+              },
+              {
+                "id": "asm_fa80776e7240d30f4eab",
+                "dimension": "practice",
+                "status": "rated",
+                "level": 4,
+                "created_at": "2026-10-06 06:40:51"
+              }
+            ],
+            "complete": true
+          },
+          "guard": {
+            "new_source_present": true,
+            "new_claim_present": true,
+            "binding_on_task_capability": true,
+            "trace_complete": true,
+            "before_present:understanding": true,
+            "after_present:understanding": true
+          },
+          "status": "level_changed"
+        },
+        "binding": {
+          "mode": "proposed",
+          "bound_on_task_capability": true,
+          "run_id": "run_87ac68c212ce4056",
+          "provider": "fake",
+          "model": "fake-deterministic",
+          "accepted_proposal_ids": [
+            "prp_2ae37708a59f8d50"
+          ],
+          "decisions": [
+            {
+              "proposal_id": "prp_2ae37708a59f8d50",
+              "accepted": true,
+              "gate_stage": "persisted",
+              "capability_id": "cap_14c033670415a3323449",
+              "reject_reason": null
+            }
+          ],
+          "reason": null,
+          "rationale": "受控交互实验：固定能力路径，不代表模型判断"
+        },
+        "assessment": {
+          "contract": "m4e-1",
+          "goal_id": "goal_demo",
+          "capability_id": "cap_14c033670415a3323449",
+          "assessment_ids": [
+            "asm_4a859bb64fc24f5336ad",
+            "asm_fa80776e7240d30f4eab"
+          ],
+          "dimensions": {
+            "understanding": {
+              "status": "rated",
+              "level": 3,
+              "assessment_id": "asm_4a859bb64fc24f5336ad"
+            },
+            "practice": {
+              "status": "rated",
+              "level": 4,
+              "assessment_id": "asm_fa80776e7240d30f4eab"
+            }
+          },
+          "levels": {
+            "understanding": 3,
+            "practice": 4,
+            "status": "assessed"
+          },
+          "level_verification": {
+            "consistent": true,
+            "expected": {
+              "understanding": 3,
+              "practice": 4,
+              "status": "assessed"
+            },
+            "stored": {
+              "understanding": 3,
+              "practice": 4,
+              "status": "assessed"
+            }
+          },
+          "gaps": [
+            {
+              "id": "gap_cap_14c033670415a3323449_understanding",
+              "user_id": "local",
+              "goal_id": "goal_demo",
+              "capability_id": "cap_14c033670415a3323449",
+              "dimension": "understanding",
+              "current_level": 3,
+              "target_level": 4,
+              "severity": "level_gap_1",
+              "rationale": "理解 3 级，目标 4 级（差 1 级）",
+              "assessment_id": "asm_4a859bb64fc24f5336ad",
+              "status": "open"
+            }
+          ],
+          "closed_gaps": [],
+          "gap_verification": {
+            "consistent": true,
+            "expected": [
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "current_level": 3,
+                "target_level": 4,
+                "severity": "level_gap_1",
+                "rationale": "理解 3 级，目标 4 级（差 1 级）",
+                "assessment_id": "asm_4a859bb64fc24f5336ad",
+                "status": "open"
+              }
+            ],
+            "stored": [
+              {
+                "id": "gap_cap_14c033670415a3323449_understanding",
+                "dimension": "understanding",
+                "current_level": 3,
+                "target_level": 4,
+                "severity": "level_gap_1",
+                "rationale": "理解 3 级，目标 4 级（差 1 级）",
+                "assessment_id": "asm_4a859bb64fc24f5336ad",
+                "status": "open"
+              }
+            ]
+          },
+          "report": {
+            "artifact": "m4d-assessment-report",
+            "capability": {
+              "id": "cap_14c033670415a3323449",
+              "goal_id": "goal_demo",
+              "path": "AI Agent/工具与执行/RAG 系统搭建与调优",
+              "depth": 3,
+              "target_level": 4,
+              "status": "active",
+              "current_level_status": "assessed",
+              "current_level_understanding": 3,
+              "current_level_practice": 4
+            },
+            "dimensions": {
+              "understanding": {
+                "assessment_id": "asm_4a859bb64fc24f5336ad",
+                "status": "rated",
+                "level": 3,
+                "base_level": 3,
+                "rationale": "理解：基线 3（2 条已绑定主张）",
+                "why_not_higher": [],
+                "supports": [
+                  {
+                    "buckets": [
+                      "knowledge"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_12d8cac0daff99f724f8",
+                    "evidence_types": [
+                      "uploaded_doc"
+                    ],
+                    "signals": []
+                  },
+                  {
+                    "buckets": [
+                      "behavior"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_41b4897c891284101c84",
+                    "evidence_types": [
+                      "probe_result"
+                    ],
+                    "signals": []
+                  }
+                ],
+                "reverse_evidence": [],
+                "excluded": []
+              },
+              "practice": {
+                "assessment_id": "asm_fa80776e7240d30f4eab",
+                "status": "rated",
+                "level": 4,
+                "base_level": 4,
+                "rationale": "实践：基线 4（2 条已绑定主张）",
+                "why_not_higher": [
+                  "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+                ],
+                "supports": [
+                  {
+                    "buckets": [
+                      "practice"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_0a552be01bce1b68ec32",
+                    "evidence_types": [
+                      "repo_artifact"
+                    ],
+                    "signals": []
+                  },
+                  {
+                    "buckets": [
+                      "task"
+                    ],
+                    "cap": null,
+                    "claim_id": "clm_1b7d8d9e61380511f35c",
+                    "evidence_types": [
+                      "task_submission"
+                    ],
+                    "signals": []
+                  }
+                ],
+                "reverse_evidence": [],
+                "excluded": []
+              }
+            },
+            "supports": [
+              {
+                "claim_id": "clm_12d8cac0daff99f724f8",
+                "present": true,
+                "subject": "材料",
+                "predicate": "包含",
+                "object": "RAG 内容",
+                "statement": "受控材料包含 RAG 内容（notes.md）",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_7825f9c78dd24bf8｜proposer=fake/fake-deterministic｜理由：受控 Demo：材料直接对应 RAG 实践",
+                "quotes": [
+                  {
+                    "passage_id": "p_333a7046ac33ac53",
+                    "quote": "# 受控 Demo 笔记",
+                    "quote_verbatim": true,
+                    "source_id": "src_1200a8773aaf81db",
+                    "source_title": "notes"
+                  }
+                ],
+                "dimension": "understanding",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "uploaded_doc"
+                ]
+              },
+              {
+                "claim_id": "clm_41b4897c891284101c84",
+                "present": true,
+                "subject": "提交材料",
+                "predicate": "包含",
+                "object": "任务产出物（probe_answer）",
+                "statement": "提交材料（probe_answer）包含任务「解释 RAG 检索与评测的设计选择」的产出物：产出说明检索、重排、引用与失败案例的理解回答",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_87ac68c212ce4056｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+                "quotes": [
+                  {
+                    "passage_id": "p_e91011f4851e4796",
+                    "quote": "受控理解回答：检索减少无来源生成，重排提高相关性；无匹配报告不足。",
+                    "quote_verbatim": true,
+                    "source_id": "src_acd276755834da75",
+                    "source_title": "解释 RAG 检索与评测的设计选择｜现场作答"
+                  }
+                ],
+                "dimension": "understanding",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "probe_result"
+                ]
+              },
+              {
+                "claim_id": "clm_0a552be01bce1b68ec32",
+                "present": true,
+                "subject": "材料",
+                "predicate": "包含",
+                "object": "RAG 内容",
+                "statement": "受控材料包含 RAG 内容（project.md）",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_90e4704b2f7141f7｜proposer=fake/fake-deterministic｜理由：受控 Demo：材料直接对应 RAG 实践",
+                "quotes": [
+                  {
+                    "passage_id": "p_af4da51a9c909f21",
+                    "quote": "# 受控 Demo 项目",
+                    "quote_verbatim": true,
+                    "source_id": "src_c1ba3f6fb8590fe4",
+                    "source_title": "project"
+                  }
+                ],
+                "dimension": "practice",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "repo_artifact"
+                ]
+              },
+              {
+                "claim_id": "clm_1b7d8d9e61380511f35c",
+                "present": true,
+                "subject": "提交材料",
+                "predicate": "包含",
+                "object": "任务产出物（markdown）",
+                "statement": "提交材料（markdown）包含任务「实现 Agent Evaluation 评测实验」的产出物：产出包含十条 RAG 检索样本与判定标准的评测报告",
+                "binding_rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_2f7f792c789f45e9｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+                "quotes": [
+                  {
+                    "passage_id": "p_95784e947468db66",
+                    "quote": "十条RAG样本，引用对应来源；无匹配应报告不足。",
+                    "quote_verbatim": true,
+                    "source_id": "src_bcfe2c2faaad1600",
+                    "source_title": "实现 Agent Evaluation 评测实验｜提交"
+                  },
+                  {
+                    "passage_id": "p_47871759e812d1c5",
+                    "quote": "# 受控评测",
+                    "quote_verbatim": true,
+                    "source_id": "src_bcfe2c2faaad1600",
+                    "source_title": "实现 Agent Evaluation 评测实验｜提交"
+                  }
+                ],
+                "dimension": "practice",
+                "cap": null,
+                "signals": [],
+                "evidence_types": [
+                  "task_submission"
+                ]
+              }
+            ],
+            "gaps": [
+              {
+                "dimension": "practice",
+                "text": "缺少优化 / 诊断 / 设计取舍的显式信号（可到 5）"
+              }
+            ],
+            "reverse_evidence": [],
+            "excluded": [],
+            "rule_version": "m4c-1",
+            "generated_at": "2026-10-06T06:40:51+00:00",
+            "generated_by": "run_87ac68c212ce4056",
+            "limitations": [
+              "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+              "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+              "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+              "报告不构成对系统整体评估可靠性的结论。"
+            ],
+            "read_only": true
+          },
+          "report_paths": {
+            "json": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_c3aa17d46afbb24da1e7.json",
+            "markdown": "D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\reports\\loop-task_c3aa17d46afbb24da1e7.md"
+          }
+        }
+      }
+    }
+  },
+  "reopen": {
+    "process_id": 33348,
+    "checks": {
+      "practice_persistent_attribution": true,
+      "practice_replay": true,
+      "practice_single_submission": true,
+      "understanding_persistent_attribution": true,
+      "understanding_replay": true,
+      "understanding_single_submission": true,
+      "both_traces_complete": true,
+      "readonly_write_routes_absent": true
+    },
+    "traces": {
+      "practice": {
+        "contract": "m5c-1",
+        "task_id": "task_6ca38fded73baf8376b1",
+        "task_status": "done",
+        "gap_id": "gap_cap_14c033670415a3323449_practice",
+        "gap": {
+          "id": "gap_cap_14c033670415a3323449_practice",
+          "user_id": "local",
+          "goal_id": "goal_demo",
+          "capability_id": "cap_14c033670415a3323449",
+          "dimension": "practice",
+          "current_level": 3,
+          "target_level": 4,
+          "severity": "level_gap_1",
+          "rationale": "实践 3 级，目标 4 级（差 1 级）；缺口：缺少任务证据（独立完成完整任务可到 4）",
+          "assessment_id": "asm_59e482e08dc96d5ab3b0",
+          "status": "closed",
+          "created_at": "2026-10-06 06:40:51",
+          "updated_at": "2026-10-06 06:40:51"
+        },
+        "submissions": [
+          {
+            "id": "sub_8339289433e93e75",
+            "task_id": "task_6ca38fded73baf8376b1",
+            "source_id": "src_bcfe2c2faaad1600",
+            "note": null,
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "source_ids": [
+          "src_bcfe2c2faaad1600"
+        ],
+        "claims": [
+          {
+            "claim_id": "clm_1b7d8d9e61380511f35c",
+            "statement": "提交材料（markdown）包含任务「实现 Agent Evaluation 评测实验」的产出物：产出包含十条 RAG 检索样本与判定标准的评测报告",
+            "sources": [
+              "src_bcfe2c2faaad1600"
+            ]
+          }
+        ],
+        "bindings": [
+          {
+            "capability_id": "cap_14c033670415a3323449",
+            "claim_id": "clm_1b7d8d9e61380511f35c",
+            "role": "supports",
+            "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_2f7f792c789f45e9｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "assessments": [
+          {
+            "id": "asm_30c07597961ff6f2dd3c",
+            "dimension": "understanding",
+            "status": "rated",
+            "level": 2,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_4a859bb64fc24f5336ad",
+            "dimension": "understanding",
+            "status": "rated",
+            "level": 3,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_59e482e08dc96d5ab3b0",
+            "dimension": "practice",
+            "status": "rated",
+            "level": 3,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_fa80776e7240d30f4eab",
+            "dimension": "practice",
+            "status": "rated",
+            "level": 4,
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "complete": true
+      },
+      "understanding": {
+        "contract": "m5c-1",
+        "task_id": "task_c3aa17d46afbb24da1e7",
+        "task_status": "done",
+        "gap_id": "gap_cap_14c033670415a3323449_understanding",
+        "gap": {
+          "id": "gap_cap_14c033670415a3323449_understanding",
+          "user_id": "local",
+          "goal_id": "goal_demo",
+          "capability_id": "cap_14c033670415a3323449",
+          "dimension": "understanding",
+          "current_level": 3,
+          "target_level": 4,
+          "severity": "level_gap_1",
+          "rationale": "理解 3 级，目标 4 级（差 1 级）",
+          "assessment_id": "asm_4a859bb64fc24f5336ad",
+          "status": "open",
+          "created_at": "2026-10-06 06:40:51",
+          "updated_at": "2026-10-06 06:40:51"
+        },
+        "submissions": [
+          {
+            "id": "sub_3f67fe781c1da743",
+            "task_id": "task_c3aa17d46afbb24da1e7",
+            "source_id": "src_acd276755834da75",
+            "note": "probe 物化=D:\\projects\\Personal Growth\\tmp\\i5-jcdthqyy\\journey\\submissions\\task_c3aa17d46afbb24da1e7.probe.md",
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "source_ids": [
+          "src_acd276755834da75"
+        ],
+        "claims": [
+          {
+            "claim_id": "clm_41b4897c891284101c84",
+            "statement": "提交材料（probe_answer）包含任务「解释 RAG 检索与评测的设计选择」的产出物：产出说明检索、重排、引用与失败案例的理解回答",
+            "sources": [
+              "src_acd276755834da75"
+            ]
+          }
+        ],
+        "bindings": [
+          {
+            "capability_id": "cap_14c033670415a3323449",
+            "claim_id": "clm_41b4897c891284101c84",
+            "role": "supports",
+            "rationale": "M4-b LLM 提议 + 确定性闸门通过｜run=run_87ac68c212ce4056｜proposer=fake/fake-deterministic｜理由：受控交互实验：固定能力路径，不代表模型判断",
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "assessments": [
+          {
+            "id": "asm_30c07597961ff6f2dd3c",
+            "dimension": "understanding",
+            "status": "rated",
+            "level": 2,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_4a859bb64fc24f5336ad",
+            "dimension": "understanding",
+            "status": "rated",
+            "level": 3,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_59e482e08dc96d5ab3b0",
+            "dimension": "practice",
+            "status": "rated",
+            "level": 3,
+            "created_at": "2026-10-06 06:40:51"
+          },
+          {
+            "id": "asm_fa80776e7240d30f4eab",
+            "dimension": "practice",
+            "status": "rated",
+            "level": 4,
+            "created_at": "2026-10-06 06:40:51"
+          }
+        ],
+        "complete": true
+      }
+    }
+  },
+  "quality_copies": [
+    {
+      "database": "tmp/i5-jcdthqyy/journey/demo.db",
+      "before": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 4,
+          "passages": 7,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 4,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 4,
+          "evidence": 5,
+          "conflicts": 0,
+          "conflict_candidates": 0,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 20
+        }
+      },
+      "damage": {
+        "status": "caught",
+        "injected_claim": "clm_damage_991b9ad6",
+        "injected_evidence": "ev_damage_991b9ad6",
+        "quote_violations_after_injection": 1,
+        "audit_status_during_injection": "fail"
+      },
+      "after": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 4,
+          "passages": 7,
+          "entities": 0,
+          "entity_aliases": 0,
+          "events": 0,
+          "relations": 4,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 4,
+          "evidence": 5,
+          "conflicts": 0,
+          "conflict_candidates": 0,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 22
+        }
+      },
+      "data_restored_except_audit_log": true
+    },
+    {
+      "database": "data/growth.db",
+      "before": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 3,
+          "passages": 109,
+          "entities": 60,
+          "entity_aliases": 3,
+          "events": 1,
+          "relations": 2,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 2,
+          "evidence": 6,
+          "conflicts": 0,
+          "conflict_candidates": 2,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 1453
+        }
+      },
+      "damage": {
+        "status": "caught",
+        "injected_claim": "clm_damage_93f9d4c6",
+        "injected_evidence": "ev_damage_93f9d4c6",
+        "quote_violations_after_injection": 1,
+        "audit_status_during_injection": "fail"
+      },
+      "after": {
+        "status": "pass",
+        "total_violations": 0,
+        "checks": {
+          "evidence_quote_not_in_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_evidence": {
+            "violations": 0,
+            "sample": []
+          },
+          "claims_without_passages": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "evidence_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "relations_missing_claim": {
+            "violations": 0,
+            "sample": []
+          },
+          "passages_missing_source": {
+            "violations": 0,
+            "sample": []
+          },
+          "events_missing_passage": {
+            "violations": 0,
+            "sample": []
+          },
+          "aliases_self_referential": {
+            "violations": 0,
+            "sample": []
+          },
+          "ledger_complete_passage_missing": {
+            "violations": 0,
+            "sample": []
+          }
+        },
+        "counts": {
+          "sources": 3,
+          "passages": 109,
+          "entities": 60,
+          "entity_aliases": 3,
+          "events": 1,
+          "relations": 2,
+          "timeline_entries": 0,
+          "place_assertions": 0,
+          "claims": 2,
+          "evidence": 6,
+          "conflicts": 0,
+          "conflict_candidates": 2,
+          "review_feedback": 0,
+          "evolution_snapshots": 0,
+          "audit_log": 1455
+        }
+      },
+      "data_restored_except_audit_log": true
+    }
+  ],
+  "original_database_states": {
+    "data\\growth.db": {
+      "table_hashes": {
+        "agent_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attack_reports": "906c0f1f7728dd4a44e77a66817abc257c0a9b7b4a58f78a01f770df8048adf5",
+        "audit_log": "baa03607fa40a26c2a73bbd304b7cb856bbbe25ec29b86c03756cfa34251c8e2",
+        "claims": "622b4ccf51c9c19e048dc188e0cc89ee7431fc7638be8220cc4b1870e6d5ef4d",
+        "clarification_questions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "completeness_assessments": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflict_candidates": "cf215430c082c965731954204ff0ec10d162e6afe964eb9c7b4b69f1633398ed",
+        "conflicts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities": "7146bcd9781adc5b1b228587daa9900d37fcf61d58a04736c5f72de96b25d190",
+        "entity_aliases": "2931bfec9206bbccb9a663eba5c7f4595cfdc0e64625143852af6b8218f6d020",
+        "events": "302503d828d13b89d4d5633928e28a5da16d2bdf45c4908f9021fa508d879d22",
+        "evidence": "bb08ca45f6416de9970b01e364958ce7040d5a82e7f9fd8f47f8d31d0527b8da",
+        "evolution_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "extraction_batches": "16813573fe27ce1db31e5b2c1e711d6f399fd4a76b1002dbec44a83c4016d6ca",
+        "extraction_passages": "13a9f8ff5151a246402d5a00086c54c59c28158ed69e254ba7bfcac603d45746",
+        "ingestion_artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ingestion_jobs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "normalized_documents": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "passages": "3849a4479672b5720369d9001d34be7be62ea8451d52eef7c0ba140bf8a9795a",
+        "people_extraction_batches": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "people_extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "place_assertions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processing_errors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_assets": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "recognition_results": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relations": "cbf5e053a65243024fb2b5a49dc3438ffde2c8470fe75d69e2925ac883218eb4",
+        "review_feedback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "review_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sources": "376df6c414d93b03bfe6de3f4a20783c5cb40b1b4e6818ba7afed3b4a1062d3f",
+        "timeline_entries": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_evidence_anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_knowledge_drafts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memory_history": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_steps": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_sync_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "counts": {
+        "agent_runs": 0,
+        "annotations": 0,
+        "attack_reports": 4,
+        "audit_log": 1453,
+        "claims": 2,
+        "clarification_questions": 0,
+        "completeness_assessments": 0,
+        "conflict_candidates": 2,
+        "conflicts": 0,
+        "entities": 60,
+        "entity_aliases": 3,
+        "events": 1,
+        "evidence": 6,
+        "evolution_snapshots": 0,
+        "extraction_batches": 6,
+        "extraction_passages": 109,
+        "ingestion_artifacts": 0,
+        "ingestion_jobs": 0,
+        "normalized_documents": 0,
+        "passages": 109,
+        "people_extraction_batches": 0,
+        "people_extraction_passages": 0,
+        "place_assertions": 0,
+        "processing_errors": 0,
+        "raw_assets": 0,
+        "recognition_results": 0,
+        "relations": 2,
+        "review_feedback": 0,
+        "review_tasks": 0,
+        "sources": 3,
+        "timeline_entries": 0,
+        "v2_evidence_anchors": 0,
+        "v2_knowledge_drafts": 0,
+        "v2_memories": 0,
+        "v2_memory_history": 0,
+        "v2_reading_runs": 0,
+        "v2_reading_steps": 0,
+        "v2_sync_tasks": 0
+      }
+    },
+    "data\\demo\\demo.db": {
+      "table_hashes": {
+        "agent_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attack_reports": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "audit_log": "a881c728f562af1e36bca3c6a698bf48b54d09579d45db52a1369c80d16c1b8c",
+        "claims": "8c6ca8446f4b899c53b58b83b8e63324a25ac3becd0a6fa5810a02885bec5e03",
+        "clarification_questions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "completeness_assessments": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflict_candidates": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflicts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entity_aliases": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "events": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "evidence": "0a281216bd69f74df5f530ec077ca4bf608c6a9091a8f2af2b3dc55030ed08db",
+        "evolution_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_agent_runs": "23d3c496757f1b0ba8c26b1bba3c1990756bb5f2bd4d9fd3b30b6682cbae4744",
+        "g_assessments": "d32f031aee23417fd66bb4218c4e72bcb87260d3226808e3fe8f89cb55dd36f9",
+        "g_capabilities": "4957c6a08ed222e3bbf88fd56506c07919bc9d253effc6eb9ff6556fd83206d2",
+        "g_capability_claims": "185bf8a060157830ddf2067a9419ed42bb5aac80a047e0095a25ac648da4472c",
+        "g_events": "1171dfff0a4bf728de0b57701f1b3aaa0f88b5396ae7b21460079edcd98177eb",
+        "g_gaps": "cdc00a83537bb0d08266c13aee19a11e79d555d46cac89bb4f7ad6367607e591",
+        "g_goal_clarifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_goals": "bd36c8016ff73281f2b25b39408a2a46e77926e2a97a1bd0c9b53783a525d6c1",
+        "g_growth_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_notifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_settings": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_task_submissions": "677df5dedae6d31a8d1dfb38e572862b9521b49041d73bd2a61d7c255968157d",
+        "g_tasks": "154787e44f55f141b6c7710028e89c43d513a68373b3ef98042b334833e22d6a",
+        "g_users": "b389ff6a64d682f5c0faef73b68cbc4997e48eceadb32025b58441f12347641c",
+        "ingestion_artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ingestion_jobs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "normalized_documents": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "passages": "e6328d38aa8a1777ab388a86cfcaf300e4bea4ce084c262daa596f139cbdf0db",
+        "people_extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "place_assertions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processing_errors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_assets": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "recognition_results": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relations": "2dcf45ea47bce5512526ea8c80f1dbf02b82e9ef5c25078df2979511bd5fb73e",
+        "review_feedback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "review_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sources": "77c2401c1e2e3d338923b0c69f4d96383e35dadfcda22bdda1e5e68b2eedd670",
+        "timeline_entries": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_evidence_anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_knowledge_drafts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memory_history": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_steps": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_sync_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "counts": {
+        "agent_runs": 0,
+        "annotations": 0,
+        "attack_reports": 0,
+        "audit_log": 37,
+        "claims": 3,
+        "clarification_questions": 0,
+        "completeness_assessments": 0,
+        "conflict_candidates": 0,
+        "conflicts": 0,
+        "entities": 0,
+        "entity_aliases": 0,
+        "events": 0,
+        "evidence": 5,
+        "evolution_snapshots": 0,
+        "extraction_passages": 0,
+        "g_agent_runs": 3,
+        "g_assessments": 3,
+        "g_capabilities": 1,
+        "g_capability_claims": 3,
+        "g_events": 3,
+        "g_gaps": 2,
+        "g_goal_clarifications": 0,
+        "g_goals": 1,
+        "g_growth_snapshots": 0,
+        "g_memories": 0,
+        "g_notifications": 0,
+        "g_proactive_runs": 0,
+        "g_proactive_settings": 0,
+        "g_task_submissions": 1,
+        "g_tasks": 1,
+        "g_users": 1,
+        "ingestion_artifacts": 0,
+        "ingestion_jobs": 0,
+        "normalized_documents": 0,
+        "passages": 26,
+        "people_extraction_passages": 0,
+        "place_assertions": 0,
+        "processing_errors": 0,
+        "raw_assets": 0,
+        "recognition_results": 0,
+        "relations": 3,
+        "review_feedback": 0,
+        "review_tasks": 0,
+        "sources": 3,
+        "timeline_entries": 0,
+        "v2_evidence_anchors": 0,
+        "v2_knowledge_drafts": 0,
+        "v2_memories": 0,
+        "v2_memory_history": 0,
+        "v2_reading_runs": 0,
+        "v2_reading_steps": 0,
+        "v2_sync_tasks": 0
+      }
+    },
+    "data\\demo-return\\demo.db": {
+      "table_hashes": {
+        "agent_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attack_reports": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "audit_log": "acc3bec2f1ac56b5ffa9bcfa55996f2f1ac218a1466f85eb968720ba1496ec47",
+        "claims": "404d8d6e2b03e100de18fa56e24cb546d113b1b57463f08ac01fdb7d7d57a08d",
+        "clarification_questions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "completeness_assessments": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflict_candidates": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflicts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entity_aliases": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "events": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "evidence": "c5acceb10001fa9fd02b117e7ecd6d36558888c24757a026ec24434e9e71e407",
+        "evolution_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_agent_runs": "bc1e8e7ada9a9cc50f7b207273d112f401f8cdae38a58b1cfd95f02a5f1cd502",
+        "g_assessments": "1762428ca914fe7cbbf77904dc8e7de9853931894a658a7ac4bf5bed6a04b02d",
+        "g_capabilities": "8cae4d5865d8196b71b82d38f10d0a8d885dff75e5122c42123750d4cdb98482",
+        "g_capability_claims": "105675e041c52ff5e26338c197ece273b004e13f5584887a08f3a7c697192c70",
+        "g_events": "afbc63ef76461d750d244e603c8d1b90b3c2aabcb16a74faefa3bdda69d02082",
+        "g_gaps": "133d0bef9c75a9054765e4d8350f8bfb3e2836c8136b683c086802b4519c79fd",
+        "g_goal_clarifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_goals": "8b797fe07d5f942e6b26a47d0da05e49784c88e7f068c998625a4d954ba1e733",
+        "g_growth_snapshots": "8ff7f10ef173f7282a83ab0d82fa85fc9c3b9cdf98a1de1ee016a1db1321563a",
+        "g_memories": "89825a2fcc44f95bf33c4523ba5a229fab56c55904b77f283dddbf8940cba93c",
+        "g_notifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_settings": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_task_submissions": "637fc58c99072af95ef2b3b230dc34d30ac6dfd71b6d68ec349e844d5db25630",
+        "g_tasks": "2a9f73df4852be6f7fafb72213acf3eabeb6cfc2792baa6baeeea5fc00854005",
+        "g_users": "bbdf7b1d67fdf6aa23b6f736d978fb1326fd01c173b7061aa455660438eb41fa",
+        "ingestion_artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ingestion_jobs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "normalized_documents": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "passages": "1429d89742f32b4d07d16749b8ba355ebe734d690f6028bb497434324a820940",
+        "people_extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "place_assertions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processing_errors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_assets": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "recognition_results": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relations": "36a276ff3dd04d52e006381fbc9312f2110a5d9e4355f25ed33f3efe514635ed",
+        "review_feedback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "review_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sources": "a114c3dc4bfdc7aebaed648ddc733527e0d688e6e1fa081bf0d87d07f472303d",
+        "timeline_entries": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_evidence_anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_knowledge_drafts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memory_history": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_steps": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_sync_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "counts": {
+        "agent_runs": 0,
+        "annotations": 0,
+        "attack_reports": 0,
+        "audit_log": 37,
+        "claims": 3,
+        "clarification_questions": 0,
+        "completeness_assessments": 0,
+        "conflict_candidates": 0,
+        "conflicts": 0,
+        "entities": 0,
+        "entity_aliases": 0,
+        "events": 0,
+        "evidence": 5,
+        "evolution_snapshots": 0,
+        "extraction_passages": 0,
+        "g_agent_runs": 3,
+        "g_assessments": 3,
+        "g_capabilities": 1,
+        "g_capability_claims": 3,
+        "g_events": 10,
+        "g_gaps": 2,
+        "g_goal_clarifications": 0,
+        "g_goals": 1,
+        "g_growth_snapshots": 2,
+        "g_memories": 7,
+        "g_notifications": 0,
+        "g_proactive_runs": 0,
+        "g_proactive_settings": 0,
+        "g_task_submissions": 1,
+        "g_tasks": 1,
+        "g_users": 1,
+        "ingestion_artifacts": 0,
+        "ingestion_jobs": 0,
+        "normalized_documents": 0,
+        "passages": 26,
+        "people_extraction_passages": 0,
+        "place_assertions": 0,
+        "processing_errors": 0,
+        "raw_assets": 0,
+        "recognition_results": 0,
+        "relations": 3,
+        "review_feedback": 0,
+        "review_tasks": 0,
+        "sources": 3,
+        "timeline_entries": 0,
+        "v2_evidence_anchors": 0,
+        "v2_knowledge_drafts": 0,
+        "v2_memories": 0,
+        "v2_memory_history": 0,
+        "v2_reading_runs": 0,
+        "v2_reading_steps": 0,
+        "v2_sync_tasks": 0
+      }
+    },
+    "data\\interactive\\demo.db": {
+      "table_hashes": {
+        "agent_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attack_reports": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "audit_log": "c05907243ffaf676fe6791b24cf182c1e453e4f1ce9731c5aa8c1c10a21b74da",
+        "claims": "c1999723fcd0964fac0efe1ba1386a0674608c92bdf7641b5b2ba572365a9dac",
+        "clarification_questions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "completeness_assessments": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflict_candidates": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "conflicts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entity_aliases": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "events": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "evidence": "93f74f523d4141af2caffa8592a6965efe510cb5b063e448ad265cd5defa9f71",
+        "evolution_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_agent_runs": "e86c0a6e2aa572664976216153b49ed9aaf6bec37a51e223fb817e7136b74f5b",
+        "g_assessments": "628c43fdd79211f3cf815d02d0653fc982408b6dfecd0e079bf4a68fd2a6eab2",
+        "g_capabilities": "b70e4b146860417147b0106d1a9abc841c3467527ded7989e123665c88ee41e1",
+        "g_capability_claims": "c82814d70ad5df10559649ce4394ab2e83b934a4fca71ff3416d722dc58791fa",
+        "g_events": "e7926cf8c8cb78a073a0039d01ab41ff6877eafef423b81a789e67fd4bb885ea",
+        "g_gaps": "8a6e1b14eab5816593eb88230bb94090c739bb2b62a1d08061016bff344a7c1d",
+        "g_goal_clarifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_goals": "6bda9d50e8d0daffc10f2c531b232860d231c4e5ab5e298f21e81257ebe2b005",
+        "g_growth_snapshots": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_notifications": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_proactive_settings": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "g_task_submissions": "895ac27cb8b8f287fb976f89181ff70c2622e1dd819f76fb1591a04efdefe213",
+        "g_tasks": "e6727546c9f26565d5e9adcc8d11901ebe2c8dbf41774d4f7dc7a0bfbcb540b3",
+        "g_users": "4efaee384c6b2fb6a273fcdcde464cffa3cb4ee29862d1cf4fed826957291543",
+        "ingestion_artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ingestion_jobs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "normalized_documents": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "passages": "c0ab360181ce423bcda278217466ac7853ff9acdb71885201faefda012416add",
+        "people_extraction_passages": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "place_assertions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processing_errors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_assets": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "recognition_results": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relations": "303ba176edc57ed4ee93ad58e2f8429ca9ff8d4bc02a39a091e351925c52cf9d",
+        "review_feedback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "review_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sources": "89534b51027dfe48cee8665e0b1e1f96e394fb8e247c0b401d8d352db4694459",
+        "timeline_entries": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_evidence_anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_knowledge_drafts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memories": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_memory_history": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_runs": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_reading_steps": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v2_sync_tasks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "counts": {
+        "agent_runs": 0,
+        "annotations": 0,
+        "attack_reports": 0,
+        "audit_log": 37,
+        "claims": 3,
+        "clarification_questions": 0,
+        "completeness_assessments": 0,
+        "conflict_candidates": 0,
+        "conflicts": 0,
+        "entities": 0,
+        "entity_aliases": 0,
+        "events": 0,
+        "evidence": 5,
+        "evolution_snapshots": 0,
+        "extraction_passages": 0,
+        "g_agent_runs": 3,
+        "g_assessments": 3,
+        "g_capabilities": 1,
+        "g_capability_claims": 3,
+        "g_events": 4,
+        "g_gaps": 2,
+        "g_goal_clarifications": 0,
+        "g_goals": 1,
+        "g_growth_snapshots": 0,
+        "g_memories": 0,
+        "g_notifications": 0,
+        "g_proactive_runs": 0,
+        "g_proactive_settings": 0,
+        "g_task_submissions": 1,
+        "g_tasks": 2,
+        "g_users": 1,
+        "ingestion_artifacts": 0,
+        "ingestion_jobs": 0,
+        "normalized_documents": 0,
+        "passages": 26,
+        "people_extraction_passages": 0,
+        "place_assertions": 0,
+        "processing_errors": 0,
+        "raw_assets": 0,
+        "recognition_results": 0,
+        "relations": 3,
+        "review_feedback": 0,
+        "review_tasks": 0,
+        "sources": 3,
+        "timeline_entries": 0,
+        "v2_evidence_anchors": 0,
+        "v2_knowledge_drafts": 0,
+        "v2_memories": 0,
+        "v2_memory_history": 0,
+        "v2_reading_runs": 0,
+        "v2_reading_steps": 0,
+        "v2_sync_tasks": 0
+      }
+    }
+  }
+}

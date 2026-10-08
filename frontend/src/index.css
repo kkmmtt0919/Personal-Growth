@@ -203,3 +203,45 @@ details p { margin: 8px 0; }
   .page-state { padding-top: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+.task-actions { margin: 24px 0; display: grid; gap: 12px; }
+.task-actions textarea { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--line); border-radius: 3px; font: inherit; resize: vertical; background: var(--paper); color: var(--ink); }
+.task-action-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.task-actions button:disabled { opacity: .6; cursor: wait; }
+.task-actions input[type="file"] { width: 100%; min-width: 0; font: inherit; }
+.assessment-details { display: grid; gap: 20px; padding: 32px 0; border-top: 1px solid var(--line); }
+.assessment-details article { display: grid; gap: 10px; padding: 16px 0; }
+.assessment-details details { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.assessment-details p, .assessment-details summary { overflow-wrap: anywhere; }
+.assessment-details blockquote { margin: 0; padding: 16px; border-left: 2px solid var(--accent); }
+.onboarding-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; margin: 32px 0; }
+.onboarding-history { display: grid; align-content: start; gap: 16px; }
+.onboarding-layout p, .onboarding-layout button, .onboarding-layout h2 { overflow-wrap: anywhere; }
+.goal-turn { padding: 20px 0; border-bottom: 1px solid var(--line); }
+.goal-turn blockquote { margin: 12px 0 0; padding: 12px; border-left: 2px solid var(--accent); }
+.goal-elements { margin: 24px 0; padding: 20px; border: 1px solid var(--line); }
+@media (max-width: 700px) { .onboarding-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+/* 首次使用能力树：层级与未知现状保持可见。 */
+.onboarding-tree article { border-left: 2px solid var(--line); padding: .6rem 1rem; margin-block: .5rem; overflow-wrap: anywhere; }
+.onboarding-tree h4, .onboarding-tree p { margin-block: .4rem; }
+.onboarding-tree .capability-depth-2 { margin-left: 1rem; }
+.onboarding-tree .capability-depth-3 { margin-left: 2rem; }
+.personal-materials { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1.5rem; }
+.personal-materials select { width: 100%; max-width: 100%; padding: .7rem; background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+.material-preview { padding-block: 1.5rem; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.material-preview blockquote { white-space: pre-wrap; margin-inline: 0; padding: .8rem; border-left: 2px solid var(--accent); }
+.new-user-home { padding-block: 5rem; max-width: 760px; }
+.home-switcher { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.home-switcher select { max-width: 100%; padding: .6rem; background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+.home-next, .home-selected { margin-block: 2rem; border-top: 1px solid var(--line); padding-block: 1.5rem; }
+.mentor-page { max-width: 900px; }
+.mentor-turn { padding-block: 1.5rem; border-bottom: 1px solid var(--line); }
+.mentor-user, .mentor-answer { padding: 1rem; overflow-wrap: anywhere; }
+.mentor-user { background: #ece9e2; }
+.mentor-turn p { white-space: pre-wrap; }
+.mentor-preference textarea { display: block; width: 100%; margin-block: .8rem; }
+.mentor-compose { margin-block: 2rem; }
+
+.goal-revision, .mentor-task-planner { margin-block: 2rem; border-top: 1px solid var(--line); padding-block: 1rem; }
+.goal-revision textarea, .mentor-task-planner select, .onboarding-tree textarea, .onboarding-tree select { display: block; width: 100%; margin-block: .7rem; background: var(--paper); color: var(--ink); border: 1px solid var(--line); padding: .6rem; }
+.action-review { border-left: 2px solid var(--accent); padding: 1rem; margin-block: 1rem; overflow-wrap: anywhere; }
+.action-review .button { margin: .4rem .6rem .4rem 0; }

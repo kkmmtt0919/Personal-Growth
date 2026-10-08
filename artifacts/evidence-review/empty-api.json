@@ -1,0 +1,62 @@
+{
+  "capability": "受控无攻击场景",
+  "assessment": {
+    "practice": null,
+    "understanding": null
+  },
+  "supports": [],
+  "gaps": [],
+  "report": {
+    "artifact": "m4d-assessment-report",
+    "capability": {
+      "id": "cap_8ec7c64e1be3b502cf7a",
+      "goal_id": "goal_m4d",
+      "path": "LLM 基础/检索增强/受控无攻击场景",
+      "depth": 3,
+      "target_level": 3,
+      "status": "active",
+      "current_level_status": "unassessed",
+      "current_level_understanding": null,
+      "current_level_practice": null
+    },
+    "dimensions": {
+      "understanding": {
+        "assessment_id": null,
+        "status": "unassessed",
+        "level": null,
+        "base_level": null,
+        "rationale": "尚无评定结果",
+        "why_not_higher": [],
+        "supports": [],
+        "reverse_evidence": [],
+        "excluded": []
+      },
+      "practice": {
+        "assessment_id": null,
+        "status": "unassessed",
+        "level": null,
+        "base_level": null,
+        "rationale": "尚无评定结果",
+        "why_not_higher": [],
+        "supports": [],
+        "reverse_evidence": [],
+        "excluded": []
+      }
+    },
+    "supports": [],
+    "gaps": [],
+    "reverse_evidence": [],
+    "attack_reviews": [],
+    "excluded": [],
+    "rule_version": "m4c-1",
+    "generated_at": "2026-10-06T06:52:50+00:00",
+    "generated_by": "growth_os.assessment.report",
+    "limitations": [
+      "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+      "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+      "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+      "报告不构成对系统整体评估可靠性的结论。"
+    ],
+    "read_only": true
+  }
+}

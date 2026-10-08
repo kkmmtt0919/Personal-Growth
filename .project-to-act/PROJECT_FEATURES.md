@@ -15,19 +15,19 @@
 
 | 功能 ID | 功能 | 来源引用 | 优先级 | 状态 | 验收状态 | 依赖 | 完成条件 | 设计引用 | 证据 ID |
 |---|---|---|---|---|---|---|---|---|---|
-| F-001 | 目标澄清与确认（Goal Agent、澄清状态机、目标存储） | PRD §16 §17 | P0 | 已完成 | 通过 | Q1 Q2 | ≤6 轮产出 confirmed goal 且含方向/目的/周期/可衡量结果 | ARCHITECTURE §5.3；ROADMAP M2 | EV-052 EV-056 EV-057 |
-| F-002 | 能力模型动态生成（目标 → 能力树 + 外部参考） | PRD §25 | P0 | 已完成 | 通过 | F-001 | 生成 ≥3 领域 ≥12 能力点，且可人工调整不被覆盖 | ARCHITECTURE §5.3；ROADMAP M2 | EV-053 EV-056 |
-| F-003 | 文档摄入与检索（PDF/Markdown/TXT/代码/ZIP） | PRD §22 §23 | P0 | 进行中 | 部分（后端 Gate 通过；PDF 产品上传入口未建） | M1 | 上传 PDF 与 MD 均产出 passages 且可检索 | ARCHITECTURE §7；ROADMAP M3 | EV-059 EV-061 EV-065 |
+| F-001 | 目标澄清与确认（Goal Agent、澄清状态机、目标存储） | PRD §16 §17 | P0 | 已完成 | 通过（M2内核；O1页面；U1真实模型产品接线） | Q1 Q2 | ≤6 轮产出 confirmed goal 且含方向/目的/周期/可衡量结果 | ARCHITECTURE §5.3；ROADMAP M2 | EV-052 EV-056 EV-057 EV-089 |
+| F-002 | 能力模型动态生成（目标 → 能力树 + 外部参考） | PRD §25 | P0 | 已完成 | 通过 | F-001 | 生成 ≥3 领域 ≥12 能力点，且可人工调整不被覆盖 | ARCHITECTURE §5.3；ROADMAP M2 | EV-053 EV-056 EV-090 EV-094 |
+| F-003 | 文档摄入与检索（PDF/Markdown/TXT/代码/ZIP） | PRD §22 §23 | P0 | 进行中 | 部分（P1 Markdown/TXT/代码上传与确认绑定通过；PDF/ZIP直接上传与检索页待建） | M1 | 上传 PDF 与 MD 均产出 passages 且可检索 | ARCHITECTURE §7；ROADMAP M3；docs/PERSONAL-MATERIALS-PLAN.md | EV-059 EV-061 EV-065 EV-092 |
 | F-004 | GitHub 集成（OAuth、选仓库、项目分析） | PRD §7.3 | P0 | 进行中 | 部分（公共仓库已通过；OAuth/私有仓库未做，M3 决策 6） | M1 | 授权后自动产出技术栈清单与 ≥3 条 capability claim；token 不落明文 | ARCHITECTURE §3.4；ROADMAP M3 | EV-062 EV-065 |
 | F-005 | 证据图谱（Claim / Evidence / Source / Provenance / Attack / Confidence） | PRD §5 §6 §7 §8 | P0 | 已完成 | 通过 | M1 | evkg 全流水线可用；audit_store=pass；damage_selftest=caught | ARCHITECTURE §3 §7；ROADMAP M1 | EV-008 EV-037…EV-041（QG2 双向测量口径） |
 | F-006 | 五星能力审计与缺口识别 | PRD §9 §10 | P0 | 已完成 | 通过 | F-002 F-005 | 通过 G3 的 A/B 对照实验；每级可追溯；能解释"为什么三星"（M4 已封板：契约 / 绑定 / 两维度评级 / 解释与回填 / 编排与缺口；产品入口留 M8） | ARCHITECTURE §3；ACCEPTANCE G3；ROADMAP M4 | EV-066 EV-067 EV-068 EV-069 EV-070 EV-071 |
-| F-007 | 任务生成与完成闭环 | PRD §11 §12 | P0 | 已完成 | 通过（M5 Gate；M8-c 只读展示） | F-006 | G4/G5 通过，变化可归因 | docs/M5-PLAN.md；docs/M8-PLAN.md | EV-072…EV-076 EV-081 |
+| F-007 | 任务生成与完成闭环 | PRD §11 §12 | P0 | 已完成 | 通过（M5 Gate；I1–I5与O3新目标受控旅程） | F-006 | G4/G5 通过，变化可归因 | docs/M5-PLAN.md；docs/M8-PLAN.md；docs/ONBOARDING-PLAN.md | EV-072…EV-076 EV-081 EV-087 EV-091 |
 | F-008 | Memory 三层（Profile / State / Growth History） | PRD §13 | P0 | 已完成 | 通过 | F-006 | 三层互不覆盖；能展示能力星级时间线；G6 的隔天 Agent 回答留 M7/M8 | ROADMAP M6 | EV-077 |
 | F-009 | 主动 Agent（每日分析、4 类事件、提醒可关闭） | PRD §14 §15 | P0 | 已完成 | 通过 | F-007 F-008 | 无变化不通知；冷却期生效；用户可关闭；外部投递与自动重建继续冻结 | ARCHITECTURE §5.4；ROADMAP M7 | EV-078 EV-079 EV-080 |
 | F-010 | Agent 运行时与轨迹（Runtime / ToolRegistry / ContextAssembler / Tracer） | PRD §29 §30 | P0 | 进行中 | 部分（最小运行时与轨迹已通过；编排与更多工具随 M4/M5） | M1 | 轨迹落 `g_agent_runs` 可回放；工具调用可审计 | ARCHITECTURE §5；ROADMAP M1 | EV-051 EV-056 |
-| F-011 | UI · Growth Dashboard | PRD §19 | P0 | 已完成 | 通过（本地只读 Demo与地图改版） | F-006 | 实际能力地图、选中详情与任务定位来自API，键盘及三宽度验证 | docs/M8-PLAN.md | EV-081 EV-085 |
-| F-012 | UI · Knowledge / Evidence Space | PRD §20 | P0 | 进行中 | 部分（引文/来源/绑定理由已验证；攻击详情未展示） | F-005 | 完整范围含攻击结果；M8-c 只读部分已交付 | docs/M8-PLAN.md | EV-081 |
-| F-013 | UI · AI Mentor | PRD §21 | P0 | 已规划 | 待检查（M8-c 冻结，不实施） | F-006 F-008 | 回答访问 Goal+Memory+Capability+Evidence+History | ROADMAP M8；docs/M8-PLAN.md | 无 |
+| F-011 | UI · Growth Dashboard | PRD §19 | P0 | 已完成 | 通过（Demo地图与U1实际目标个人首页） | F-006 | 实际能力地图、选中详情与任务定位来自API，键盘及三宽度验证 | docs/M8-PLAN.md | EV-081 EV-085 |
+| F-012 | UI · Knowledge / Evidence Space | PRD §20 | P0 | 进行中 | 部分（只读攻击/反向/排除详情已交付；完整知识空间未验收） | F-005 | 只读评级依据和攻击结果可核对；完整知识空间保留 | docs/M8-PLAN.md | EV-081 EV-088 |
+| F-013 | UI · AI Mentor | PRD §21 | P0 | 进行中 | 通过U1真实对话与U2显式任务确认入口 | F-006 F-008 | 回答访问 Goal+Memory+Capability+Evidence+History | ROADMAP M8；docs/PRODUCT-EXPERIENCE-PLAN.md | EV-093 EV-094 |
 | F-014 | 项目验收证据链（用 evkg 承载验收证据，与用户库隔离） | DECISIONS D8 | P1 | 已规划 | 待检查 | F-005 | 每道验收门有可审计 dossier；acceptance.db 与用户库物理隔离 | ACCEPTANCE §2 | 无 |
 | F-015 | LLM 网关配置与 Agent 模型分层 | DECISIONS D3 | P0 | 已完成 | 通过 | M1 | evkg 流水线与 Agent 可用不同模型；verifier 可独立配置 | ARCHITECTURE §5.2 | EV-029 EV-051 |
 | F-016 | UI · Growth Loop | M8 冻结范围 | P0 | 已完成 | 通过（本地只读 Demo） | F-007 | 缺口、任务、提交、重评前后与证据入口 | docs/M8-PLAN.md | EV-081 |

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": [
+    "activate_practice",
+    "empty_selection_disabled",
+    "native_file_selection",
+    "upload_complete",
+    "practice_3_to_4",
+    "understanding_unchanged",
+    "reload_persistence",
+    "completed_form_hidden",
+    "desktop_form_no_overflow",
+    "mobile_form_no_overflow",
+    "desktop_result_no_overflow",
+    "mobile_result_no_overflow"
+  ],
+  "constructed": true,
+  "real_model_calls": 0
+}

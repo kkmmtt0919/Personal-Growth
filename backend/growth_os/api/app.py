@@ -7,6 +7,7 @@ from datetime import datetime
 from fastapi import FastAPI, HTTPException
 
 from ..agent.return_summary import GrowthReturnAgent, ReturnSummaryError
+from ..assessment.report import build_report
 from ..evidence import adapter
 from ..store import GrowthStore
 
@@ -86,9 +87,14 @@ def create_app(store: GrowthStore, evidence_store=None, *, loop_reports=None, re
         if row is None:
             raise HTTPException(404, "能力点不存在")
         links = store.list_capability_claims(capability_id=capability_id, role="supports")
+        assessment_report = build_report(store, evidence_store, capability_id=capability_id) if evidence_store else None
+        excluded_ids = {item["claim_id"] for item in assessment_report["excluded"]} if assessment_report else set()
+        rated_supports = {item["claim_id"] for item in assessment_report["supports"]} if assessment_report else set()
         dossiers = {item["claim"]["id"]: item for item in adapter.claims_overview(evidence_store)} if evidence_store else {}
         supports = []
         for link in links:
+            if link["claim_id"] in excluded_ids and link["claim_id"] not in rated_supports:
+                continue
             dossier = dossiers.get(link["claim_id"], {})
             first = max(dossier.get("evidence") or [{}],
                         key=lambda item: len(item.get("quote") or ""))
@@ -105,6 +111,7 @@ def create_app(store: GrowthStore, evidence_store=None, *, loop_reports=None, re
             "assessment": {"practice": row["current_level_practice"], "understanding": row["current_level_understanding"]},
             "supports": supports,
             "gaps": [gap["rationale"] for gap in store.list_gaps(capability_id=capability_id, status="open")],
+            "report": assessment_report,
         }
 
     @app.get("/api/growth-loop/{goal_id}")
@@ -121,6 +128,7 @@ def create_app(store: GrowthStore, evidence_store=None, *, loop_reports=None, re
                     "gap": store.get_gap(task["gap_id"]),
                     "objective": task["objective"],
                     "acceptance": task["acceptance"],
+                    "deliverable_type": task["deliverable_type"],
                     "capability_id": task["capability_id"],
                     "attribution": (loop_reports or {}).get(task["id"]),
                     "submissions": store.list_task_submissions(task_id=task["id"]),

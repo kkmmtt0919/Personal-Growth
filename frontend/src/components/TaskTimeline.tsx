@@ -2,11 +2,15 @@ import { useEffect } from 'react'
 import type { GrowthTask } from '../types/growth'
 import { Link, useLocation } from 'react-router-dom'
 import { taskAnchor } from './taskLinks'
+import { TaskActions } from './TaskActions'
+import { useProduct } from '../api/product'
 
 const statuses: Record<string, string> = { proposed: '待确认', active: '进行中', blocked: '受阻', done: '已完成', abandoned: '已放弃' }
 
-export function TaskTimeline({ tasks }: { tasks: GrowthTask[] }) {
-  const { hash } = useLocation()
+export function TaskTimeline({ tasks, refresh, submissionEnabled = false }: { tasks: GrowthTask[]; refresh?: () => Promise<void>; submissionEnabled?: boolean }) {
+  const { product } = useProduct()
+  const { hash, search } = useLocation()
+  const goal = new URLSearchParams(search).get('goal')
   useEffect(() => {
     if (!hash) return
     let id: string
@@ -15,8 +19,9 @@ export function TaskTimeline({ tasks }: { tasks: GrowthTask[] }) {
     if (target) { target.scrollIntoView({ block: 'start' }); target.focus({ preventScroll: true }) }
   }, [hash, tasks])
   return <main>
-    <section className="page-hero detail-hero"><div><p className="eyebrow">01 / GROWTH LOOP</p><h1>让下一步，有据可循。</h1><p className="lead">从证据缺口生成任务，通过提交与重评验证成长。</p></div><Link className="button outline" to="/#capability-map">返回能力地图 ↗</Link></section>
+    <section className="page-hero detail-hero"><div><p className="eyebrow">01 / GROWTH LOOP</p><h1>让下一步，有据可循。</h1><p className="lead">从证据缺口生成任务，通过提交与重评验证成长。</p></div><Link className="button outline" to={goal ? `/start?goal=${goal}` : '/#capability-map'}>返回能力地图 ↗</Link></section>
     <div className="section-heading"><h2><span className="section-number">02 /</span> 成长任务</h2><span className="muted small">{tasks.length} 项任务</span></div>
+    {goal && <p className="muted">{product?.enabled && product.mode === 'model' ? '评级依据已记录的证据；任务完成不直接代表能力提升。' : '本地受控实验：评级用于核对证据流程，回答与产物质量尚未人工验收。任务完成不保证等级提升。'}</p>}
     {tasks.length ? tasks.map((task, index) => <article className="task-article" key={task.id} id={taskAnchor(task.id)} tabIndex={-1}>
       <div className="task-heading"><div><p className="eyebrow">TASK / {String(index + 1).padStart(2, '0')}</p><h2>{task.title}</h2></div><span className={`tag ${task.status === 'done' ? 'tag-complete' : ''}`}>{statuses[task.status] ?? task.status}</span></div>
       <div className="task-gap"><span className="eyebrow">证据缺口</span><p>{task.gap ? <>{task.gap.rationale} <span className="tag">{task.gap.status === 'closed' ? '已补齐' : '待补齐'}</span></> : '暂无已关联的证据缺口。'}</p></div>
@@ -25,7 +30,9 @@ export function TaskTimeline({ tasks }: { tasks: GrowthTask[] }) {
         <div className="task-stage"><div className="stage-label"><span className={`stage-number ${task.submissions.length ? 'stage-complete' : ''}`}>02</span><h3>提交</h3></div><h4>{task.submissions.length ? '已记录的提交' : '等待提交'}</h4>{task.submissions.length ? <details open><summary>{task.submissions.length} 条提交记录</summary>{task.submissions.map((item, submissionIndex) => <p className="source-id" key={`${item.source_id}-${submissionIndex}`}>{item.source_id}</p>)}</details> : <p className="muted">尚未提交。新证据记录后，会显示在此阶段。</p>}</div>
         <div className="task-stage"><div className="stage-label"><span className={`stage-number ${task.attribution ? 'stage-complete' : ''}`}>03</span><h3>重评</h3></div>{task.attribution ? <><h4>实践等级变化</h4><p className="level-change">{task.attribution.before.practice.level ?? '未评估'} <span>→</span> {task.attribution.after.practice.level ?? '未评估'}</p><p className="muted">归因链{Object.values(task.attribution.guard).every(Boolean) ? '完整' : '待核对'}</p><details><summary>核对归因检查</summary>{Object.entries(task.attribution.guard).map(([name, passed]) => <p key={name}>{name}：{passed ? '通过' : '待核对'}</p>)}</details></> : <><h4>等待重评</h4><p className="muted">等级由新证据重评产生，任务完成本身不代表等级提升。</p></>}</div>
       </div>
-      <Link className="text-link" to={`/evidence/${encodeURIComponent(task.capability_id)}`}>查看等级依据 →</Link>
+      {task.attribution?.before.understanding && <p>理解等级：{task.attribution.before.understanding.level ?? '未评估'} → {task.attribution.after.understanding?.level ?? '未评估'}</p>}
+      {refresh && <TaskActions task={task} refresh={refresh} submissionEnabled={submissionEnabled} />}
+      <Link className="text-link" to={`/evidence/${encodeURIComponent(task.capability_id)}${goal ? `?goal=${goal}` : ''}`}>查看等级依据 →</Link>
     </article>) : <div className="empty-state"><h3>暂无成长任务</h3><p>当前场景尚未生成任务，可以先查看能力与证据缺口。</p></div>}
   </main>
 }

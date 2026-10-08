@@ -270,3 +270,69 @@
 - 历史G1–G5记录与产物哈希复核，不重跑真实模型、不续期；当前源码与改版截图记录哈希。
 - 证据：`artifacts/gates/G6/g6c/README.md`、`result.json`、两份JUnit、`validation.json`；运行器` scripts/verify_g6_final.py`。
 - 完整PRD MVP、实时交互与发布未验收；零真实模型请求。
+
+## EV-087 · I1–I5 本地任务交互与阶段验收（2026-10-06）
+
+- 状态操作、理解回答和实践文档/代码/ZIP文件提交已实现；独立交互服务，原只读契约保持。
+- 新实验实践3→4、理解2→3，各维度独立；来源→主张→绑定→前后评定→trace可反查。子进程重开与重放一致，各仅一条提交。
+- I5总判定26项通过，478项本仓与111项上游完整回归通过；ruff、build/lint通过。
+- QG1–QG5复核通过：两个副本audit pass、damage caught且数据恢复；四份原库逐表零变更；密钥扫描零命中。
+- I3/I4两份浏览器检查各12项通过，本轮核对归档，不冒充重新执行；真实模型调用为零，固定绑定规则仅验证链路机制。
+- 证据：`artifacts/interaction/i5/README.md`、`result.json`、`scenario.json`、两份JUnit；验收器 `scripts/verify_interaction_final.py`。
+- 进程中断仍fail-stop，自动恢复与真实模型交互验收未交付；完整PRD MVP与发布未封板。
+
+## EV-088 · Evidence只读审计详情（2026-10-06）
+
+- 两维度依据、攻击复核、反向原文与封顶、排除项、规则与局限从既有报告进入API和页面；维持裁决可见，空记录不伪报通过。
+- 已排除且未被其他维度评级采用的主张不混入支持列表，排除原因仍可查看。
+- query_only与完整dump验证只读；13项接口/报告定向与16项真实浏览器检查通过，1440/390px无溢出；ruff/build/lint通过。
+- 当前完整回归见 `artifacts/evidence-review/regression.xml`；后续支持过滤收紧另做定向与浏览器验证。
+- 证据：`artifacts/evidence-review/README.md`、API JSON、browser-verification.json、实截图。独立临时夹具，零真实模型请求；完整知识空间与PRD MVP未验收。
+
+## EV-089 · O1 首次使用目标澄清与确认（2026-10-06）
+
+- 独立首次使用库、目标页与GoalAgent接线；四要素保存用户原话，不自动确认。重复创建/回答/确认不重复调用模型或覆盖历史。
+- 新增resume仅恢复无待答问题的失败提问；失败记录与已答内容保留，六轮上限受既有状态机保护。
+- 484项全量、33项接口/澄清定向与14项浏览器检查通过；中途刷新、确认原话与确认后刷新可读，1440/390px无溢出；ruff/build/lint通过。
+- 证据：`artifacts/onboarding/README.md`、regression.xml、browser-verification.json与四张截图；执行计划 `docs/ONBOARDING-PLAN.md`。
+- 固定问句实验，零真实模型请求；能力树生成页面尚未接入，不宣称完整G1实时模型或PRD MVP通过。
+
+## EV-090 · O2 显式能力树生成与实际目标页面（2026-10-07）
+
+- 已确认本地目标显式调用既有生成器与结构闸门；重复请求返回保存树，无额外模型调用。跨目标隔离、重启恢复、结构拒绝和重试通过。
+- 默认固定演示模板明确标注目标相关性未核对、等级为占位值；当前等级NULL、来源未校验。模型模式仅显式配置，本次零真实模型请求。
+- 486项全量、16项浏览器检查与ruff/build/lint通过；实际goal_id地址刷新恢复，1440/390px无溢出。
+- 证据：artifacts/onboarding/o2/README.md、regression.xml、browser-verification.json及截图。O3证据任务旅程未验收，不宣称完整PRD MVP通过。
+
+## EV-091 · O3 新目标任务与证据闭环（2026-10-07）
+
+- 新目标澄清/确认、三层树、能力点两维度缺口任务、操作、回答/文件提交、证据原文、重评与归因已接通。复用既有编排、TaskGenerator/闸门和TaskLoop；没有证据显示证据不足，任务完成不直接抬级。
+- 491项本仓、111项上游回归、27项浏览器和23项最终检查通过；新增5项接口旅程与共享锁检查。ruff/build/lint通过。
+- 独立实验库，新进程重开可重放提交及读取归因；原库表内容hash未变。损坏检测仅执行副本，caught且恢复，audit前后pass；秘密扫描0命中。
+- 证据：artifacts/onboarding/o3/README.md、result.json、两份回归XML、browser-verification.json与1440/390px截图。
+- 默认固定模板与按任务来源的绑定规则，零真实模型请求；未验收回答/产物真实质量。已有个人材料直接导入入口、真实模型效果与完整PRD MVP仍待推进。
+
+## EV-092 · P1 已有个人材料与显式绑定（2026-10-07）
+
+- UTF-8 Markdown/TXT/代码直接入库、选择类型/归属/能力点、原文与定位预览、显式确认后BindingGate与评定编排已接通。预览不写能力绑定或评级，未知归属不越过闸门。
+- 请求摘要去重、跨目标与非法输入拒绝、预览/确认状态新进程恢复通过。绑定后重评失败显示待恢复，重试不重复绑定。
+- 505项本仓与111项上游完整回归通过；恢复状态最后小修后14项定向、27项浏览器和22项最终检查通过，ruff/build/lint通过。完整回归未在最后小修后重复执行，详见artifact说明。
+- 原库表内容hash未变，损坏检测仅副本且caught/恢复，audit前后pass；秘密扫描0命中。零真实模型请求，候选仅记录用户选择，不声称模型相关性或质量判断。
+- 证据：artifacts/personal-materials/README.md、result.json、两份回归及final-focused.xml、browser-verification.json与截图。PDF/ZIP直接导入、完整检索/知识空间和真实质量仍未验收。
+
+## EV-093 · U1 正常产品入口与真实 AI 导师（2026-10-07）
+
+- 按用户“新用户进去，可以正常交互”及继续原计划的指示，恢复M8产品范围；自动初始化独立空个人库，默认真实模型，一键启动等待就绪与退出清理。
+- 实际目标首页、AI导师、连续对话、显式偏好、可点击依据、目标/任务/提交接口统一接线。导师读取Goal+Memory+Capability+Evidence+History，未知不判零、完成不自动抬级、建议不冒充执行；非法引用拒绝，失败可手动重试。
+- 513项本仓+111项上游回归通过；真实API旅程17项、离线页面29项、真实页面12项、最终14项及启动冒烟通过。累计7次真实模型调用，3轮导师回答持久化。
+- 原库表内容hash未变；损坏检测仅副本，caught且恢复、audit前后pass；秘密扫描0命中；ruff/build/lint通过。最后前端提示微调后重跑build/lint，未重复后端完整回归。
+- 证据：artifacts/product/README.md、result.json、live/result.json、两份回归XML、两个browser-verification.json及1440/390px截图、startup-smoke.json。后续U2确认执行/目标调整、U3完整材料知识空间、U4新用户总验收；完整PRD MVP未封板。
+
+## EV-094 · U2 显式任务操作与目标版本调整（2026-10-07）
+
+- 导师页接通能力/维度选择、核对、显式确认生成、任务页启动；复用同缺口未完成任务。人工目标要求调整保留理由和前后值，当前能力不直接抬级，陈旧请求拒绝覆盖，异常留意图并可恢复。
+- 已确认目标调整建立新版本和父目标/原话记录；新目标重新澄清与显式确认，旧目标/能力/任务保留，旧等级不继承。操作历史、版本链接与新进程恢复通过。
+- 523项完整后端回归、18项最终定向、45项浏览器、15项真实复测与17项最终复核通过；前端1440/390px无溢出，无浏览器异常或React重复键错误。ruff/build/lint通过。
+- 自动审批首次拒绝新增数据外发；用户随后明确允许最多5次向现有GLM服务发送验收构造数据。实际新增3次模型调用：任务、目标调整、能力树。U1库未变，本批累计10次真实调用；没有发送用户实际个人材料。
+- 空浏览器证据库audit pass，damage按规则skipped；有证据的真实副本damage caught/恢复，audit前后pass。原库hash未变，秘密扫描0命中。
+- 证据：artifacts/product/actions-README.md、actions-result.json、actions-live/result.json、actions-regression.xml、actions-focused.xml、browser-actions/browser-verification.json及截图。完整MVP仍未封板；PDF/ZIP、知识检索和OAuth留U3，完整连续用户G1–G6留U4。

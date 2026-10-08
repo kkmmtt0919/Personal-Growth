@@ -1,0 +1,185 @@
+{
+  "capability": "受控攻击复核场景",
+  "assessment": {
+    "practice": 2,
+    "understanding": null
+  },
+  "supports": [
+    {
+      "claim_id": "clm_9a51bbec8a83ff09399d",
+      "source": {
+        "id": "src_e5260ae65332148c",
+        "name": "keep",
+        "type": "repo_artifact"
+      },
+      "quote": {
+        "text": "# 受控项目",
+        "locator": null
+      },
+      "binding_reason": "M4-b 闸门通过（等价写入）"
+    }
+  ],
+  "gaps": [],
+  "report": {
+    "artifact": "m4d-assessment-report",
+    "capability": {
+      "id": "cap_dd7ff1c78cf7e0e07976",
+      "goal_id": "goal_m4d",
+      "path": "LLM 基础/检索增强/受控攻击复核场景",
+      "depth": 3,
+      "target_level": 3,
+      "status": "active",
+      "current_level_status": "assessed",
+      "current_level_understanding": null,
+      "current_level_practice": 2
+    },
+    "dimensions": {
+      "understanding": {
+        "assessment_id": "asm_e3a3928033218ec96727",
+        "status": "insufficient_evidence",
+        "level": null,
+        "base_level": null,
+        "rationale": "证据不足（insufficient_evidence）：没有通过准入且可入桶的理解证据（已排除：clm_0093063a1cb07c5a7689：攻击裁决 broken：主张不计入）",
+        "why_not_higher": [
+          "缺少可起评的理解证据"
+        ],
+        "supports": [],
+        "reverse_evidence": [],
+        "excluded": [
+          {
+            "claim_id": "clm_0093063a1cb07c5a7689",
+            "reason": "攻击裁决 broken：主张不计入"
+          }
+        ]
+      },
+      "practice": {
+        "assessment_id": "asm_c2e1623460b3566a3be2",
+        "status": "rated",
+        "level": 2,
+        "base_level": 3,
+        "rationale": "实践：基线 3（1 条已绑定主张）；反向证据封顶 ≤2 → 最终 2",
+        "why_not_higher": [],
+        "supports": [
+          {
+            "buckets": [
+              "practice"
+            ],
+            "cap": 2,
+            "claim_id": "clm_9a51bbec8a83ff09399d",
+            "evidence_types": [
+              "repo_artifact"
+            ],
+            "signals": []
+          }
+        ],
+        "reverse_evidence": [
+          {
+            "cap": 2,
+            "claim_id": "clm_9a51bbec8a83ff09399d"
+          }
+        ],
+        "excluded": [
+          {
+            "claim_id": "clm_0093063a1cb07c5a7689",
+            "reason": "攻击裁决 broken：主张不计入"
+          }
+        ]
+      }
+    },
+    "supports": [
+      {
+        "claim_id": "clm_9a51bbec8a83ff09399d",
+        "present": true,
+        "subject": "项目材料",
+        "predicate": "包含",
+        "object": "相关内容",
+        "statement": "项目材料中包含相关内容（keep.md）",
+        "binding_rationale": "M4-b 闸门通过（等价写入）",
+        "quotes": [
+          {
+            "passage_id": "p_d7e813a0b35e4956",
+            "quote": "# 受控项目",
+            "quote_verbatim": true,
+            "source_id": "src_e5260ae65332148c",
+            "source_title": "keep"
+          }
+        ],
+        "dimension": "practice",
+        "cap": 2,
+        "signals": [],
+        "evidence_types": [
+          "repo_artifact"
+        ]
+      }
+    ],
+    "gaps": [
+      {
+        "dimension": "understanding",
+        "text": "缺少可起评的理解证据"
+      }
+    ],
+    "reverse_evidence": [
+      {
+        "dimension": "practice",
+        "claim_id": "clm_9a51bbec8a83ff09399d",
+        "cap": 2,
+        "attacks": [],
+        "refuting_evidence": [
+          {
+            "passage_id": "p_d7e813a0b35e4956",
+            "quote": "# 受控项目",
+            "reasoning": "注入式反向证据"
+          }
+        ]
+      }
+    ],
+    "attack_reviews": [
+      {
+        "claim_id": "clm_0093063a1cb07c5a7689",
+        "statement": "项目材料中包含相关内容（broken.md）",
+        "attacks": [
+          {
+            "angle": "注入式测试",
+            "question": "注入式测试质疑",
+            "verdict": "broken",
+            "reasoning": "注入式反例（测试）",
+            "missing_evidence": [
+              "用户角色说明"
+            ]
+          }
+        ]
+      }
+    ],
+    "excluded": [
+      {
+        "claim_id": "clm_0093063a1cb07c5a7689",
+        "reason": "攻击裁决 broken：主张不计入",
+        "dimensions": [
+          "understanding",
+          "practice"
+        ],
+        "attacks": [
+          {
+            "angle": "注入式测试",
+            "question": "注入式测试质疑",
+            "verdict": "broken",
+            "reasoning": "注入式反例（测试）",
+            "missing_evidence": [
+              "用户角色说明"
+            ]
+          }
+        ]
+      }
+    ],
+    "rule_version": "m4c-1",
+    "generated_at": "2026-10-06T06:52:49+00:00",
+    "generated_by": "growth_os.assessment.report",
+    "limitations": [
+      "不能由“项目存在”推出“用户个人实现”：材料口径证据只证明材料内容（M3 硬规则）。",
+      "缺失证据不等于没做过：insufficient_evidence 只说明现有材料不足以支持等级。",
+      "等级由确定性规则从已绑定证据算出、可复算；报告不包含任何模型分值。",
+      "报告不构成对系统整体评估可靠性的结论。"
+    ],
+    "read_only": true
+  }
+}

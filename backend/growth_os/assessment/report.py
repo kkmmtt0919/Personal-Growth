@@ -189,6 +189,11 @@ def build_report(store, evidence_store, *, capability_id: str, generated_by: str
         "supports": supports,
         "gaps": gaps,
         "reverse_evidence": reverse_evidence,
+        "attack_reviews": [
+            {"claim_id": claim_id, "statement": (overview[claim_id].get("claim") or {}).get("statement"),
+             "attacks": _attack_details(overview[claim_id])}
+            for claim_id in links_by_claim if claim_id in overview and overview[claim_id].get("attacks")
+        ],
         "excluded": list(excluded.values()),
         "rule_version": rule_version,
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
